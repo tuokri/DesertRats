@@ -1,0 +1,11 @@
+
+# Misc
+**.ini
+**.bat
+
+# Mesh Work
+Mesh/*/_work
+
+# Tex Work
+/UI/_work
+
