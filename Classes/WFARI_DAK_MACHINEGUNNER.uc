@@ -1,28 +1,21 @@
 //=============================================================================
-// WFARI_UK_TEAMLEADER.uc
+// WFARI_DAK_MACHINEGUNNER.uc
 //=============================================================================
-// British Team Leader Role Info.
+// German Machine Gunner Role Info.
 //=============================================================================
 // African Expansion for Heroes of the West by Sgt Joe
 // Copyright (C) 2017 Tripwire Interactive LLC
 //=============================================================================
 
-class WFARI_UK_TEAMLEADER extends WFARI_UK;
+class WFARI_DAK_MACHINEGUNNER extends WFARI_DAK;
 
 defaultproperties
 {
-	RoleType=RORIT_Commander
-	ClassTier=4
-	ClassIndex=`RI_TEAMLEADER
+	RoleType=RORIT_MachineGunner
+	ClassTier=2
+	ClassIndex=`RI_MACHINEGUN
 	
-	PrimaryWeapons(0)=class'WFGame.WFWeap_SMLE_Rifle'
-	PrimaryWeapons(1)=class'RSGame.RSWeap_M1928_SMG'
+	PrimaryWeapons(0)=class'WFGame.WFWeap_MG34_LMG'
 	
 	bAllowPistolsInRealism=true
-	
-	OtherItems(0)=class'WFGame.WFWeap_Mills_Grenade'
-	OtherItems(1)=class'RSGame.RSWeap_M8_Smoke'
-	OtherItems(2)=class'WFGame.WFItem_Binoculars'
-	
-	bIsTeamLeader=true
 }
