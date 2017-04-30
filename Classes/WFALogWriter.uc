@@ -8,7 +8,7 @@
 //=============================================================================
 
 class WFALogWriter extends Actor
-	// seperate config as placeholder, will work out integration when greenlit
+	// seperate config as placeholder, will work out integration when officially approved
 	config(Game_WFA);
 
 struct LogStruct

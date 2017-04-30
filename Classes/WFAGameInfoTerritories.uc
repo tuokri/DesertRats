@@ -8,7 +8,7 @@
 //=============================================================================
 
 class WFAGameInfoTerritories extends WFGameInfoTerritories
-	// seperate config as placeholder, will work out integration when greenlit
+	// seperate config as placeholder, will work out integration when officially approved
 	config(Game_WFA); 
 
 var WFALogWriter Logger;
@@ -42,14 +42,7 @@ function class<Pawn> GetPlayerClass(Controller C)
 	
 	// Since I highly doubt Italians will be coming I'll just make this a boolean
 	// Can always easily change later
-	if ( ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX )
-	{
-		PawnClass = GER[UniformIndex];
-	}
-	else
-	{
-		PawnClass = BRIT[UniformIndex];
-	}
+	PawnClass = (ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX) ? GER[UniformIndex] : BRIT[UniformIndex];
 	
 	switch (UniformIndex)
 	{
@@ -87,13 +80,13 @@ defaultProperties
 	BRIT(`RI_ENGINEER)=		class'WFAPawnAlliesBrit'
 	BRIT(`RI_ANTITANK)=		class'WFAPawnAlliesBrit'
 	BRIT(`RI_SNIPER)=		class'WFAPawnAlliesBrit'
-	BRIT(`RI_SQUADLEADER)=	class'WFAPawnAlliesBrit'
 	BRIT(`RI_RADIOMAN)=		class'WFAPawnAlliesBritRO'
+	BRIT(`RI_SQUADLEADER)=	class'WFAPawnAlliesBrit'
+	BRIT(`RI_TEAMLEADER)=	class'WFAPawnAlliesBritTL'
 	BRIT(`RI_TANK_CREW)=	class'WFAPawnTanker'
 	BRIT(`RI_TANK_COMM)=	class'WFAPawnTanker'
 	BRIT(`RI_TANK_SL)=		class'WFAPawnTanker'
 	BRIT(`RI_TANK_TL)=		class'WFAPawnTanker'
-	BRIT(`RI_TEAMLEADER)=	class'WFAPawnAlliesBritTL'
 	
 	GER(`RI_RIFLEMAN)=		class'WFAPawnAxisGer'
 	GER(`RI_ASSAULT)=		class'WFAPawnAxisGer'
@@ -101,11 +94,11 @@ defaultProperties
 	GER(`RI_ENGINEER)=		class'WFAPawnAxisGer'
 	GER(`RI_ANTITANK)=		class'WFAPawnAxisGer'
 	GER(`RI_SNIPER)=		class'WFAPawnAxisGer'
-	GER(`RI_SQUADLEADER)=	class'WFAPawnAxisGer'
 	GER(`RI_RADIOMAN)=		class'WFAPawnAxisGerRO'
+	GER(`RI_SQUADLEADER)=	class'WFAPawnAxisGer'
+	GER(`RI_TEAMLEADER)=	class'WFAPawnAxisGerTL'
 	GER(`RI_TANK_CREW)=		class'WFAPawnTanker'
 	GER(`RI_TANK_COMM)=		class'WFAPawnTanker'
 	GER(`RI_TANK_SL)=		class'WFAPawnTanker'
 	GER(`RI_TANK_TL)=		class'WFAPawnTanker'
-	GER(`RI_TEAMLEADER)=	class'WFAPawnAxisGerTL'
 }

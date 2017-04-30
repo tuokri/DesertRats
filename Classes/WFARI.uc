@@ -8,13 +8,13 @@
 //=============================================================================
 
 class WFARI extends WFRoleInfo
-	// seperate config as placeholder, will work out integration when greenlit
+	// seperate config as placeholder, will work out integration when officially approved
 	config(Game_WFA)
 	abstract;
 
 DefaultProperties
 {
-	bAllowPistolsInRealism=true
+	bAllowPistolsInRealism=false
 	
 	NumPrimaryUnlimitedWeapons=0
 	

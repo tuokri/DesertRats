@@ -17,8 +17,5 @@ defaultproperties
 	
 	PrimaryWeapons(0)=class'WFGame.WFWeap_SMLE_Rifle'
 	
-	PrimaryWeapons(2)=class'WFGame.WFWeap_Kar98_Rifle'
-	NumPrimaryVeteranEnemyWeapons=1
-	
 	OtherItems(0)=class'WFGame.WFWeap_Mills_Grenade'
 }

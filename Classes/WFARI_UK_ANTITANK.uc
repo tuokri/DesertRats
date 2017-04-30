@@ -17,8 +17,5 @@ defaultproperties
 	
 	PrimaryWeapons(0)=class'WFGame.WFWeap_PIAT'
 	
-	SecondaryWeapons(0)=class'WFGame.WFWeap_BHP35_Pistol'
-	
-	SecondaryWeapons(1)=class'WFGame.WFWeap_P38_Pistol'
-	NumSecondaryFrontlineEnemyWeapons=1
+	bAllowPistolsInRealism=true
 }

@@ -9,3 +9,8 @@
 
 class WFARI_UK extends WFARI
 	abstract;
+
+defaultproperties
+{
+	SecondaryWeapons(0)=class'WFGame.WFWeap_BHP35_Pistol'
+}

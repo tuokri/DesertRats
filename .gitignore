@@ -8,14 +8,14 @@
 /_Media
 
 # Reference Classes
-Classes/src_*/
+/Classes/src_*
 
 # Mesh Work
-Mesh/*/_work
+/Mesh/*/_work
 
 # Tex Work
-Mesh/*/Textures/_work
+/Mesh/*/Textures/_work
 /UI/_work
 
 # Maps & Packages (for now)
-/Published
+/Unpublished

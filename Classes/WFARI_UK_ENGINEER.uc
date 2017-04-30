@@ -18,10 +18,6 @@ defaultproperties
 	PrimaryWeapons(0)=class'WFGame.WFWeap_SMLE_Rifle'
 	PrimaryWeapons(1)=class'RSGame.RSWeap_M1928_SMG'
 	
-	PrimaryWeapons(2)=class'WFGame.WFWeap_Kar98_Rifle'
-	PrimaryWeapons(3)=class'WFGame.WFWeap_MP40_SMG'
-	NumPrimaryVeteranEnemyWeapons=2
-	
 	OtherItems(0)=class'RSGame.RSWeap_M37_SatchelCharge'
 	
 	bCanCompleteMiniObjectives=true

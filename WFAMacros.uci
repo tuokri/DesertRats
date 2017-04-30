@@ -20,8 +20,8 @@
 `define RI_SNIPER		4
 `define RI_SQUADLEADER	9
 `define RI_RADIOMAN		7
+`define RI_TEAMLEADER	10
 `define RI_TANK_CREW	11
 `define RI_TANK_COMM	12
 `define RI_TANK_SL		14
 `define RI_TANK_TL		15
-`define RI_TEAMLEADER	10

@@ -38,19 +38,7 @@ DefaultProperties
 	ArmsMeshesFP(0)=SkeletalMesh'CHR_1stP_Hands_Master.Mesh.1stP_Hands_US_rolledSleeve'
 	
 	Begin Object Name=ROPawnSkeletalMeshComponent
-		AnimSets(0)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Stand_anim'
-		AnimSets(1)=AnimSet'CHR_Playeranim_Master.Anim.CHR_ChestCover_anim'
-		AnimSets(2)=AnimSet'CHR_Playeranim_Master.Anim.CHR_WaistCover_anim'
-		AnimSets(3)=AnimSet'CHR_Playeranim_Master.Anim.CHR_StandCover_anim'
-		AnimSets(4)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Crouch_anim'
-		AnimSets(5)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Prone_anim'
-		AnimSets(6)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Hand_Poses_Master'
-		AnimSets(7)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Death_anim'
-		AnimSets(8)=AnimSet'WFGameCustom.Anim.Tripod_all_MG'
-		AnimSets(9)=AnimSet'CHR_Playeranim_Master.Anim.Special_Actions'
-		AnimSets(10)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Melee'
 		AnimSets(11)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Russian_Unique'
-		AnimSets(12)=None	// Reserved for weapon specific animations
 	End Object
 	
 	bSingleHandedSprinting=false

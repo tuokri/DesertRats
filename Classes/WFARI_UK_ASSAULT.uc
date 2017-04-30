@@ -17,8 +17,5 @@ defaultproperties
 	
 	PrimaryWeapons(0)=class'RSGame.RSWeap_M1928_SMG'
 	
-	PrimaryWeapons(1)=class'WFGame.WFWeap_MP40_SMG'
-	NumPrimaryVeteranEnemyWeapons=1
-	
 	OtherItems(0)=class'WFGame.WFWeap_Mills_Grenade'
 }
