@@ -11,7 +11,7 @@ class WFAVehicleSoftSkinnedTransport extends ROVehicleTransport;
 
 simulated event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {
-	local int newDamage, HitIndex;
+	local int newDamage/*, HitIndex*/;
 	
 	if ( Role == ROLE_Authority )
 	{
@@ -87,6 +87,153 @@ simulated event TakeDamage(int Damage, Controller EventInstigator, vector HitLoc
 	else
 	{
 		`wfalog(self @ "took no damage from" @ DamageType, 'SSVDamage');
+	}
+}
+
+simulated function SitDriver( ROPawn ROP, int SeatIndex )
+{
+	local ROPlayerController ROPC;
+	local Pawn LocalPawn;
+
+	super.SitDriver(ROP, SeatIndex);
+	
+	if( Seats[SeatIndex].SeatPawn != none && Seats[SeatIndex].SeatPawn.Driver != none )
+	{
+		ROPC = ROPlayerController(Seats[SeatIndex].SeatPawn.Driver.Controller);
+	}
+	if( ROPC == none && Seats[SeatIndex].SeatPawn != none )
+	{
+		ROPC = ROPlayerController(Seats[SeatIndex].SeatPawn.Controller);
+	}
+	if( ROPC == none )
+	{
+		if( ROP.DrivenVehicle.Controller != none && ROP.DrivenVehicle.Controller == GetALocalPlayerController() )
+		{
+			ROPC = ROPlayerController(ROP.DrivenVehicle.Controller);
+		}
+	}
+	if( ROPC == none && SeatIndex == 0 )
+	{
+		if( GetALocalPlayerController() != none && GetALocalPlayerController().Pawn == self )
+		{
+			ROPC = ROPlayerController(GetALocalPlayerController());
+		}
+	}
+	if( ROPC == none  )
+	{
+		LocalPawn = GetALocalPlayerController().Pawn;
+		if( GetALocalPlayerController() != none && LocalPawn == Seats[SeatIndex].SeatPawn )
+		{
+			ROPC = ROPlayerController(GetALocalPlayerController());
+		}
+	}
+	
+	if( ROPC != none && (WorldInfo.NetMode == NM_Standalone || IsLocalPlayerInThisVehicle()) )
+	{
+		ROPC.SetRotation(rot(0,0,0));
+	}
+	
+	if( ROP != none )
+	{
+  		ROP.Mesh.SetAnimTreeTemplate(PassengerAnimTree);
+		if( ROP.CurrentWeaponAttachment != none )
+			ROP.PutAwayWeaponAttachment();
+
+		if( Role == ROLE_Authority )
+		{
+			UpdateSeatProxyHealth(GetSeatProxyIndexForSeatIndex(SeatIndex), ROP.Health, false);
+		}
+	}
+
+	if( WorldInfo.NetMode != NM_DedicatedServer )
+	{
+		if ( ROPC != None && LocalPlayer(ROPC.Player) != none && (WorldInfo.NetMode == NM_Standalone || IsLocalPlayerInThisVehicle()) )
+		{
+			if ( Mesh.DepthPriorityGroup == SDPG_World )
+			{
+				SetVehicleDepthToForeground();
+			}
+			
+			if (ROP != None)
+			{
+				if( ROP.ThirdPersonHeadgearMeshComponent != none )
+				{
+					ROP.ThirdPersonHeadgearMeshComponent.SetHidden(true);
+				}
+
+				ROP.ThirdPersonHeadAndArmsMeshComponent.SetSkeletalMesh(ROP.ArmsOnlyMesh);
+				ROP.ArmsMesh.SetHidden(true);
+			}
+		}
+		
+		SpawnOrReplaceSeatProxy(SeatIndex, ROP);
+	}
+
+	if( ROP != none )
+	{
+		ROP.SetRelativeRotation(Seats[SeatIndex].SeatRotation);
+		ROP.UpdateVehicleIK(self, SeatIndex, SeatPositionIndex(SeatIndex,, true));
+	}
+}
+
+simulated function SpawnOrReplaceSeatProxy(int SeatIndex, ROPawn ROP)
+{
+	local int i;
+	local VehicleCrewProxy CurrentProxyActor;
+
+	if( WorldInfo.NetMode == NM_DedicatedServer )
+	{
+		return;
+	}
+
+	for ( i = 0; i < SeatProxies.Length; i++ )
+	{
+		if( SeatIndex == i && ROP != none )
+		{
+			if( SeatProxies[i].ProxyMeshActor != none && SeatProxies[i].ProxyMeshActor.bIsDismembered )
+			{
+				`wfalog("WFAVehicleSoftSkinnedTransport.SpawnOrReplaceSeatProxy() - ProxyMeshActor.bIsDismembered!");
+				SeatProxies[i].ProxyMeshActor.Destroy();
+			}
+
+			if( SeatProxies[i].ProxyMeshActor == none )
+			{
+				SeatProxies[i].ProxyMeshActor = Spawn(class'VehicleCrewProxy',self);
+				SeatProxies[i].ProxyMeshActor.MyVehicle = self;
+				SeatProxies[i].ProxyMeshActor.SeatProxyIndex = i;
+
+				CurrentProxyActor = SeatProxies[i].ProxyMeshActor;
+				SeatProxies[i].TunicMeshType.Characterization = class'ROPawn'.default.PlayerHIKCharacterization;
+				CurrentProxyActor.Mesh.SetShadowParent(Mesh);
+				CurrentProxyActor.SetLightingChannels(InteriorLightingChannels);
+				CurrentProxyActor.SetLightEnvironment(InteriorLightEnvironment);
+				CurrentProxyActor.SetCollision( false, false);
+				CurrentProxyActor.bCollideWorld = false;
+				CurrentProxyActor.SetBase(none);
+				CurrentProxyActor.SetHardAttach(true);
+				CurrentProxyActor.SetLocation( Location );
+				CurrentProxyActor.SetPhysics( PHYS_None );
+				CurrentProxyActor.SetBase( Self, , Mesh, Seats[SeatProxies[i].SeatIndex].SeatBone);
+				CurrentProxyActor.SetRelativeLocation( vect(0,0,0) );
+				CurrentProxyActor.SetRelativeRotation( Seats[SeatProxies[i].SeatIndex].SeatRotation );
+			}
+			else
+				CurrentProxyActor = SeatProxies[i].ProxyMeshActor;
+
+			CurrentProxyActor.ReplaceProxyMeshWithPawn(ROP);
+
+			if ( SeatProxyAnimSet != None )
+			{
+				CurrentProxyActor.Mesh.AnimSets[0] = SeatProxyAnimSet;
+			}
+			
+			if( IsLocalPlayerInThisVehicle() )
+				CurrentProxyActor.SetVisibilityToInterior();
+			else
+				CurrentProxyActor.SetVisibilityToExterior();
+
+			CurrentProxyActor.HideMesh(true);
+		}
 	}
 }
 

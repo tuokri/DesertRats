@@ -13,9 +13,6 @@ class WFAGameInfoTerritories extends WFGameInfoTerritories
 
 var WFALogWriter Logger;
 
-var array< class<Pawn> > BRIT;
-var array< class<Pawn> > GER;
-
 // TODO: Is this necessary?
 static event class<GameInfo> SetGameType(string MapName, string Options, string Portal)
 {
@@ -40,10 +37,6 @@ function class<Pawn> GetPlayerClass(Controller C)
 	ROPRI = ROPlayerReplicationInfo(C.PlayerReplicationInfo);
 	UniformIndex = ROPRI.RoleInfo.ClassIndex;
 	
-	// Since I highly doubt Italians will be coming I'll just make this a boolean
-	// Can always easily change later
-	PawnClass = (ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX) ? GER[UniformIndex] : BRIT[UniformIndex];
-	
 	switch (UniformIndex)
 	{
 		case `RI_RIFLEMAN:		nm = "RI_RIFLEMAN"; break;
@@ -54,12 +47,25 @@ function class<Pawn> GetPlayerClass(Controller C)
 		case `RI_SNIPER:		nm = "RI_SNIPER"; break;
 		case `RI_SQUADLEADER:	nm = "RI_SQUADLEADER"; break;
 		case `RI_RADIOMAN:		nm = "RI_RADIOMAN"; break;
+		case `RI_TEAMLEADER:	nm = "RI_TEAMLEADER"; break;
 		case `RI_TANK_CREW:		nm = "RI_TANK_CREW"; break;
 		case `RI_TANK_COMM:		nm = "RI_TANK_COMM"; break;
 		case `RI_TANK_SL:		nm = "RI_TANK_SL"; break;
 		case `RI_TANK_TL:		nm = "RI_TANK_TL"; break;
-		case `RI_TEAMLEADER:	nm = "RI_TEAMLEADER"; break;
 		default:				nm = "BAD CLASS";
+	}
+	
+	switch (UniformIndex)
+	{
+		case `RI_TANK_CREW:
+		case `RI_TANK_COMM:
+		case `RI_TANK_SL:
+		case `RI_TANK_TL:
+			PawnClass = class'WFAPawnTanker';
+			break;
+		
+		default:
+			PawnClass = (ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX) ? class'WFAPawnAxisGer' : class'WFAPawnAlliesBrit';
 	}
 	`wfalog("Class index is" @ nm @ "("$UniformIndex$") - returning" @ PawnClass, 'PawnClass');
 	
@@ -69,36 +75,7 @@ function class<Pawn> GetPlayerClass(Controller C)
 
 defaultProperties
 {
-	PlayerControllerClass=	class'WFPlayerController'
+	PlayerControllerClass=	class'WFAPlayerController'
 	AIControllerClass=		class'WFAAIController'
-	TeamInfoClass=			class'WFTeamInfo'
-	HUDType=				class'WFHUD'
-	
-	BRIT(`RI_RIFLEMAN)=		class'WFAPawnAlliesBrit'
-	BRIT(`RI_ASSAULT)=		class'WFAPawnAlliesBrit'
-	BRIT(`RI_MACHINEGUN)=	class'WFAPawnAlliesBrit'
-	BRIT(`RI_ENGINEER)=		class'WFAPawnAlliesBrit'
-	BRIT(`RI_ANTITANK)=		class'WFAPawnAlliesBrit'
-	BRIT(`RI_SNIPER)=		class'WFAPawnAlliesBrit'
-	BRIT(`RI_RADIOMAN)=		class'WFAPawnAlliesBritRO'
-	BRIT(`RI_SQUADLEADER)=	class'WFAPawnAlliesBrit'
-	BRIT(`RI_TEAMLEADER)=	class'WFAPawnAlliesBritTL'
-	BRIT(`RI_TANK_CREW)=	class'WFAPawnTanker'
-	BRIT(`RI_TANK_COMM)=	class'WFAPawnTanker'
-	BRIT(`RI_TANK_SL)=		class'WFAPawnTanker'
-	BRIT(`RI_TANK_TL)=		class'WFAPawnTanker'
-	
-	GER(`RI_RIFLEMAN)=		class'WFAPawnAxisGer'
-	GER(`RI_ASSAULT)=		class'WFAPawnAxisGer'
-	GER(`RI_MACHINEGUN)=	class'WFAPawnAxisGer'
-	GER(`RI_ENGINEER)=		class'WFAPawnAxisGer'
-	GER(`RI_ANTITANK)=		class'WFAPawnAxisGer'
-	GER(`RI_SNIPER)=		class'WFAPawnAxisGer'
-	GER(`RI_RADIOMAN)=		class'WFAPawnAxisGerRO'
-	GER(`RI_SQUADLEADER)=	class'WFAPawnAxisGer'
-	GER(`RI_TEAMLEADER)=	class'WFAPawnAxisGerTL'
-	GER(`RI_TANK_CREW)=		class'WFAPawnTanker'
-	GER(`RI_TANK_COMM)=		class'WFAPawnTanker'
-	GER(`RI_TANK_SL)=		class'WFAPawnTanker'
-	GER(`RI_TANK_TL)=		class'WFAPawnTanker'
+	HUDType=				class'WFAHUD'
 }

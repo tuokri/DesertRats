@@ -12,6 +12,50 @@ class WFARI extends WFRoleInfo
 	config(Game_WFA)
 	abstract;
 
+function PreLoadContentSingle(class<Pawn> PawnIn)
+{
+	local int InvIndex, InvLevelIndex;
+	local class<ROWeapon> InvType, WeaponClass;
+	
+	AddSharedContentRef(PawnIn);
+	
+	for (InvIndex = 0; InvIndex < PrimaryWeapons.length; InvIndex++)
+	{
+		InvType = PrimaryWeapons[InvIndex];
+		
+		for (InvLevelIndex = 0; InvLevelIndex < InvType.default.WeaponContentClass.Length; InvLevelIndex++)
+		{
+			WeaponClass = class<ROWeapon>(DynamicLoadObject(InvType.default.WeaponContentClass[InvLevelIndex], class'Class'));
+			
+			AddSharedContentRef(WeaponClass);
+		}
+	}
+	
+	for (InvIndex = 0; InvIndex < SecondaryWeapons.length; InvIndex++)
+	{
+		InvType = SecondaryWeapons[InvIndex];
+		
+		for (InvLevelIndex = 0; InvLevelIndex < InvType.default.WeaponContentClass.Length; InvLevelIndex++)
+		{
+			WeaponClass = class<ROWeapon>(DynamicLoadObject(InvType.default.WeaponContentClass[InvLevelIndex], class'Class'));
+			
+			AddSharedContentRef(WeaponClass);
+		}
+	}
+	
+	for (InvIndex = 0; InvIndex < OtherItems.length; InvIndex++)
+	{
+		InvType = OtherItems[InvIndex];
+		
+		for (InvLevelIndex = 0; InvLevelIndex < InvType.default.WeaponContentClass.Length; InvLevelIndex++)
+		{
+			WeaponClass = class<ROWeapon>(DynamicLoadObject(InvType.default.WeaponContentClass[InvLevelIndex], class'Class'));
+			
+			AddSharedContentRef(WeaponClass);
+		}
+	}
+}
+
 DefaultProperties
 {
 	bAllowPistolsInRealism=false
