@@ -9,13 +9,13 @@
 
 class WFAMapInfo extends ROMapInfo;
 
-/* enum EAxisFaction
+enum EAxisFaction
 {
-	AXIS_GER <DisplayName=Germany>
+	AXIS_GER <DisplayName=Germany>,
 	AXIS_ITA <DisplayName=Italy (NOT IMPLEMENTED)>
 }; 
 
-var(Axis) EAxisFaction AxisFaction; */
+var(Axis) EAxisFaction AxisFaction;
 
 function PreLoadSharedContentForGameType()
 {
@@ -93,6 +93,8 @@ private function PreloadGameClass(class<GameInfo> DummyClass)
 
 DefaultProperties
 {
+	AxisFaction=AXIS_GER
+	
 	MortarStats=(BatterySize=5,SalvoAmount=5,StrikeDelay=5,SalvoInterval=2.5,StrikePattern=850,ShellClass=class'RSMortarShell')
 	MediumArtyStats=(BatterySize=3,SalvoAmount=5,StrikeDelay=8,SalvoInterval=10.0,StrikePattern=1250,ShellClass=class'RSFieldArtilleryShell')
 	RocketArtyStats=(BatterySize=15,SalvoAmount=0,StrikeDelay=12,SalvoInterval=0.5,StrikePattern=2000,ShellClass=class'RSBattleshipShell')

@@ -11,6 +11,11 @@ class WFAPlayerController extends WFPlayerController
 	// seperate config as placeholder, will work out integration when officially approved
 	config(Game_WFA); 
 
+function bool IsATommyMap()
+{
+	return true;
+}
+
 exec function Camera(name NewMode)
 {
 	ServerCamera(NewMode);

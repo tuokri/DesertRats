@@ -7,7 +7,8 @@
 // Copyright (C) 2017 Tripwire Interactive LLC
 //=============================================================================
 
-class WFAVehicleSoftSkinnedTransport extends ROVehicleTransport;
+class WFAVehicleSoftSkinnedTransport extends ROVehicleTransport
+	abstract;
 
 simulated event TakeDamage(int Damage, Controller EventInstigator, vector HitLocation, vector Momentum, class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {

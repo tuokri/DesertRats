@@ -54,3 +54,56 @@ exec function LogSquadInfo()
 	}
 	`wfalog("", 'SquadInfo');
 }
+
+exec function AIEnabled(bool on, bool TanksOnly)
+{
+	local ROAIController TestAI;
+	
+	if (on)
+	{
+		foreach WorldInfo.AllControllers(class'ROAIController', TestAI)
+		{
+			if (TestAI != none)
+			{
+				if (!TanksOnly ||(TanksOnly && TestAI.CurrentAIPurpose == AIP_VehicleAI))
+				{
+					TestAI.AIUnSuspended();
+				}
+			}
+		}
+	}
+	else
+	{
+		foreach WorldInfo.AllControllers(class'ROAIController', TestAI)
+		{
+			if (TestAI != none)
+			{
+				if (!TanksOnly ||(TanksOnly && TestAI.CurrentAIPurpose == AIP_VehicleAI))
+				{
+					TestAI.AIUnSuspended();
+				}
+			}
+		}
+	}
+}
+
+
+exec function botCrewGun()
+{
+	local WFAVehicleATGun G;
+	local ROAIController TestAI;
+	
+	foreach WorldInfo.AllControllers(class'ROAIController', TestAI)
+	{
+		if (TestAI != none && TestAI.CurrentAIPurpose != AIP_VehicleAI)
+		{
+			foreach AllActors(class'WFAVehicleATGun',G)
+			{
+				G.TryToDrive(TestAI.Pawn);
+				break;
+			}
+			break;
+		}
+		
+	}
+}
