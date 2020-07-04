@@ -57,6 +57,7 @@ simulated function SetMoraleMusic()
 	
 	NewMoraleMusicTrack.TheSoundCue = none;
 	
+	/*
 	if (Morale < 50)
 	{
 		if (TeamIndex == `AXIS_TEAM_INDEX)
@@ -90,6 +91,9 @@ simulated function SetMoraleMusic()
 			CRef_NewMoralMusicTrack = AlliesHighMoralePlayList.CRef_MusicTracks[TrackIndex];
 		}
 	}
+	*/
+	
+	CRef_NewMoralMusicTrack = "SoundCue'DR__PLACEHOLDER_MUS.TEMPCUE'";
 	
 	LoadAsyncMoraleMusicTrack(CRef_NewMoralMusicTrack);
 	
@@ -228,15 +232,14 @@ defaultproperties
 	NoTransitionCheck=false
 	
 	NewMoraleMusicTrack=(bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=1.0,FadeInVolumeLevel=1.0,FadeOutTime=0.5,FadeOutVolumeLevel=0.0)
-	/* 
-	// Don't forget to update this as more tracks are added
-	TotalTrackSets=2
 	
+	// Don't forget to update this as more tracks are added
+	TotalTrackSets=1
+	/*
 	AxisLowMoralePlayList={(
 		PlaylistName=Axis_LowMorale,
 		CRef_MusicTracks=(
-			"SoundCue'WinterWar_AUD_MUS.FIN.F_L_1_Cue'",
-			"SoundCue'WinterWar_AUD_MUS.FIN.F_L_2_Cue'"
+			"SoundCue'WinterWar_AUD_MUS.FIN.F_L_1_Cue'"
 		)
 	)}
 	
