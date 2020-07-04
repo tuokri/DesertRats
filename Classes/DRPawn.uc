@@ -1,0 +1,554 @@
+
+class DRPawn extends ROPawn
+	abstract;
+
+simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlayerReplicationInfo OverrideROPRI) {}
+
+/*
+simulated event PreBeginPlay()
+{
+	// PawnHandlerClass = class'WWPawnHandler';
+	
+	super.PreBeginPlay();
+}
+
+simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlayerReplicationInfo OverrideROPRI)
+{
+	local int TeamNum, ArmyIndex, ClassIndex, HonorLevel, isSL;
+	local ROPlayerReplicationInfo ROPRI;
+	local byte IsHelmet, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, HeadgearMatID, SkinID, FaceItemID, FacialHairID, TattooID, bPilot, bNoHeadgear, byteDisposal;
+	
+	PawnHandlerClass = class'WWPawnHandler';
+	
+	TeamNum = GetTeamNum();
+	
+	if( OverrideROPRI != none )
+		ROPRI = OverrideROPRI;
+	else
+		ROPRI = ROPlayerReplicationInfo(PlayerReplicationInfo);
+	
+	ArmyIndex = 0;
+	isSL = 0;
+	
+	if( ROPRI != none )
+	{
+		if( ROPRI.RoleInfo != none )
+		{
+			ClassIndex = ROPRI.RoleInfo.ClassIndex;
+		}
+		
+		if (ROPRI.bIsSquadLeader)
+		{
+			isSL = 1;
+		}
+		
+		if( !ROPRI.bBot )
+		{
+			if( bViaReplication )
+			{
+				HonorLevel = int(ROPRI.HonorLevel);
+			}
+			else if( ROPlayerController(Controller) != none )
+			{
+				ROPlayerController(Controller).StatsWrite.UpdateHonorLevel();
+				HonorLevel = ROPlayerController(Controller).StatsWrite.HonorLevel;
+			}
+		}
+	}
+	
+	if (TeamNum == 255)
+	{
+		TeamNum = ScriptGetTeamNum();
+	}
+	
+	bPilot = (ClassIndex == `RI_TANK_CREW) ? 1 : 0;
+	
+	if( !bViaReplication && IsHumanControlled() )
+	{
+		PawnHandlerClass.static.GetCharConfig(TeamNum, ArmyIndex, bPilot, ClassIndex, HonorLevel, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, HeadgearMatID, FaceItemID, FacialHairID, TattooID, ROPRI);
+		
+		ROPRI.bUsesAltVoicePacks = false;
+	}
+	else if( ROPRI != none )
+	{
+		TunicID = ROPRI.CurrentCharConfig.TunicMesh;
+		TunicMatID = ROPRI.CurrentCharConfig.TunicMaterial;
+		ShirtID = ROPRI.CurrentCharConfig.ShirtTexture;
+		HeadID = ROPRI.CurrentCharConfig.HeadMesh;
+		HairID = 0;
+		HeadgearID = ROPRI.CurrentCharConfig.HeadgearMesh;
+		HeadgearMatID = ROPRI.CurrentCharConfig.HeadgearMaterial;
+		FaceItemID = ROPRI.CurrentCharConfig.FaceItemMesh;
+		FacialHairID = ROPRI.CurrentCharConfig.FacialHairMesh;
+		TattooID = 0;
+		
+		PawnHandlerClass.static.ValidateCharConfig(TeamNum, ArmyIndex, bPilot, HonorLevel, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, HeadgearMatID, FaceItemID, FacialHairID, TattooID, ROPRI);
+	}
+	else
+	{
+		TunicID = 0;
+		TunicMatID = 0;
+		ShirtID = 0;
+		HeadID = 0;
+		HairID = 0;
+		HeadgearID = 0;
+		HeadgearMatID = 0;
+		FaceItemID = 0;
+		FacialHairID = 0;
+		TattooID = 0;
+	}
+	
+	if (TunicID == 0 && TunicMatID == 0 && HeadID == 0 && HeadgearID == 0 && FaceItemID == 0 && FacialHairID == 0)
+	{
+		// Client hasn't saved their config yet, set it to default random values to avoid a bunch of 0-everything clones
+		TunicID = DefaultConfigs[TeamNum].TunicMesh;
+		TunicMatID = DefaultConfigs[TeamNum].TunicMaterial;
+		HeadID = DefaultConfigs[TeamNum].HeadMesh;
+		HeadgearID = DefaultConfigs[TeamNum].HeadgearMesh;
+		FaceItemID = DefaultConfigs[TeamNum].FaceItemMesh;
+		FacialHairID = DefaultConfigs[TeamNum].FacialHairMesh;
+		
+		// Need to call this function to convert 255 to an actual item ID
+		PawnHandlerClass.static.ValidateCharConfig(TeamNum, ArmyIndex, bPilot, HonorLevel, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, HeadgearMatID, FaceItemID, FacialHairID, TattooID, ROPRI);
+	}
+	
+	TunicMesh = PawnHandlerClass.static.GetTunicMeshes(TeamNum, ArmyIndex, bPilot, TunicID, bNoHeadgear);
+	BodyMICTemplate = PawnHandlerClass.static.GetBodyMIC(TeamNum, ArmyIndex, bPilot, TunicID, TunicMatID);
+	
+	PawnMesh_SV = PawnHandlerClass.static.GetTunicMeshSV(TeamNum, ArmyIndex, ClassIndex, bPilot, bHasFlamethrower, BodyMICTemplate_SV);
+	
+	FieldgearMesh = PawnHandlerClass.static.GetFieldgearMesh(TeamNum, isSL, TunicID, ClassIndex, TunicMatID);
+	
+	HeadAndArmsMesh = PawnHandlerClass.static.GetHeadAndArmsMesh(TeamNum, ArmyIndex, bPilot, HeadID, SkinID);
+	
+	if( bUseSingleCharacterVariant )
+		HeadAndArmsMICTemplate = PawnHandlerClass.static.GetHeadMIC(TeamNum, ArmyIndex, HeadID, 1, bPilot);
+	else
+		HeadAndArmsMICTemplate = PawnHandlerClass.static.GetHeadMIC(TeamNum, ArmyIndex, HeadID, TunicID, bPilot);
+	
+	if( !bUseSingleCharacterVariant )
+	{
+		UberGoreMesh = PawnHandlerClass.static.GetGoreMeshes(TeamNum, ArmyIndex, TunicID, SkinID, GoreMIC, Gore_LeftHand.GibClass, Gore_RightHand.GibClass, Gore_LeftLeg.GibClass, Gore_RightLeg.GibClass);
+	}
+	
+	ArmsOnlyMeshFP = PawnHandlerClass.static.GetFPArmsMesh(TeamNum, ArmyIndex, bPilot, TunicID, TunicMatID, SkinID, FPArmsSkinMaterialTemplate, FPArmsSleeveMaterialTemplate);
+	
+	if( bNoHeadgear == 0 )
+		HeadgearMesh = PawnHandlerClass.static.GetHeadgearMesh(TeamNum, ArmyIndex, bPilot, HeadID, HairID, HeadgearID, HeadgearMatID, HeadgearMICTemplate, HairMICTemplate, HeadgearAttachSocket, IsHelmet);
+	else
+		HeadgearMesh = none;
+	
+	if( IsHelmet != 0 )
+		bHeadGearIsHelmet = true;
+	else
+		bHeadGearIsHelmet = false;
+	
+	FaceItemMesh = PawnHandlerClass.static.GetFaceItemMesh(TeamNum, ArmyIndex, bPilot, HeadgearID, FaceItemID, FaceItemAttachSocket, byteDisposal);
+	FacialHairMesh = PawnHandlerClass.static.GetFacialHairMesh(TeamNum, ArmyIndex, FacialHairID, FacialHairAttachSocket);
+	
+	if (TeamNum == `AXIS_TEAM_INDEX && TunicID == 4)
+	{
+		FaceItemMesh = none;
+		FacialHairMesh = none;
+	}
+	
+	BadgeMesh = class'WWPawnHandler'.static.GetBadgeMesh(TeamNum, TunicID, ClassIndex, isSL);
+	
+	if( Role == ROLE_Authority && ROPRI != none )
+	{
+		ROPRI.VoicePackIndex = rand(3);
+	}
+}
+*/
+simulated function CreatePawnMesh()
+{
+	local ROMapInfo ROMI;
+	
+	if( Health <= 0 )
+		return;
+	
+	if( HeadAndArmsMIC == none )
+		HeadAndArmsMIC = new class'MaterialInstanceConstant';
+	if( BodyMIC == none )
+		BodyMIC = new class'MaterialInstanceConstant';
+	if( HeadgearMIC == none )
+		HeadgearMIC = new class'MaterialInstanceConstant';
+	if( HairMIC == none && HairMICTemplate != none )
+		HairMIC = new class'MaterialInstanceConstant';
+	if( FPArmsSleeveMaterial == none && FPArmsSleeveMaterialTemplate != none )
+		FPArmsSleeveMaterial = new class'MaterialInstanceConstant';
+	
+	if( bUseSingleCharacterVariant && BodyMICTemplate_SV != none )
+		BodyMIC.SetParent(BodyMICTemplate_SV);
+	else
+		BodyMIC.SetParent(BodyMICTemplate);
+	
+	HeadAndArmsMIC.SetParent(HeadAndArmsMICTemplate);
+	HeadgearMIC.SetParent(HeadgearMICTemplate);
+	
+	if( FPArmsSleeveMaterial != none )
+		FPArmsSleeveMaterial.SetParent(FPArmsSleeveMaterialTemplate);
+	
+	if( HairMIC != none )
+		HairMIC.SetParent(HairMICTemplate);
+	
+	MeshMICs.Length = 0;
+	MeshMICs.AddItem(BodyMIC);
+	MeshMICs.AddItem(HeadAndArmsMIC);
+	// MeshMICs.AddItem(HeadgearMIC);
+	
+	if( HairMIC != none )
+		MeshMICs.AddItem(HairMIC);
+	
+	if( ThirdPersonHeadgearMeshComponent.AttachedToSkelComponent != none )
+		mesh.DetachComponent(ThirdPersonHeadgearMeshComponent);
+	if( FaceItemMeshComponent.AttachedToSkelComponent != none )
+		mesh.DetachComponent(FaceItemMeshComponent);
+	if( FacialHairMeshComponent.AttachedToSkelComponent != none )
+		mesh.DetachComponent(FacialHairMeshComponent);
+	if( ThirdPersonHeadAndArmsMeshComponent.AttachedToSkelComponent != none )
+		DetachComponent(ThirdPersonHeadAndArmsMeshComponent);
+	if( TrapDisarmToolMeshTP.AttachedToSkelComponent != none )
+		mesh.DetachComponent(TrapDisarmToolMeshTP);
+	
+	ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+	
+	CompositedBodyMesh = ROMI.GetCachedCompositedPawnMesh(TunicMesh, FieldgearMesh);
+	CompositedBodyMesh.Characterization = PlayerHIKCharacterization;
+	
+	ROSkeletalMeshComponent(mesh).ReplaceSkeletalMesh(CompositedBodyMesh);
+	
+	// mesh.SetMaterial(0, BodyMIC);
+	
+	// Be careful here. Soviets need to have their BodyMic applied to their gear mesh
+	// for proper wrappings/boot textures but it also seems to run on Finns sometimes.
+	// Hopefully this will mitigate that.
+	
+//	if (GetTeamNum() == `ALLIES_TEAM_INDEX)
+	// if (self.IsA('WWPawnAllies'))
+	// {
+		// mesh.SetMaterial(1, BodyMIC);
+	// }
+	
+	ROSkeletalMeshComponent(mesh).GenerateAnimationOverrideBones(HeadAndArmsMesh);
+	
+	ThirdPersonHeadAndArmsMeshComponent.SetSkeletalMesh(HeadAndArmsMesh);
+	ThirdPersonHeadAndArmsMeshComponent.SetMaterial(0, HeadAndArmsMIC);
+	ThirdPersonHeadAndArmsMeshComponent.SetParentAnimComponent(mesh);
+	ThirdPersonHeadAndArmsMeshComponent.SetShadowParent(mesh);
+	ThirdPersonHeadAndArmsMeshComponent.SetLODParent(mesh);
+	
+	AttachComponent(ThirdPersonHeadAndArmsMeshComponent);
+	
+	if( HeadgearMesh != none )
+	{
+		AttachNewHeadgear(HeadgearMesh);
+	}
+	
+	if( FaceItemMesh != none )
+	{
+		AttachNewFaceItem(FaceItemMesh);
+	}
+	
+	if( FacialHairMesh != none )
+	{
+		AttachNewFacialHair(FacialHairMesh);
+	}
+	
+	if ( ClothComponent != None )
+	{
+		ClothComponent.SetParentAnimComponent(mesh);
+		ClothComponent.SetShadowParent(mesh);
+		AttachComponent(ClothComponent);
+		ClothComponent.SetEnableClothSimulation(true);
+		ClothComponent.SetAttachClothVertsToBaseBody(true);
+	}
+	
+	if ( ArmsMesh != None )
+	{
+		ArmsMesh.SetSkeletalMesh(ArmsOnlyMeshFP);
+	}
+	
+	if ( BandageMesh != none )
+	{
+		BandageMesh.SetSkeletalMesh(BandageMeshFP);
+		BandageMesh.SetHidden(true);
+	}
+	
+	if ( ROMI != none )
+	{
+		if ( TrapDisarmToolMesh != none )
+		{
+			TrapDisarmToolMesh.SetSkeletalMesh(GetTrapDisarmToolMesh(true));
+		}
+		if ( TrapDisarmToolMeshTP != none )
+		{
+			TrapDisarmToolMeshTP.SetSkeletalMesh(GetTrapDisarmToolMesh(false));
+		}
+	}
+	
+	if ( TrapDisarmToolMesh != none )
+	{
+		TrapDisarmToolMesh.SetHidden(true);
+	}
+	
+	if ( TrapDisarmToolMeshTP != none )
+	{
+		Mesh.AttachComponentToSocket(TrapDisarmToolMeshTP, GrenadeSocket);
+		TrapDisarmToolMeshTP.SetHidden(true);
+	}
+	
+	if ( bOverrideLighting )
+	{
+		ThirdPersonHeadAndArmsMeshComponent.SetLightingChannels(LightingOverride);
+		ThirdPersonHeadgearMeshComponent.SetLightingChannels(LightingOverride);
+	}
+	
+	if( WorldInfo.NetMode == NM_DedicatedServer )
+	{
+		mesh.ForcedLODModel = 1000;
+		ThirdPersonHeadAndArmsMeshComponent.ForcedLodModel = 1000;
+		ThirdPersonHeadgearMeshComponent.ForcedLodModel = 1000;
+		FaceItemMeshComponent.ForcedLodModel = 1000;
+		FacialHairMeshComponent.ForcedLodModel = 1000;
+	}
+}
+
+simulated function AttachNewHeadgear(SkeletalMesh NewHeadgearMesh)
+{
+	local SkeletalMeshSocket HeadSocket;
+	
+	ThirdPersonHeadgearMeshComponent.SetSkeletalMesh(NewHeadgearMesh);
+	// ThirdPersonHeadgearMeshComponent.SetMaterial(0, HeadgearMIC);
+	
+	HeadSocket = ThirdPersonHeadAndArmsMeshComponent.GetSocketByName(HeadgearAttachSocket);
+	
+	if( HeadSocket != none )
+	{
+		if( mesh.MatchRefBone(HeadSocket.BoneName) != INDEX_NONE )
+		{
+			ThirdPersonHeadgearMeshComponent.SetShadowParent(mesh);
+			ThirdPersonHeadgearMeshComponent.SetLODParent(mesh);
+			mesh.AttachComponent( ThirdPersonHeadgearMeshComponent, HeadSocket.BoneName, HeadSocket.RelativeLocation, HeadSocket.RelativeRotation, HeadSocket.RelativeScale);
+		}
+	}
+}
+
+simulated function UpdateWetnessValue(float DeltaTime) {}
+
+function JumpOffVehicle() {}
+
+function bool IsInCamo()
+{
+	return false;
+}
+
+simulated function HideGear(optional bool bHideGear) {}
+
+simulated function LoaderLHCannon1()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_LH1);
+}
+
+simulated function LoaderRHCannon1()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_RH1);
+}
+
+simulated function LoaderLHCannon2()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_LH2);
+}
+
+simulated function LoaderRHCannonMG1()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_RH2);
+}
+
+simulated function LoaderLHCannonBreech1()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_LH3);
+}
+
+simulated function LoaderRHIKoff()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_RHOff);
+}
+
+simulated function LoaderLHIKoff()
+{
+	VehicleIKNode.HandleDriverAction(DAct_CannonReload_LHOff);
+}
+
+
+defaultproperties
+{
+	PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full'
+	
+	ArmsOnlyMesh=none
+	
+	HeadgearAttachSocket=helmet
+	
+	Begin Object Name=ROPawnSkeletalMeshComponent
+		AnimSets(0)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Stand_anim'
+		AnimSets(1)=AnimSet'CHR_Playeranim_Master.Anim.CHR_ChestCover_anim'
+		AnimSets(2)=AnimSet'CHR_Playeranim_Master.Anim.CHR_WaistCover_anim'
+		AnimSets(3)=AnimSet'CHR_Playeranim_Master.Anim.CHR_StandCover_anim'
+		AnimSets(4)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Crouch_anim'
+		AnimSets(5)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Prone_anim'
+		AnimSets(6)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Hand_Poses_Master'
+		AnimSets(7)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Death_anim'
+		AnimSets(8)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Tripod_anim'
+		AnimSets(9)=AnimSet'CHR_Playeranim_Master.Anim.Special_Actions'
+		AnimSets(10)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Melee'
+		AnimSets(11)=none // Team specific sprinting animations
+		AnimSets(12)=none // Reserved for weapon specific animations
+		AnimSets(13)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_Tripod_anim'
+		AnimSets(14)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_Stand_anim'
+		AnimSets(15)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_ChestCover_anim'
+		AnimSets(16)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_WaistCover_anim'
+		AnimSets(17)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_StandCover_anim'
+		AnimSets(18)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_Crouch_anim'
+		AnimSets(19)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_Prone_anim'
+		AnimSets(20)=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_Hand_Poses_Master'
+		AnimSets(21)=AnimSet'CHR_VN_Playeranim_Master.Anim.VN_Special_Actions'
+	End Object
+	
+	Gore_LeftHand=(GibClass=class'ROGameContent.ROGib_HumanArm_Gore_BareArm')
+	Gore_RightHand=(GibClass=class'ROGameContent.ROGib_HumanArm_Gore_BareArm')
+	Gore_LeftLeg=(GibClass=class'ROGameContent.ROGib_HumanLeg_Gore_BareLeg')
+	Gore_RightLeg=(GibClass=class'ROGameContent.ROGib_HumanLeg_Gore_BareLeg')
+	
+	BulletHitHelmetSound=none
+	BulletHitMyHeadSound=none
+	BulletHitMyHelmetSound=none
+	MyBulletHitHelmetSound=none
+	
+	bCanCamouflage=false
+	
+	FootstepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Dirt')()
+	FootstepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Gravel'))
+	FootstepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Dirt'))
+	FootstepSounds.Add((MaterialType=EMT_Metal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Metal'))
+	FootstepSounds.Add((MaterialType=EMT_Wood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Wood'))
+	FootstepSounds.Add((MaterialType=EMT_Asphalt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Rock'))
+	FootstepSounds.Add((MaterialType=EMT_RedBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Rock'))
+	FootstepSounds.Add((MaterialType=EMT_WhiteBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Rock'))
+	FootstepSounds.Add((MaterialType=EMT_Plant,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Grass'))
+	FootstepSounds.Add((MaterialType=EMT_HollowMetal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Metal'))
+	FootstepSounds.Add((MaterialType=EMT_HollowWood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Wood'))
+	FootstepSounds.Add((MaterialType=EMT_Mud,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Mud'))
+	FootstepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Dirt'))
+	FootstepSounds.Add((MaterialType=EMT_Water,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Water'))
+	FootstepSounds.Add((MaterialType=EMT_ShallowWater,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Mud'))
+	FootstepSounds.Add((MaterialType=EMT_Gravel,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Gravel'))
+	FootstepSounds.Add((MaterialType=EMT_Plaster,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Rock'))
+	FootstepSounds.Add((MaterialType=EMT_Concrete,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Rock'))
+	FootstepSounds.Add((MaterialType=EMT_Poop,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Mud'))
+	FootstepSounds.Add((MaterialType=EMT_Plastic,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Rock'))
+	
+	CrawlFootStepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Dirt'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Gravel'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Dirt'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Metal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Metal'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Wood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Wood'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Asphalt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Rock'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_RedBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Rock'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_WhiteBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Rock'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Plant,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Grass'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_HollowMetal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Metal'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_HollowWood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Wood'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Mud,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Mud'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Dirt'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Water,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Water'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_ShallowWater,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Water'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Gravel,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Gravel'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Plaster,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Rock'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Concrete,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Rock'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Poop,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Mud'))
+	CrawlFootStepSounds.Add((MaterialType=EMT_Plastic,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crawl_Rock'))
+	
+	SprintFootStepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Dirt'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Gravel'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Dirt'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Metal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Metal'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Wood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Wood'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Asphalt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Rock'))
+	SprintFootStepSounds.Add((MaterialType=EMT_RedBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Rock'))
+	SprintFootStepSounds.Add((MaterialType=EMT_WhiteBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Rock'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Plant,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Grass'))
+	SprintFootStepSounds.Add((MaterialType=EMT_HollowMetal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Metal'))
+	SprintFootStepSounds.Add((MaterialType=EMT_HollowWood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Wood'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Mud,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Mud'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Dirt'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Water,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Water'))
+	SprintFootStepSounds.Add((MaterialType=EMT_ShallowWater,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Mud'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Gravel,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Gravel'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Plaster,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Rock'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Concrete,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Rock'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Poop,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Mud'))
+	SprintFootStepSounds.Add((MaterialType=EMT_Plastic,Sound=AkEvent'WW_FOL_US.Play_FS_US_Sprint_Rock'))
+	
+	WalkFootStepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Dirt'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Gravel'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Dirt'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Metal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Metal'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Wood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Wood'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Asphalt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Rock'))
+	WalkFootStepSounds.Add((MaterialType=EMT_RedBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Rock'))
+	WalkFootStepSounds.Add((MaterialType=EMT_WhiteBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Rock'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Plant,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Grass'))
+	WalkFootStepSounds.Add((MaterialType=EMT_HollowMetal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Metal'))
+	WalkFootStepSounds.Add((MaterialType=EMT_HollowWood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Wood'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Mud,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Mud'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Dirt'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Water,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Water'))
+	WalkFootStepSounds.Add((MaterialType=EMT_ShallowWater,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Mud'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Gravel,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Gravel'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Plaster,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Rock'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Concrete,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Rock'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Poop,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Mud'))
+	WalkFootStepSounds.Add((MaterialType=EMT_Plastic,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Rock'))
+	
+	CrouchFootStepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Dirt'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Gravel'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Dirt'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Metal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Metal'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Wood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Wood'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Asphalt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_RedBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_WhiteBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Plant,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Grass'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_HollowMetal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Metal'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_HollowWood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Wood'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Mud,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Mud'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Dirt'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Water,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Water'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_ShallowWater,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Mud'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Gravel,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Gravel'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Plaster,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Concrete,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Poop,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Mud'))
+	CrouchFootStepSounds.Add((MaterialType=EMT_Plastic,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Dirt'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Gravel'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Dirt'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Metal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Metal'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Wood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Wood'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Asphalt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_RedBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_WhiteBrick,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Plant,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Grass'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_HollowMetal,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Metal'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_HollowWood,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Wood'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Mud,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Mud'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Dirt,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Dirt'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Water,Sound=AkEvent'WW_FOL_US.Play_FS_US_Walk_Water'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_ShallowWater,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Mud'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Gravel,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Gravel'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Plaster,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Concrete,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Poop,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Mud'))
+	CrouchWalkFootStepSounds.Add((MaterialType=EMT_Plastic,Sound=AkEvent'WW_FOL_US.Play_FS_US_Crouch_Rock'))
+}

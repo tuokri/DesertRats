@@ -1,0 +1,17 @@
+
+`define BUILDVER "0.0.0"
+
+// `define RELEASE
+
+`define dr(msg,type) class'DRLogger'.static.DRDebugLog(`msg, class.name$"::"$GetFuncName(),`type)
+`define drtrace class'DRLogger'.static.DRDebugTrace("[TRACE]" @ default.class.name$"::"$GetFuncName())
+
+`define RI_RIFLEMAN			0
+`define RI_ASSAULT			1
+`define RI_MACHINE_GUNNER	2
+`define RI_SNIPER			3
+`define RI_SAPPER			4
+`define RI_COMMANDER		5
+`define RI_TANK_CREW		6
+
+`define WI_BINOCS			0
