@@ -1,21 +1,26 @@
-
 # Misc
 **desktop.ini
 **.bat
 **.lnk
+**.url
 
-# Media
-/_Media
-
-# Reference Classes
+# Reference classes
 /Classes/src_*
 
-# Mesh Work
-/Mesh/*/_work
+# UI folder
+/UI
 
-# Tex Work
-/Mesh/*/Textures/_work
-/UI/_work
+# Screenshots and promotional images
+/_Media
 
-# Maps & Packages (for now)
-/Unpublished
+# Art folders
+/Mesh
+
+# Temporary audio storage
+/Audio
+
+# UPK files
+/Unpublished*
+
+# Zipped files
+/__RELEASE
