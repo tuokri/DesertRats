@@ -1,0 +1,10 @@
+
+simulated state WeaponEquipping
+{
+	simulated function BeginState(Name PreviousStateName)
+	{
+		super.BeginState(PreviousStateName);
+		`drtrace;
+		// Instigator.ReceiveLocalizedMessage(class'DRLocalMessageGamePickup', class'DRLocalMessageGamePickup'.const.ROMSG_SwitchWeapon,ROPlayerReplicationInfo(Instigator.Controller.PlayerReplicationInfo),,self);
+	}
+}

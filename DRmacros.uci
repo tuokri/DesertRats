@@ -15,3 +15,8 @@
 `define RI_TANK_CREW		6
 
 `define WI_BINOCS			0
+`define WI_THOMPSON			1
+`define WI_MP40				2
+`define WI_WEBLEY			3
+
+

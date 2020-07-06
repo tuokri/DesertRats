@@ -8,7 +8,7 @@ DefaultProperties
 	ClassIndex=`RI_ASSAULT
 	
 	Items[RORIGM_Default]={(
-		PrimaryWeapons=(class'ROWeap_MP40_SMG'),
+		PrimaryWeapons=(class'DRWeapon_MP40'),
 		
 		OtherItems=(class'ROWeap_Type67_Grenade',class'ROWeap_RDG1_Smoke')
 	)}
