@@ -1,212 +1,107 @@
 
-class DRWeapon_Webley extends ROProjectileWeapon
+class DRWeapon_Webley extends ROWeap_M1917_Pistol
 	abstract;
 
 `include(DesertRats\Classes\DRWeaponPickupMessagesOverride.uci)
-
-simulated function CauseShellEject(bool bPlayingFireEffects)
-{
-	if ( bPlayingFireEffects )
-	{
-		return;
-	}
-	
-	Super.CauseShellEject(bPlayingFireEffects);
-}
-
-simulated function float GetSpreadMod()
-{
-	return 3 * super.GetSpreadMod();
-}
 
 defaultproperties
 {
 	WeaponContentClass(0)="DesertRats.DRWeapon_Webley_ActualContent"
 	
-	RoleSelectionImage(0)=Texture2D'WinterWar_UI.WP_Render.WP_Render_NagantRevolver'
-	
-	WeaponClassType=ROWCT_HandGun
+	// RoleSelectionImage(0)=
 	
 	TeamIndex=`ALLIES_TEAM_INDEX
 	
 	InvIndex=`WI_WEBLEY
 	
-	Category=ROIC_Secondary
-	Weight=0.79
-	InventoryWeight=0
-	WeaponDryFireSnd=AkEvent'WW_WEP_Shared.Play_WEP_Generic_Dry_Fire'
-	RoleEncumbranceModifier=0.0
-
-	PlayerIronSightFOV=65.0
+	WeaponEquipAnim=M1917_pullout
+	WeaponPutDownAnim=M1917_Putaway
 	
-	FiringStatesArray(0)=WeaponSingleFiring
-	WeaponFireTypes(0)=EWFT_Custom
-	WeaponProjectiles(0)=class'M1917Bullet'
-	FireInterval(0)=+0.175
-	Spread(0)=0.0048
+	WeaponDownAnim=M1917_Down
+	WeaponUpAnim=M1917_Up
 	
-	FiringStatesArray(ALTERNATE_FIREMODE)=WeaponSingleFiring
-	WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Custom
-	WeaponProjectiles(ALTERNATE_FIREMODE)=class'M1917Bullet'
-	FireInterval(ALTERNATE_FIREMODE)=+0.175
-	Spread(ALTERNATE_FIREMODE)=0.0035
+	WeaponFireAnim(0)=M1917_shoot
+	WeaponFireAnim(1)=M1917_Single_shoot
+	WeaponFireLastAnim=M1917_shoot
 	
-	PreFireTraceLength=1250 //25 Meters
+	WeaponFireShoulderedAnim(0)=M1917_shoot
+	WeaponFireShoulderedAnim(1)=M1917_Single_shoot
+	WeaponFireLastShoulderedAnim=M1917_shoot
 	
-	MinBurstAmount=1
-	MaxBurstAmount=3
-	BurstWaitTime=1.5
-	AISpreadScale=20.0
+	WeaponFireSightedAnim(0)=M1917_shoot
+	WeaponFireSightedAnim(1)=M1917_Single_shoot
+	WeaponFireLastSightedAnim=M1917_shoot
 	
-	maxRecoilPitch=220//950
-	minRecoilPitch=220//900
-	maxRecoilYaw=70//100
-	minRecoilYaw=-70//-100
-	RecoilRate=0.1
-	RecoilMaxYawLimit=500
-	RecoilMinYawLimit=65035
-	RecoilMaxPitchLimit=750
-	RecoilMinPitchLimit=64785
-	RecoilISMaxYawLimit=500
-	RecoilISMinYawLimit=65035
-	RecoilISMaxPitchLimit=500
-	RecoilISMinPitchLimit=65035
-   	RecoilBlendOutRatio=0.65
+	WeaponIdleAnims(0)=M1917_shoulder_idle
+	WeaponIdleAnims(1)=M1917_shoulder_idle
+	WeaponIdleShoulderedAnims(0)=M1917_shoulder_idle
+	WeaponIdleShoulderedAnims(1)=M1917_shoulder_idle
 	
-	InstantHitDamage(0)=85
-	InstantHitDamage(1)=85
+	WeaponIdleSightedAnims(0)=M1917_iron_idle
+	WeaponIdleSightedAnims(1)=M1917_iron_idle
 	
-	InstantHitDamageTypes(0)=class'RODmgType_M1917Bullet'
-	InstantHitDamageTypes(1)=class'RODmgType_M1917Bullet'
+	WeaponCrawlingAnims(0)=M1917_CrawlF
+	WeaponCrawlStartAnim=M1917_Crawl_into
+	WeaponCrawlEndAnim=M1917_Crawl_out
 	
-	MuzzleFlashSocket=MuzzleFlashSocket
-	MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_Pistol'
-	MuzzleFlashDuration=0.33
-	MuzzleFlashLightClass=class'ROGame.RORifleMuzzleFlashLight'
+	WeaponReloadStripperAnim=M1917_reload
+	WeaponAltReloadStripperAnim=M1917_reload_uncocked
 	
-	ShellEjectSocket=ShellEjectSocket
-	ShellEjectPSCTemplate=ParticleSystem'FX_VN_Weapons.ShellEjects.FX_Wep_ShellEject_USA_M1917_Revolver_Full'
-	bNoShellEjectOnFire=true
-
-	bHasIronSights=true;
-
-	 //Equip and putdown
-	WeaponPutDownAnim=1st_revolver_putaway
-	WeaponEquipAnim=1st_revolver_pullout
-	WeaponDownAnim=1st_revolver_Down
-	WeaponUpAnim=1st_revolver_Up
-
-	// Fire Anims
-	//Hip fire
-   	WeaponFireAnim(0)=1st_revolver_iron_shootdecocked
-	WeaponFireAnim(1)=1st_revolver_iron_shootdecocked
-	WeaponFireLastAnim=1st_revolver_iron_shootdecocked
-	//Shouldered fire
-	WeaponFireShoulderedAnim(0)=1st_revolver_iron_shootdecocked
-	WeaponFireShoulderedAnim(1)=1st_revolver_iron_shootdecocked
-	WeaponFireLastShoulderedAnim=1st_revolver_iron_shootdecocked
-	//Fire using iron sights
-   	WeaponFireSightedAnim(0)=1st_revolver_iron_shootdecocked
-	WeaponFireSightedAnim(1)=1st_revolver_iron_shootdecocked
-	WeaponFireLastSightedAnim=1st_revolver_iron_shootdecocked
-
-	// Idle Anims
-	//Hip Idle
-   	WeaponIdleAnims(0)=1st_revolver_shoulder_idle_decocked
-	WeaponIdleAnims(1)=1st_revolver_shoulder_idle_decocked
-	// Shouldered idle
-	WeaponIdleShoulderedAnims(0)=1st_revolver_shoulder_idle_decocked
-	WeaponIdleShoulderedAnims(1)=1st_revolver_shoulder_idle_decocked
-	//Sighted Idle
-	WeaponIdleSightedAnims(0)=1st_revolver_iron_idle_decocked
-	WeaponIdleSightedAnims(1)=1st_revolver_iron_idle_decocked
-
-	// Prone Crawl
-	WeaponCrawlingAnims(0)=1st_revolver_CrawlF
-	WeaponCrawlStartAnim=1st_revolver_Crawl_into
-	WeaponCrawlEndAnim=1st_revolver_Crawl_out
-
-	//Reloading
-	WeaponReloadSingleBulletAnim=1st_revolver_reloadInsert_NewReload
-	WeaponOpenBoltAnim=1st_revolver_reloadOpen_NewReload
-	WeaponCloseBoltAnim=1st_revolver_reloadClose_NewReload
-
-	// Ammo check
-	WeaponAmmoCheckAnim=1st_revolver_ammocheck
-
-	// Sprinting
-	WeaponSprintStartAnim=1st_revolver_sprint_into
-	WeaponSprintLoopAnim=1st_revolver_Sprint
-	WeaponSprintEndAnim=1st_revolver_sprint_out
-
-	// Mantling
-	WeaponMantleOverAnim=1st_revolver_Mantle
-
-	// Melee anims
-	WeaponMeleeAnims(0)=1st_revolver_Bash
-	WeaponMeleeHardAnim=1st_revolver_BashHard
-	MeleePullbackAnim=1st_revolver_Pullback
-	MeleeHoldAnim=1st_revolver_Pullback_Hold
-
-	EquipTime=+0.50
-	PutDownTime=+0.33
-
+	ReloadStripperDoubleAnim=M1917_reload
+	
+	WeaponAmmoCheckAnim=M1917_ammocheck
+	WeaponAltAmmoCheckAnim=M1917_Ammocheck_uncocked
+	
+	WeaponSprintStartAnim=M1917_sprint_into
+	WeaponSprintLoopAnim=M1917_Sprint
+	WeaponSprintEndAnim=M1917_sprint_out
+	
+	WeaponMantleOverAnim=M1917_Mantle
+	
+	WeaponSwitchToAltFireModeAnim=M1917_Manual_Hammer
+	WeaponSightedSwitchToAltFireModeAnim=M1917_Manual_Hammer
+	
+	WeaponSpotEnemyAnim=M1917_SpotEnemy
+	WeaponSpotEnemySightedAnim=M1917_SpotEnemy_ironsight
+	
+	WeaponMeleeAnims(0)=M1917_Bash
+	
+	MeleePullbackAnim=M1917_Pullback
+	MeleeHoldAnim=M1917_Pullback_Hold
+	WeaponMeleeHardAnim=M1917_BashHard
+	
+	WeaponDryFireAnim=M1917_DryFire
+	
+	bUsesIronSightAnims=false
+	bUsesIronsightMeleeAnim=false
+	
+	DoubleActionFireDelay=0.07 //0.17
+	
+	ZoomInTime=0.25
+	ZoomOutTime=0.25
+	
 	bDebugWeapon = true
-
-  	//BoltControllerName=BoltSlide_MP40
-
-	ISFocusDepth=20
-	ISFocusBlendRadius=8
-
-	// Ammo
+	
+	PlayerViewOffset=(X=9.0,Y=6.5,Z=-2.75)
+	ShoulderedPosition=(X=8.0,Y=4.0,Z=-2.0)
+	IronSightPosition=(X=3,Y=0,Z=0)
+	
 	MaxAmmoCount=6
-	AmmoClass=class'ROAmmo_1143x23_M1917Clip'
+	AmmoClass=class'DRAmmo_Webley'
 	bUsesMagazines=false
-	InitialNumPrimaryMags=8
+	InitialNumPrimaryMags=4
 	bPlusOneLoading=false
 	bCanReloadNonEmptyMag=false
-	bCanLoadStripperClip=false
-	bCanLoadSingleBullet=true
-	PenetrationDepth=8.89
+	bCanLoadStripperClip=true
+	bCanLoadSingleBullet=false
+	StripperClipBulletCount=6
+	PenetrationDepth=10
 	MaxPenetrationTests=3
 	MaxNumPenetrations=2
-
-	PlayerViewOffset=(X=0.0,Y=8.0,Z=-5)
-	ZoomInRotation=(Pitch=-910,Yaw=0,Roll=2910)
-	ShoulderedTime=0.35
-	ShoulderedPosition=(X=0.5,Y=4.0,Z=-2.0)// (X=0,Y=1,Z=-1.4)
-	ShoulderRotation=(Pitch=-500,Yaw=0,Roll=2500)
-
-	bUsesFreeAim=true
-
-	// Free Aim variables
-	FreeAimMaxYawLimit=2000
-	FreeAimMinYawLimit=63535
-	FreeAimMaxPitchLimit=1500
-	FreeAimMinPitchLimit=64035
-	FreeAimISMaxYawLimit=500
-	FreeAimISMinYawLimit=65035
-	FreeAimISMaxPitchLimit=350
-	FreeAimISMinPitchLimit=65185
-	FullFreeAimISMaxYaw=250
-	FullFreeAimISMinYaw=65285
-	FullFreeAimISMaxPitch=175
-	FullFreeAimISMinPitch=65360
-	FreeAimSpeedScale=0.35
-	FreeAimISSpeedScale=0.4
-	FreeAimHipfireOffsetX=25
-
-	Begin Object Class=ForceFeedbackWaveform Name=ForceFeedbackWaveformShooting1
-		Samples(0)=(LeftAmplitude=30,RightAmplitude=30,LeftFunction=WF_Constant,RightFunction=WF_Constant,Duration=0.120)
-	End Object
-	WeaponFireWaveForm=ForceFeedbackWaveformShooting1
-
-	CollisionCheckLength=22.0
-
-	FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_C96_Shoot'
-	FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_C96_Shoot'
-
-    SuppressionPower=2.5
-
-    AIRating=0.3
+	PerformReloadPct=0.73f
+	
+	BoltControllerNames[0]=Hammer_M1917
+//	BoltControllerNames[1]=Cylinder_M1917
+	
+	SightRanges.Empty
 }

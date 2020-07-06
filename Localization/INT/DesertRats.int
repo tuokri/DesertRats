@@ -66,6 +66,8 @@ AlliesBotNames[30]="Bartlett"
 AlliesBotNames[31]="Welsh"
 
 
+
+
 [DRMapInfo]
 NorthernArmyNames[0]="AFRIKA CORPS"
 NorthernArmyShortNames[0]="DAK"
@@ -75,6 +77,8 @@ SouthernArmyShortNames[0]="UK"
 [DRUISceneTeamSelect]
 TeamDescriptions[0]="The Deutsches Afrikakorps was the German expeditionary force in Libya and Tunisia during the North African Campaign of World War II."
 TeamDescriptions[1]="The 7th Armoured Division was an armoured division of the British Army whose exploits in the Western Desert Campaign gained it the Desert Rats nickname."
+
+
 
 
 [DRRoleInfo]
@@ -104,4 +108,12 @@ MyName="SNIPER"
 [DRRoleInfoAlliesSniper]
 MyName="SNIPER"
 
+
+
+
+[DRWeapon_Webley]
+DisplayName="Webley Revolver"
+ShortDisplayName="Webley"
+CapitalizedDisplayName="WEBLEY REVOLVER"
+Description=""
 

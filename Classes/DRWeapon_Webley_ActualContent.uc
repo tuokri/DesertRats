@@ -3,21 +3,21 @@ class DRWeapon_Webley_ActualContent extends DRWeapon_Webley;
 
 DefaultProperties
 {
-	ArmsAnimSet=AnimSet'WinterWar_WP_SOV_REVOLVER.Anim.NagantRevolver_Hands'
+	ArmsAnimSet=AnimSet'DR_WP_UK_WEBLEY.Anim.UK_Webley_Anims'
 	
 	Begin Object Name=FirstPersonMesh
 		DepthPriorityGroup=SDPG_Foreground
-		SkeletalMesh=SkeletalMesh'WinterWar_WP_SOV_REVOLVER.Mesh.Nagant_Revolver'
+		SkeletalMesh=SkeletalMesh'DR_WP_UK_WEBLEY.Mesh.UK_Webley'
 		PhysicsAsset=None
-		AnimSets(0)=AnimSet'WinterWar_WP_SOV_REVOLVER.Anim.NagantRevolver_Hands'
-		AnimTreeTemplate=AnimTree'WinterWar_WP_SOV_REVOLVER.Anim.Sov_M1895_Tree'
+		AnimSets(0)=AnimSet'DR_WP_UK_WEBLEY.Anim.UK_Webley_Anims'
+		AnimTreeTemplate=AnimTree'DR_WP_UK_WEBLEY.Anim.UK_Webley_AnimTree'
 		Scale=1.0
 		FOV=70
 	End Object
 	
 	Begin Object Name=PickupMesh
-		SkeletalMesh=SkeletalMesh'WinterWar_WP_SOV_REVOLVER.Mesh.Nagant_Revolver_3rd_Master'
-		PhysicsAsset=PhysicsAsset'WinterWar_WP_SOV_REVOLVER.Phy.Nagant_Revolver_3rd_phy'
+		SkeletalMesh=SkeletalMesh'WP_VN_3rd_Master_02.Mesh.M1917_SW_3rd_Master'
+		PhysicsAsset=PhysicsAsset'WP_VN_3rd_Master_02.Phy.M1917_SW_3rd_Physics'
 		CollideActors=true
 		BlockActors=true
 		BlockZeroExtent=true

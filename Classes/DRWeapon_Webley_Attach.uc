@@ -7,7 +7,7 @@ defaultproperties
 	IKProfileName=C96
 	
 	Begin Object Name=SkeletalMeshComponent0
-		SkeletalMesh=SkeletalMesh'WinterWar_WP_SOV_REVOLVER.Mesh.Nagant_Revolver_3rd_Master'
+		SkeletalMesh=SkeletalMesh'WP_VN_3rd_Master_02.Mesh.M1917_SW_3rd_Master'
 		AnimSets(0)=AnimSet'WP_VN_3rd_Master_02.Anim.M1917_SW_3rd_Anim'
 		PhysicsAsset=PhysicsAsset'WP_VN_3rd_Master_02.Phy_Bounds.M1917_SW_3rd_Bounds_Physics'
 		CullDistance=5000
