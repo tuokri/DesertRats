@@ -17,8 +17,9 @@ defaultproperties
 	WeaponEquipAnim=M1917_pullout
 	WeaponPutDownAnim=M1917_Putaway
 	
-	WeaponDownAnim=M1917_Down
-	WeaponUpAnim=M1917_Up
+	WeaponUpAnim=M1917_pullout//M1917_Up
+	WeaponDownAnim=M1917_Putaway//M1917_Down
+	WeaponDownSightedAnim=M1917_Putaway//M1917_Down
 	
 	WeaponFireAnim(0)=M1917_shoot
 	WeaponFireAnim(1)=M1917_Single_shoot
@@ -32,6 +33,9 @@ defaultproperties
 	WeaponFireSightedAnim(1)=M1917_Single_shoot
 	WeaponFireLastSightedAnim=M1917_shoot
 	
+	WeaponFireLastSingleAnim=M1917_Single_shoot
+	WeaponFireLastSightedSingleAnim=M1917_Single_shoot
+	
 	WeaponIdleAnims(0)=M1917_shoulder_idle
 	WeaponIdleAnims(1)=M1917_shoulder_idle
 	WeaponIdleShoulderedAnims(0)=M1917_shoulder_idle
@@ -44,13 +48,18 @@ defaultproperties
 	WeaponCrawlStartAnim=M1917_Crawl_into
 	WeaponCrawlEndAnim=M1917_Crawl_out
 	
-	WeaponReloadStripperAnim=M1917_reload
-	WeaponAltReloadStripperAnim=M1917_reload_uncocked
+	WeaponReloadStripperAnim=M1917_reload_uncocked
+	ReloadStripperDoubleAnim=M1917_reload_uncocked
+	WeaponAltReloadStripperAnim=M1917_reload
+	WeaponAltReloadStripperIronAnim=M1917_reload
 	
-	ReloadStripperDoubleAnim=M1917_reload
+	WeaponReloadEmptyMagIronAnim=M1917_reload_uncocked
+	WeaponReloadNonEmptyMagIronAnim=M1917_reload_uncocked
 	
 	WeaponAmmoCheckAnim=M1917_ammocheck
-	WeaponAltAmmoCheckAnim=M1917_Ammocheck_uncocked
+	WeaponAmmoCheckIronAnim=M1917_ammocheck
+	WeaponAltAmmoCheckAnim=M1917_Ammocheck//_uncocked
+	WeaponAltAmmoCheckIronAnim=M1917_Ammocheck//_uncocked
 	
 	WeaponSprintStartAnim=M1917_sprint_into
 	WeaponSprintLoopAnim=M1917_Sprint
@@ -71,6 +80,7 @@ defaultproperties
 	WeaponMeleeHardAnim=M1917_BashHard
 	
 	WeaponDryFireAnim=M1917_DryFire
+	WeaponDryFireSightedAnim=M1917_DryFire
 	
 	bUsesIronSightAnims=false
 	bUsesIronsightMeleeAnim=false
@@ -80,11 +90,11 @@ defaultproperties
 	ZoomInTime=0.25
 	ZoomOutTime=0.25
 	
-	bDebugWeapon = true
+	bDebugWeapon = false
 	
-	PlayerViewOffset=(X=9.0,Y=6.5,Z=-2.75)
-	ShoulderedPosition=(X=8.0,Y=4.0,Z=-2.0)
-	IronSightPosition=(X=3,Y=0,Z=0)
+	PlayerViewOffset=(X=4.0,Y=6.5,Z=-2.75)
+	ShoulderedPosition=(X=4.0,Y=4.0,Z=-2.0)
+	IronSightPosition=(X=3.5,Y=0.02,Z=-0.35)
 	
 	MaxAmmoCount=6
 	AmmoClass=class'DRAmmo_Webley'
@@ -100,6 +110,7 @@ defaultproperties
 	MaxNumPenetrations=2
 	PerformReloadPct=0.73f
 	
+	BoltControllerNames.Empty
 	BoltControllerNames[0]=Hammer_M1917
 //	BoltControllerNames[1]=Cylinder_M1917
 	

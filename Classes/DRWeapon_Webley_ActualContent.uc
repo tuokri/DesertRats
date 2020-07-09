@@ -8,7 +8,7 @@ DefaultProperties
 	Begin Object Name=FirstPersonMesh
 		DepthPriorityGroup=SDPG_Foreground
 		SkeletalMesh=SkeletalMesh'DR_WP_UK_WEBLEY.Mesh.UK_Webley'
-		PhysicsAsset=None
+		PhysicsAsset=PhysicsAsset'DR_WP_UK_WEBLEY.Phy.UK_Webley_Physics'
 		AnimSets(0)=AnimSet'DR_WP_UK_WEBLEY.Anim.UK_Webley_Anims'
 		AnimTreeTemplate=AnimTree'DR_WP_UK_WEBLEY.Anim.UK_Webley_AnimTree'
 		Scale=1.0
