@@ -18,5 +18,7 @@
 `define WI_THOMPSON			1
 `define WI_MP40				2
 `define WI_WEBLEY			3
+`define WI_KAR98			4
+`define WI_ENFIELD			5
 
 
