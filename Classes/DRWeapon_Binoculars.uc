@@ -6,7 +6,7 @@ class DRWeapon_Binoculars extends ROItem_Binoculars
 
 DefaultProperties
 {
-	WeaponContentClass(0)="WinterWar.DRWeapon_Binoculars_ActualContent"
+	WeaponContentClass(0)="DesertRats.DRWeapon_Binoculars_ActualContent"
 	
-	InvIndex=`WI_Binocs
+	InvIndex=`WI_BINOCS
 }
