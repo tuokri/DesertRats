@@ -5,7 +5,7 @@ class DRRoleInfoAxis extends DRRoleInfo
 DefaultProperties
 {
 	Items[RORIGM_Default]={(
-		SecondaryWeapons=(class'ROWeap_PM_Pistol')
+		SecondaryWeapons=(class'DRWeapon_Luger')
 	)}
 	
 	RoleRootClass=class'DRRoleInfoAxis'

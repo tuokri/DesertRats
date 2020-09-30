@@ -20,5 +20,6 @@
 `define WI_WEBLEY			3
 `define WI_KAR98			4
 `define WI_ENFIELD			5
+`define WI_LUGER			6
 
 
