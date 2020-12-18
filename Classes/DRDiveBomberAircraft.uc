@@ -1,3 +1,5 @@
+// TODO: calculate trajectory on server but replicate pre-calculated values to clients?
+
 class DRDiveBomberAircraft extends RONapalmStrikeAircraftARVN;
 
 enum EDiveBomberDiveState
@@ -687,7 +689,7 @@ DefaultProperties
 
     AmbientSound=None
     AmbientComponent=None
-    AmbientSoundCustom=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
+    //? AmbientSoundCustom=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
 
     Begin Object Class=AudioComponent name=AmbientSoundComponentCustom
         OcclusionCheckInterval=1.0
