@@ -1102,6 +1102,69 @@ simulated function CreateVoicePacks(byte TeamIndex)
 	}
 }
 
+function RightLeftLean()
+{
+	ServerLeanLeft(bWantsToLeanLeft);
+}
+
+function LeftRightLean()
+{
+	ServerLeanRight(bWantsToLeanRight);
+}
+
+exec function LeanRight()
+{
+	if (Pawn != None)
+	{
+		if (ROPawn(Pawn) != None)
+		{
+			ROPawn(Pawn).LeanRight();
+		}
+	}
+
+	ServerLeanRight(True);
+}
+
+exec function LeanLeft()
+{
+	if (Pawn != None)
+	{
+		if (ROPawn(Pawn) != None)
+		{
+			ROPawn(Pawn).LeanLeft();
+		}
+	}
+
+
+	ServerLeanLeft(True);
+}
+
+exec function LeanRightReleased()
+{
+	if (Pawn != None)
+	{
+		if (ROPawn(Pawn) != None)
+		{
+			ROPawn(Pawn).LeanRightReleased();
+		}
+	}
+
+	ServerLeanRight(false);
+}
+
+exec function LeanLeftReleased()
+{
+	if (Pawn != None)
+	{
+		if (ROPawn(Pawn) != None)
+		{
+			ROPawn(Pawn).LeanLeftReleased();
+		}
+	}
+
+	ServerLeanLeft(False);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
