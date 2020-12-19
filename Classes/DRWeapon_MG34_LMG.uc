@@ -9,7 +9,7 @@ DefaultProperties
 
     bDebugWeapon=True
 
-    AmmoClass=class'DRAmmo_762x63_M1919Belt_250'
+    AmmoClass=class'DRAmmo_762x57_MG34Belt_250'
     MaxAmmoCount=250
     bUsesMagazines=true
     InitialNumPrimaryMags=1
