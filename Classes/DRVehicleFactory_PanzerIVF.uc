@@ -1,12 +1,5 @@
 class DRVehicleFactory_PanzerIVF extends DRVehicleFactory;
 
-event SpawnVehicle()
-{
-	`dr("Spawning PZIVF...");
-	super.SpawnVehicle();
-	`dr("Spawned PZIVF");
-}
-
 DefaultProperties
 {
 	Begin Object Name=SVehicleMesh
