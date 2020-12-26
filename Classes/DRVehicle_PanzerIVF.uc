@@ -1308,24 +1308,24 @@ defaultproperties
     //                 Interior lights
     //--------------------------------------------------------
 
-    Begin Object class=PointLightComponent name=InteriorLight_0
-        Radius=75.0
-        LightColor=(R=255,G=170,B=130)
-        UseDirectLightMap=FALSE
-        Brightness=1.0
-        LightingChannels=(Unnamed_1=TRUE,BSP=FALSE,Static=FALSE,Dynamic=FALSE,CompositeDynamic=FALSE)
-    End Object
+    // Begin Object class=PointLightComponent name=InteriorLight_0
+    //     Radius=75.0
+    //     LightColor=(R=255,G=170,B=130)
+    //     UseDirectLightMap=FALSE
+    //     Brightness=1.0
+    //     LightingChannels=(Unnamed_1=TRUE,BSP=FALSE,Static=FALSE,Dynamic=FALSE,CompositeDynamic=FALSE)
+    // End Object
 
-    Begin Object class=PointLightComponent name=InteriorLight_1
-        Radius=75.0
-        LightColor=(R=255,G=170,B=130)
-        UseDirectLightMap=FALSE
-        Brightness=1.0
-        LightingChannels=(Unnamed_1=TRUE,BSP=FALSE,Static=FALSE,Dynamic=FALSE,CompositeDynamic=FALSE)
-    End Object
+    // Begin Object class=PointLightComponent name=InteriorLight_1
+    //     Radius=75.0
+    //     LightColor=(R=255,G=170,B=130)
+    //     UseDirectLightMap=FALSE
+    //     Brightness=1.0
+    //     LightingChannels=(Unnamed_1=TRUE,BSP=FALSE,Static=FALSE,Dynamic=FALSE,CompositeDynamic=FALSE)
+    // End Object
 
-    VehicleLights(0)={(AttachmentName=InteriorLightComponent0,Component=InteriorLight_0,bAttachToSocket=true,AttachmentTargetName=interior_light_0)}
-    VehicleLights(1)={(AttachmentName=InteriorLightComponent1,Component=InteriorLight_1,bAttachToSocket=true,AttachmentTargetName=interior_light_1)}
+    // VehicleLights(0)={(AttachmentName=InteriorLightComponent0,Component=InteriorLight_0,bAttachToSocket=true,AttachmentTargetName=interior_light_0)}
+    // VehicleLights(1)={(AttachmentName=InteriorLightComponent1,Component=InteriorLight_1,bAttachToSocket=true,AttachmentTargetName=interior_light_1)}
 
     // once we get the magic bones onto the goliath then we can change the InfluenceBones to be those and this should just work
 //  DamageMorphTargets(0)=(InfluenceBone=b_FrontDamage,MorphNodeName=MorphNodeW_Front,LinkedMorphNodeName=none,Health=190,DamagePropNames=(Damage2))
@@ -1351,52 +1351,167 @@ defaultproperties
 //  MachineGunStopSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_TurretFireStop_Cue'
 
 //  DrawScale=1.35
-    
-    Seats(0)={( CameraTag=None,
-                CameraOffset=-420,
-                SeatAnimBlendName=DriverPositionNode,
-                SeatPositions=( (bDriverVisible=true,bAllowFocus=true,PositionCameraTag=None,ViewFOV=70.0,PositionUpAnim=Driver_open,PositionIdleAnim=Driver_open_idle,DriverIdleAnim=Driver_open_idle,AlternateIdleAnim=Driver_open_idle_AI,SeatProxyIndex=0,
-                                    bIsExterior=true,
-                                    LeftHandIKInfo=(PinEnabled=true),
-                                    RightHandIKInfo=(PinEnabled=true),
-                                    HipsIKInfo=(PinEnabled=true),
-                                    PositionFlinchAnims=(Driver_open_Flinch),
-                                    PositionDeathAnims=(Driver_open_Death)),
-                                (bDriverVisible=false,bAllowFocus=true,PositionCameraTag=None,ViewFOV=70.0,PositionUpAnim=Driver_portTOclose,PositionDownAnim=Driver_close,PositionIdleAnim=Driver_close_idle,DriverIdleAnim=Driver_close_idle,AlternateIdleAnim=Driver_close_idle_AI,SeatProxyIndex=0,
-                                    LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DriverLeftLever,DefaultEffectorRotationTargetName=DriverLeftLever),
-                                    RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DriverRightLever,DefaultEffectorRotationTargetName=DriverRightLever,
-                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=DriverClutchLever,EffectorRotationTargetName=DriverClutchLever))),
-                                    LeftFootIKInfo=(IKEnabled=false,
-                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=DriverBreakPedal,EffectorRotationTargetName=DriverBreakPedal))),
-                                    RightFootIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DriverGasPedal,DefaultEffectorRotationTargetName=DriverGasPedal),
-                                    HipsIKInfo=(PinEnabled=true),
-                                    PositionFlinchAnims=(Driver_close_Flinch),
-                                    PositionDeathAnims=(Driver_close_Death),
-                                    PositionInteractions=((InteractionIdleAnim=Driver_sideport_Idle,StartInteractionAnim=Driver_closeTOsideport,EndInteractionAnim=Driver_sideportTOclose,FlinchInteractionAnim=Driver_sideport_Flinch,
-                                        ViewFOV=70,bAllowFocus=true,InteractionSocketTag=DriverLeftViewPort,InteractDotAngle=0.95,bUseDOF=true))),
-                                (bDriverVisible=false,bAllowFocus=false,PositionCameraTag=Driver_Camera,ViewFOV=70.0,bViewFromCameraTag=true,bDrawOverlays=true,
-                                    PositionDownAnim=Driver_closeTOport,PositionIdleAnim=Driver_port_idle,DriverIdleAnim=Driver_port_idle,AlternateIdleAnim=Driver_port_idle_AI,SeatProxyIndex=0,
-                                    LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DriverLeftLever,DefaultEffectorRotationTargetName=DriverLeftLever),
-                                    RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DriverRightLever,DefaultEffectorRotationTargetName=DriverRightLever,
-                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=DriverClutchLever,EffectorRotationTargetName=DriverClutchLever))),
-                                    LeftFootIKInfo=(IKEnabled=false,
-                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=DriverBreakPedal,EffectorRotationTargetName=DriverBreakPedal))),
-                                    RightFootIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DriverGasPedal,DefaultEffectorRotationTargetName=DriverGasPedal),
-                                    PositionFlinchAnims=(Driver_close_Flinch),
-                                    PositionDeathAnims=(Driver_close_Death))
-                                ),
-                bSeatVisible=true,
-                SeatBone=Chassis,
-                DriverDamageMult=1.0,
-                InitialPositionIndex=1,
-                SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
-                VehicleBloodMICParameterName=Gore02,
-//              SeatIconPos=(X=0.33,Y=0.35),
-                //MuzzleFlashLightClass=class'UTTankMuzzleFlash',
-//              WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0)))
-                )}
 
-    Seats(1)={( 
+    Seats(0)={(
+        CameraTag=None,
+        CameraOffset=-420,
+        SeatAnimBlendName=DriverPositionNode,
+        bSeatVisible=true,
+        SeatBone=Chassis,
+        DriverDamageMult=1.0,
+        InitialPositionIndex=0,
+        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        VehicleBloodMICParameterName=Gore02,
+        // SeatIconPos=(X=0.33,Y=0.35),
+        // MuzzleFlashLightClass=class'UTTankMuzzleFlash',
+        // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
+        SeatPositions=
+        (
+            /*
+            // 0
+            (
+                bDriverVisible=true,
+                bAllowFocus=true,
+                PositionCameraTag=None,
+                ViewFOV=70.0,
+                PositionUpAnim=Driver_open,
+                PositionIdleAnim=Driver_open_idle,
+                DriverIdleAnim=Driver_open_idle,
+                AlternateIdleAnim=Driver_open_idle_AI,
+                SeatProxyIndex=0,
+                bIsExterior=true,
+                LeftHandIKInfo=(PinEnabled=true),
+                RightHandIKInfo=(PinEnabled=true),
+                HipsIKInfo=(PinEnabled=true),
+                PositionFlinchAnims=(Driver_open_Flinch),
+                PositionDeathAnims=(Driver_open_Death)
+            ),
+
+            // 1
+            (
+                bDriverVisible=false,
+                bAllowFocus=true,
+                PositionCameraTag=None,
+                ViewFOV=70.0,
+                PositionUpAnim=Driver_portTOclose,
+                PositionDownAnim=Driver_close,
+                PositionIdleAnim=Driver_close_idle,
+                DriverIdleAnim=Driver_close_idle,
+                AlternateIdleAnim=Driver_close_idle_AI,
+                SeatProxyIndex=0,
+                LeftHandIKInfo=
+                (
+                    IKEnabled=true,
+                    DefaultEffectorLocationTargetName=DriverLeftLever,
+                    DefaultEffectorRotationTargetName=DriverLeftLever
+                ),
+                RightHandIKInfo=
+                (
+                    IKEnabled=true,
+                    DefaultEffectorLocationTargetName=DriverRightLever,
+                    DefaultEffectorRotationTargetName=DriverRightLever,
+                    AlternateEffectorTargets=((
+                        Action=DAct_ShiftGears,
+                        IKEnabled=true,
+                        EffectorLocationTargetName=DriverClutchLever,
+                        EffectorRotationTargetName=DriverClutchLever
+                    ))
+                ),
+                LeftFootIKInfo=
+                (
+                    IKEnabled=false,
+                    AlternateEffectorTargets=((
+                        Action=DAct_ShiftGears,
+                        IKEnabled=true,
+                        EffectorLocationTargetName=DriverBreakPedal,
+                        EffectorRotationTargetName=DriverBreakPedal
+                    ))
+                ),
+                RightFootIKInfo=
+                (
+                    IKEnabled=true,
+                    DefaultEffectorLocationTargetName=DriverGasPedal,
+                    DefaultEffectorRotationTargetName=DriverGasPedal
+                ),
+                HipsIKInfo=(PinEnabled=true),
+                PositionFlinchAnims=(Driver_close_Flinch),
+                PositionDeathAnims=(Driver_close_Death),
+                PositionInteractions=((
+                    InteractionIdleAnim=Driver_sideport_Idle,
+                    StartInteractionAnim=Driver_closeTOsideport,
+                    EndInteractionAnim=Driver_sideportTOclose,
+                    FlinchInteractionAnim=Driver_sideport_Flinch,
+                    ViewFOV=70,
+                    bAllowFocus=true,
+                    InteractionSocketTag=DriverLeftViewPort,
+                    InteractDotAngle=0.95,
+                    bUseDOF=true
+                ))
+            ),
+            */
+
+            // 0 (old 2)
+            (
+                bDriverVisible=false,
+                bAllowFocus=false,
+                PositionCameraTag=Driver_Camera,
+                ViewFOV=70.0,
+                bViewFromCameraTag=true,
+                bDrawOverlays=true,
+                // PositionDownAnim=Driver_closeTOport,
+                // PositionIdleAnim=Driver_port_idle,
+                // DriverIdleAnim=Driver_port_idle,
+                // AlternateIdleAnim=Driver_port_idle_AI,
+                SeatProxyIndex=0,
+                LeftHandIKInfo=
+                (
+                    IKEnabled=false,
+                    /*
+                    DefaultEffectorLocationTargetName=DriverLeftLever,
+                    DefaultEffectorRotationTargetName=DriverLeftLever
+                    */
+                ),
+                RightHandIKInfo=
+                (
+                    IKEnabled=false,
+                    /*
+                    DefaultEffectorLocationTargetName=DriverRightLever,
+                    DefaultEffectorRotationTargetName=DriverRightLever,
+                    AlternateEffectorTargets=((
+                        Action=DAct_ShiftGears,
+                        IKEnabled=false,
+                        EffectorLocationTargetName=DriverClutchLever,
+                        EffectorRotationTargetName=DriverClutchLever
+                    ))
+                    */
+                ),
+                LeftFootIKInfo=
+                (
+                    IKEnabled=false,
+                    /*
+                    AlternateEffectorTargets=((
+                        Action=DAct_ShiftGears,
+                        IKEnabled=false,
+                        EffectorLocationTargetName=DriverBreakPedal,
+                        EffectorRotationTargetName=DriverBreakPedal
+                    ))
+                    */
+                ),
+                RightFootIKInfo=
+                (
+                    IKEnabled=false,
+                    /*
+                    DefaultEffectorLocationTargetName=DriverGasPedal,
+                    DefaultEffectorRotationTargetName=DriverGasPedal
+                    */
+                ),
+                PositionFlinchAnims=(Driver_close_Flinch),
+                PositionDeathAnims=(Driver_close_Death)
+            )
+        )
+    )}
+
+    Seats(1)={(
         TurretVarPrefix="Cuppola",
         BinocOverlayTexture=Texture2D'WP_VN_VC_Binoculars.Materials.BINOC_overlay',
         BarTexture=Texture2D'ui_textures.Textures.button_128grey',
@@ -1405,12 +1520,19 @@ defaultproperties
         bSeatVisible=true,
         SeatBone=Turret,
         SeatAnimBlendName=CommanderPositionNode,
+        DriverDamageMult=1.0,
+        InitialPositionIndex=2,
+        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        VehicleBloodMICParameterName=Gore04,
+        // SeatIconPos=(X=0.33,Y=0.35),
+        // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
         SeatPositions=
         (
+            // 0
             (
                 bDriverVisible=true,
                 bAllowFocus=false,
-                /*bDrawOverlays=true,*/
+                // bDrawOverlays=true,
                 bBinocsPosition=true,
                 PositionCameraTag=None,
                 ViewFOV=5.4,
@@ -1429,6 +1551,8 @@ defaultproperties
                 PositionFlinchAnims=(Com_open_Flinch),
                 PositionDeathAnims=(Com_open_Death)
             ),
+
+            // 1
             (
                 bDriverVisible=true,
                 bAllowFocus=true,
@@ -1450,6 +1574,8 @@ defaultproperties
                 PositionFlinchAnims=(Com_open_Flinch),
                 PositionDeathAnims=(Com_open_Death)
             ),
+
+            // 2
             (
                 bDriverVisible=false,
                 bAllowFocus=true,
@@ -1460,7 +1586,7 @@ defaultproperties
                 PositionIdleAnim=Com_close_idle,
                 DriverIdleAnim=Com_close_idle,
                 AlternateIdleAnim=Com_close_idle_AI,
-                SeatProxyIndex=1,  
+                SeatProxyIndex=1,
                 // PositionUpAnim=Com_gunnerTOclose,
                 LeftHandIKInfo=(PinEnabled=true),
                 RightHandIKInfo=(PinEnabled=true),
@@ -1470,109 +1596,240 @@ defaultproperties
                 PositionFlinchAnims=(Com_close_Flinch),
                 PositionDeathAnims=(Com_close_Death)
             )
-        ),
-        DriverDamageMult=1.0,
-        InitialPositionIndex=2,
-        // SeatIconPos=(X=0.33,Y=0.35),
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
-        VehicleBloodMICParameterName=Gore04,
-        // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0)))
+        )
     )}
 
-    Seats(2)={( GunClass=class'DRVWeapon_PanzerIVF_Turret',
-                SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg',
-                NeedleOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg_TOP',
-                RangeOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_range',
-                VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
-                GunSocket=(Barrel,CoaxMG),
-                GunPivotPoints=(gun_base,gun_base),
-                TurretVarPrefix="Turret",
-                TurretControls=(Turret_Gun,Turret_Main),
-                CameraTag=None,
-                CameraOffset=-420,
-                bSeatVisible=true,
-                SeatBone=Turret,
-                SeatAnimBlendName=GunnerPositionNode,
-                SeatPositions=((bDriverVisible=false,bAllowFocus=true,PositionCameraTag=None,ViewFOV=70.0,bRotateGunOnCommand=true,PositionUpAnim=Gunner_portTOclose,PositionIdleAnim=Gunner_Close_Idle,DriverIdleAnim=Gunner_Close_Idle,AlternateIdleAnim=Gunner_Close_Idle_AI,SeatProxyIndex=4, //PositionDownAnim=Com_closeTOgunner,
-                                    LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=GunnerElevationWheel,DefaultEffectorRotationTargetName=GunnerElevationWheel),
-                                    RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=GunnerTraverseHandle,DefaultEffectorRotationTargetName=GunnerTraverseHandle),
-                                    LeftFootIKInfo=(IKEnabled=false),
-                                    RightFootIKInfo=(IKEnabled=false),
-                                    PositionFlinchAnims=(Gunner_close_Flinch),
-                                    PositionDeathAnims=(Gunner_Death),
-                                    //LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0),
-                                    PositionInteractions=((InteractionIdleAnim=Gunner_sideport_Idle,StartInteractionAnim=Gunner_closeTOsideport,EndInteractionAnim=Gunner_sideportTOclose,FlinchInteractionAnim=Gunner_sideport_Flinch,
-                                        ViewFOV=70,bAllowFocus=true,InteractionSocketTag=GunnerViewPort,InteractDotAngle=0.95,bUseDOF=true))),
-                               (bDriverVisible=false,bAllowFocus=false,PositionCameraTag=Camera_Gunner,ViewFOV=13.5,bCamRotationFollowSocket=true,bViewFromCameraTag=true,bDrawOverlays=true,PositionDownAnim=Gunner_closeTOport,PositionIdleAnim=Gunner_port_idle,DriverIdleAnim=Gunner_port_idle,AlternateIdleAnim=Gunner_port_idle_AI,SeatProxyIndex=4,
-                                    LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=GunnerElevationWheel,DefaultEffectorRotationTargetName=GunnerElevationWheel),
-                                    RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=GunnerTraverseHandle,DefaultEffectorRotationTargetName=GunnerTraverseHandle),
-                                    LeftFootIKInfo=(IKEnabled=false),
-                                    RightFootIKInfo=(IKEnabled=false),
-                                    PositionFlinchAnims=(Gunner_close_Flinch),
-                                    PositionDeathAnims=(Gunner_Death))),
-                                    //LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0))), //2.4x zoom
-                DriverDamageMult=1.0,
-                InitialPositionIndex=1,
-                FiringPositionIndex=1,
-//              SeatIconPos=(X=0.33,Y=0.35),
-                TracerFrequency=5,
-                WeaponTracerClass=(none,class'M1919BulletTracer'),
-                MuzzleFlashLightClass=(class'ROGrenadeExplosionLight',class'ROVehicleMGMuzzleFlashLight'),
-                SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
-                VehicleBloodMICParameterName=Gore01,
-//              WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0)))
-                )}
+    Seats(2)={(
+        GunClass=class'DRVWeapon_PanzerIVF_Turret',
+        SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg',
+        NeedleOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg_TOP',
+        RangeOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_range',
+        VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
+        GunSocket=(Barrel,CoaxMG),
+        GunPivotPoints=(gun_base,gun_base),
+        TurretVarPrefix="Turret",
+        TurretControls=(Turret_Gun,Turret_Main),
+        CameraTag=None,
+        CameraOffset=-420,
+        bSeatVisible=true,
+        SeatBone=Turret,
+        SeatAnimBlendName=GunnerPositionNode,
+        DriverDamageMult=1.0,
+        InitialPositionIndex=0,
+        FiringPositionIndex=0,
+        TracerFrequency=5,
+        WeaponTracerClass=(none, class'M1919BulletTracer'),
+        MuzzleFlashLightClass=(class'ROGrenadeExplosionLight', class'ROVehicleMGMuzzleFlashLight'),
+        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        VehicleBloodMICParameterName=Gore01,
+        // PositionDownAnim=Com_closeTOgunner,
+        // SeatIconPos=(X=0.33,Y=0.35),
+        // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
+        SeatPositions=
+        (
+            // 0
+            /*
+            (
+                bDriverVisible=false,
+                bAllowFocus=true,
+                PositionCameraTag=None,
+                ViewFOV=70.0,
+                bRotateGunOnCommand=true,
+                PositionUpAnim=Gunner_portTOclose,
+                PositionIdleAnim=Gunner_Close_Idle,
+                DriverIdleAnim=Gunner_Close_Idle,
+                AlternateIdleAnim=Gunner_Close_Idle_AI,
+                SeatProxyIndex=4,
+                LeftHandIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=GunnerElevationWheel,
+                    // DefaultEffectorRotationTargetName=GunnerElevationWheel
+                ),
+                RightHandIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=GunnerTraverseHandle,
+                    // DefaultEffectorRotationTargetName=GunnerTraverseHandle
+                ),
+                LeftFootIKInfo=(IKEnabled=false),
+                RightFootIKInfo=(IKEnabled=false),
+                PositionFlinchAnims=(Gunner_close_Flinch),
+                PositionDeathAnims=(Gunner_Death),
+                //LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0),
+                PositionInteractions=
+                (
+                    (
+                        InteractionIdleAnim=Gunner_sideport_Idle,
+                        StartInteractionAnim=Gunner_closeTOsideport,
+                        EndInteractionAnim=Gunner_sideportTOclose,
+                        FlinchInteractionAnim=Gunner_sideport_Flinch,
+                        ViewFOV=70,
+                        bAllowFocus=true,
+                        InteractionSocketTag=GunnerViewPort,
+                        InteractDotAngle=0.95,
+                        bUseDOF=true
+                    )
+                )
+            ),
+            */
 
-    Seats(3)={( GunClass=class'DRVWeapon_PanzerIVF_HullMG',
-                SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_mg',
-                VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
-                GunSocket=(MG_Barrel),
-                GunPivotPoints=(MG_Pitch),
-                TurretVarPrefix="HullMG",
-                TurretControls=(Hull_MG_Yaw,Hull_MG_Pitch),
-                CameraTag=None,
-                CameraOffset=-420,
-                bSeatVisible=true,
-                SeatBone=Chassis,
-                SeatAnimBlendName=HullMGPositionNode,
-                SeatPositions=((bDriverVisible=true,bAllowFocus=true,PositionCameraTag=None,ViewFOV=70.0,bRotateGunOnCommand=true,PositionUpAnim=MG_open,PositionIdleAnim=MG_open_idle,DriverIdleAnim=MG_open_idle,AlternateIdleAnim=MG_open_idle_AI,SeatProxyIndex=2,bIgnoreWeapon=true,
-                                    bIsExterior=true,
-                                    LeftHandIKInfo=(PinEnabled=true),
-                                    RightHandIKInfo=(PinEnabled=true),
-                                    HipsIKInfo=(PinEnabled=true),
-                                    PositionFlinchAnims=(MG_open_Flinch),
-                                    PositionDeathAnims=(MG_open_Death)),
-                               (bDriverVisible=false,bAllowFocus=true,PositionCameraTag=None,ViewFOV=70.0,bRotateGunOnCommand=true,PositionUpAnim=MG_portTOclose,PositionDownAnim=MG_close,PositionIdleAnim=MG_close_idle,DriverIdleAnim=MG_close_idle,AlternateIdleAnim=MG_close_idle_AI,SeatProxyIndex=2,bIgnoreWeapon=true,
-                                    LeftHandIKInfo=(PinEnabled=true),
-                                    RightHandIKInfo=(PinEnabled=true),
-                                    HipsIKInfo=(PinEnabled=true),
-                                    LeftFootIKInfo=(PinEnabled=true),
-                                    RightFootIKInfo=(PinEnabled=true),
-                                    PositionFlinchAnims=(MG_close_Flinch),
-                                    PositionDeathAnims=(MG_close_Death),
-                                    PositionInteractions=((InteractionIdleAnim=MG_sideport_Idle,StartInteractionAnim=MG_closeTOsideport,EndInteractionAnim=MG_sideportTOclose,FlinchInteractionAnim=MG_sideport_Flinch,
-                                        ViewFOV=70,bAllowFocus=true,InteractionSocketTag=MGRightViewPort,InteractDotAngle=0.95,bUseDOF=true))),
-                               (bDriverVisible=false,bAllowFocus=false,PositionCameraTag=MG_Camera,ViewFOV=35.0,bCamRotationFollowSocket=true,bViewFromCameraTag=true,bDrawOverlays=true,bUseDOF=true,
-                                    PositionDownAnim=MG_closeTOport,PositionIdleAnim=MG_port_idle,bConstrainRotation=false,YawContraintIndex=0,PitchContraintIndex=1,DriverIdleAnim=MG_port_idle,AlternateIdleAnim=MG_port_idle_AI,SeatProxyIndex=2,       //2.0x zoom should be 16.25, for gameplay trying less zoom for now
-                                    LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=HullMGLeftHand,DefaultEffectorRotationTargetName=HullMGLeftHand),
-                                    RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=HullMGRightHand,DefaultEffectorRotationTargetName=HullMGRightHand),
-                                    HipsIKInfo=(PinEnabled=true),
-                                    LeftFootIKInfo=(PinEnabled=true),
-                                    RightFootIKInfo=(PinEnabled=true),
-                                    PositionFlinchAnims=(MG_close_Flinch),
-                                    PositionDeathAnims=(MG_close_Death),
-                                    ChestIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=DefaultHullMGReload,DefaultEffectorRotationTargetName=DefaultHullMGReload))),
-                DriverDamageMult=1.0,
-                InitialPositionIndex=2,
-                FiringPositionIndex=2,
-                SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
-                VehicleBloodMICParameterName=Gore03,
-//              SeatIconPos=(X=0.33,Y=0.35),
-                TracerFrequency=5,
-                WeaponTracerClass=(class'M1919BulletTracer',class'M1919BulletTracer'),
-                MuzzleFlashLightClass=(class'ROVehicleMGMuzzleFlashLight',class'ROVehicleMGMuzzleFlashLight'),
-//              WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0)))
-                )}
+            // 0 (old 1)
+            (
+                bDriverVisible=false,
+                bAllowFocus=false,
+                PositionCameraTag=Camera_Gunner,
+                ViewFOV=13.5,
+                bCamRotationFollowSocket=true,
+                bViewFromCameraTag=true,
+                bDrawOverlays=true,
+                PositionDownAnim=Gunner_closeTOport,
+                PositionIdleAnim=Gunner_port_idle,
+                DriverIdleAnim=Gunner_port_idle,
+                AlternateIdleAnim=Gunner_port_idle_AI,
+                SeatProxyIndex=4,
+                // LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0))), //2.4x zoom
+                LeftHandIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=GunnerElevationWheel,
+                    // DefaultEffectorRotationTargetName=GunnerElevationWheel
+                ),
+                RightHandIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=GunnerTraverseHandle,
+                    // DefaultEffectorRotationTargetName=GunnerTraverseHandle
+                ),
+                LeftFootIKInfo=(IKEnabled=false),
+                RightFootIKInfo=(IKEnabled=false),
+                PositionFlinchAnims=(Gunner_close_Flinch),
+                PositionDeathAnims=(Gunner_Death)
+            )
+        )
+    )}
+
+    Seats(3)={(
+        GunClass=class'DRVWeapon_PanzerIVF_HullMG',
+        SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_mg',
+        VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
+        GunSocket=(MG_Barrel),
+        GunPivotPoints=(MG_Pitch),
+        TurretVarPrefix="HullMG",
+        TurretControls=(Hull_MG_Yaw,Hull_MG_Pitch),
+        CameraTag=None,
+        CameraOffset=-420,
+        bSeatVisible=true,
+        SeatBone=Chassis,
+        SeatAnimBlendName=HullMGPositionNode,
+        DriverDamageMult=1.0,
+        InitialPositionIndex=0,
+        FiringPositionIndex=0,
+        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        VehicleBloodMICParameterName=Gore03,
+        TracerFrequency=5,
+        WeaponTracerClass=(class'M1919BulletTracer',class'M1919BulletTracer'),
+        MuzzleFlashLightClass=(class'ROVehicleMGMuzzleFlashLight',class'ROVehicleMGMuzzleFlashLight'),
+        // SeatIconPos=(X=0.33,Y=0.35),
+        // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
+        SeatPositions=
+        (
+            /*
+            // 0
+            (
+                bDriverVisible=true,
+                bAllowFocus=true,
+                PositionCameraTag=None,
+                ViewFOV=70.0,
+                bRotateGunOnCommand=true,
+                PositionUpAnim=MG_open,
+                PositionIdleAnim=MG_open_idle,
+                DriverIdleAnim=MG_open_idle,
+                AlternateIdleAnim=MG_open_idle_AI,
+                SeatProxyIndex=2,
+                bIgnoreWeapon=true,
+                bIsExterior=true,
+                LeftHandIKInfo=(PinEnabled=true),
+                RightHandIKInfo=(PinEnabled=true),
+                HipsIKInfo=(PinEnabled=true),
+                PositionFlinchAnims=(MG_open_Flinch),
+                PositionDeathAnims=(MG_open_Death)
+            ),
+
+            // 1
+            (
+                bDriverVisible=false,bAllowFocus=true,
+                PositionCameraTag=None,ViewFOV=70.0,
+                bRotateGunOnCommand=true,PositionUpAnim=MG_portTOclose,
+                PositionDownAnim=MG_close,PositionIdleAnim=MG_close_idle,
+                DriverIdleAnim=MG_close_idle,AlternateIdleAnim=MG_close_idle_AI,
+                SeatProxyIndex=2,
+                bIgnoreWeapon=true,
+                LeftHandIKInfo=(PinEnabled=true),
+                RightHandIKInfo=(PinEnabled=true),
+                HipsIKInfo=(PinEnabled=true),
+                LeftFootIKInfo=(PinEnabled=true),
+                RightFootIKInfo=(PinEnabled=true),
+                PositionFlinchAnims=(MG_close_Flinch),
+                PositionDeathAnims=(MG_close_Death),
+                PositionInteractions=
+                ((
+                    InteractionIdleAnim=MG_sideport_Idle,
+                    StartInteractionAnim=MG_closeTOsideport,
+                    EndInteractionAnim=MG_sideportTOclose,
+                    FlinchInteractionAnim=MG_sideport_Flinch,
+                    ViewFOV=70,
+                    bAllowFocus=true,
+                    InteractionSocketTag=MGRightViewPort,
+                    InteractDotAngle=0.95,
+                    bUseDOF=true
+                ))
+            ),
+            */
+
+            // 0 (old 2)
+            (
+                bDriverVisible=false,
+                bAllowFocus=false,
+                PositionCameraTag=MG_Camera,ViewFOV=35.0,
+                bCamRotationFollowSocket=true,
+                bViewFromCameraTag=true,
+                bDrawOverlays=true,
+                bUseDOF=true,
+                PositionDownAnim=MG_closeTOport,
+                PositionIdleAnim=MG_port_idle,
+                bConstrainRotation=false,
+                YawContraintIndex=0,
+                PitchContraintIndex=1,
+                DriverIdleAnim=MG_port_idle,
+                AlternateIdleAnim=MG_port_idle_AI,
+                SeatProxyIndex=2, //2.0x zoom should be 16.25, for gameplay trying less zoom for now
+                LeftHandIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=HullMGLeftHand,
+                    // DefaultEffectorRotationTargetName=HullMGLeftHand
+                ),
+                RightHandIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=HullMGRightHand,
+                    // DefaultEffectorRotationTargetName=HullMGRightHand
+                ),
+                HipsIKInfo=(PinEnabled=true),
+                LeftFootIKInfo=(PinEnabled=true),
+                RightFootIKInfo=(PinEnabled=true),
+                PositionFlinchAnims=(MG_close_Flinch),
+                PositionDeathAnims=(MG_close_Death),
+                ChestIKInfo=
+                (
+                    IKEnabled=false,
+                    // DefaultEffectorLocationTargetName=DefaultHullMGReload,
+                    // DefaultEffectorRotationTargetName=DefaultHullMGReload
+                )
+            )
+        )
+    )}
 
     Seats(4)={( bNonEnterable=true,
                 SeatAnimBlendName=LoaderPositionNode,
@@ -1600,6 +1857,7 @@ defaultproperties
                 SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
                 VehicleBloodMICParameterName=Gore01
                 )}
+
 
     SeatIndexPassRotateOnCommandToOtherSeat=1
     SeatIndexToRotateOnCommandFromOtherSeat=2
