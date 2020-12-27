@@ -1165,6 +1165,81 @@ exec function LeanLeftReleased()
 	ServerLeanLeft(False);
 }
 
+reliable protected server function ServerLeanRight(bool leanstate)
+{
+	bWantsToLeanRight = leanstate;
+
+	if( Pawn != none )
+	{
+ 		if( ROPawn(Pawn) != none )
+		{
+		 	if (leanstate)
+			{
+				ROPawn(Pawn).LeanRight();
+			}
+			else
+			{
+				ROPawn(Pawn).LeanRightReleased();
+			   	bWantsToLeanRight = false;
+
+				if( bWantsToLeanLeft )
+				{
+					SetTimer(0.2f, false, 'RightLeftLean');
+				}
+			}
+		}
+		else if ( leanstate && ROVWeap_TankTurret(ROWeaponPawn(Pawn).MyVehicleWeapon) != none )
+		{
+			bWantsToLeanRight = false;
+			ROVWeap_TankTurret(ROWeaponPawn(Pawn).MyVehicleWeapon).IncrementRange();
+		}
+		// TODO: Add bHasTransferCase or something similar instead of class equivalency check.
+		else if (leanstate && DRVehicle_Willys(Pawn) != None)
+		{
+			bWantsToLeanLeft = false;
+			// DRVehicle_Willys(Pawn).ShiftTransferCase(ETCR_High);
+			ROVehicleSimTreaded(DRVehicle_Willys(Pawn).SimObj).GearArray[DRVehicle_Willys(Pawn).OutputGear].AccelRate += 0.25;
+		}
+	}
+}
+
+reliable protected server function ServerLeanLeft(bool leanstate)
+{
+	bWantsToLeanLeft = leanstate;
+
+	if( Pawn != none )
+	{
+ 		if( ROPawn(Pawn) != none )
+		{
+			if (leanstate)
+			{
+				ROPawn(Pawn).LeanLeft();
+			}
+			else
+			{
+				ROPawn(Pawn).LeanLeftReleased();
+
+				if( bWantsToLeanRight )
+  				{
+					SetTimer(0.2f, false, 'LeftRightLean');
+				}
+			}
+		}
+		else if ( leanstate && ROVWeap_TankTurret(ROWeaponPawn(Pawn).MyVehicleWeapon) != none )
+		{
+			bWantsToLeanLeft = false;
+			ROVWeap_TankTurret(ROWeaponPawn(Pawn).MyVehicleWeapon).DecrementRange();
+		}
+		// TODO: Add bHasTransferCase or something similar instead of class equivalency check.
+		else if (leanstate && DRVehicle_Willys(Pawn) != None)
+		{
+			bWantsToLeanLeft = false;
+			// DRVehicle_Willys(Pawn).ShiftTransferCase(ETCR_Low);
+			ROVehicleSimTreaded(DRVehicle_Willys(Pawn).SimObj).GearArray[DRVehicle_Willys(Pawn).OutputGear].AccelRate -= 0.25;
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

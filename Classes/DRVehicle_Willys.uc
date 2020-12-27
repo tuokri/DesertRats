@@ -12,6 +12,17 @@ var bool                            bGeneratedExteriorMICs;
 var MaterialInterface DestroyedMaterial2;
 var MaterialInterface DestroyedMaterial3;
 
+
+enum ETransferCaseRange
+{
+    ETCR_High,
+    ETCR_Low
+};
+
+var array<GearData> GearArrayLow;
+var array<GearData> GearArrayHigh;
+var ETransferCaseRange TransferCaseRange;
+
 // Replicated information about the passenger positions
 // TODO: what the hell? These aren't even used anywhere...
 var repnotify byte PassengerOneCurrentPositionIndex;
@@ -55,6 +66,10 @@ simulated event PostBeginPlay()
     local int i;
 
     super.PostBeginPlay();
+
+    GearArrayHigh = ROVehicleSimHalftrack(default.SimObj).GearArray;
+    // TODO:
+    GearArrayLow = ROVehicleSimHalftrack(default.SimObj).GearArray;
 
     if ( !bGeneratedExteriorMICs )
     {
@@ -312,10 +327,58 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
     Super.DamageSeatProxy(SeatProxyIndex, Damage, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
 }
 
-defaultproperties
+// TODO: Switching to higher range at high speed should be safe.
+function ShiftTransferCase(ETransferCaseRange Range)
+{
+    local ROVehicleSimHalftrack ROVSH;
+
+    `dr("about to shift transfer case, Range = " $ Range $ " old range = " $ TransferCaseRange);
+
+    if (Range == ETCR_High)
+    {
+        if (TransferCaseRange != ETCR_High)
+        {
+            ROVSH = ROVehicleSimHalftrack(SimObj);
+            if (ROVSH != None)
+            {
+                ROVSH.GearArray = GearArrayHigh;
+                `dr("old gear array = " $ string(ROVSH.GearArray[0].GearRatio));
+                `dr("new gear array = " $ string(GearArrayHigh[0].GearRatio));
+                TransferCaseRange = ETCR_High;
+                `dr("switched transfer case to high range");
+            }
+        }
+    }
+    else if (Range == ETCR_Low)
+    {
+        if (TransferCaseRange != ETCR_Low)
+        {
+            ROVSH = ROVehicleSimHalftrack(SimObj);
+            if (ROVSH != None)
+            {
+                ROVSH.GearArray = GearArrayLow;
+                TransferCaseRange = ETCR_Low;
+                `dr("switched transfer case to low range");
+            }
+        }
+    }
+}
+
+// TODO: We'll want these in the future.
+function SetPendingDestroyIfEmpty(float WaitToDestroyTime);
+function DestroyIfEmpty();
+
+event Tick(float DeltaTime)
+{
+    super.Tick(DeltaTime);
+    `dr("RPM=" $ ROVehicleSimTreaded(SimObj).EngineRPM $ ",G=" $ OutputGear 
+        $ ",A=" $ ROVehicleSimTreaded(SimObj).GearArray[OutputGear].AccelRate);
+}
+
+DefaultProperties
 {
     Health=1000
-    Team=1
+    Team=`ALLIES_TEAM_INDEX
 
     bOpenVehicle=true
 
@@ -454,7 +517,7 @@ Seats(3)={( CameraTag=None,
     RightWheels(0)="R1_Wheel"
     RightWheels(1)="R2_Wheel"
 
-/** Physics Wheels */
+    /** Physics Wheels */
 
     Wheels.Empty
 
@@ -463,9 +526,12 @@ Seats(3)={( CameraTag=None,
         BoneName="RearWheelRight"
         BoneOffset=(X=0.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
-        SteerFactor=0.1f
+        SteerFactor=0 //0.1f
+        bPoweredWheel=True
+        HandbrakeLongSlipFactor=0.8
+        HandbrakeLatSlipFactor=0.8
     End Object
-Wheels(0)=RRWheel
+    Wheels(0)=RRWheel
 
     // Right Front Wheel
     Begin Object Name=RFWheel
@@ -473,17 +539,21 @@ Wheels(0)=RRWheel
         BoneOffset=(X=0.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
         SteerFactor=1.0f
+        bPoweredWheel=True
     End Object
-Wheels(1)=RFWheel
+    Wheels(1)=RFWheel
 
     // Left Rear Wheel
     Begin Object Name=LRWheel
         BoneName="RearWheelLeft"
         BoneOffset=(X=0.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
-        SteerFactor=0.1f
+        SteerFactor=0 // 0.1f
+        bPoweredWheel=True
+        HandbrakeLongSlipFactor=0.8
+        HandbrakeLatSlipFactor=0.8
     End Object
-Wheels(2)=LRWheel
+    Wheels(2)=LRWheel
 
     // Left Front Wheel
     Begin Object Name=LFWheel
@@ -491,34 +561,46 @@ Wheels(2)=LRWheel
         BoneOffset=(X=0.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
         SteerFactor=1.0f
+        bPoweredWheel=True
     End Object
-Wheels(3)=LFWheel
+    Wheels(3)=LFWheel
 
+    // TODO: let's test this for now.
+    bCanFlip=True
+
+    // TODO: Transfer case SimObject.
+    // To switch between high and low gears.
+    // Low gears upto 20-30 kph, high upto 80 kph.
+    // 6 forward gears total.
     Begin Object class=ROVehicleSimHalftrack Name=SimObjectHalfTrack
-        WheelSuspensionStiffness=350
+        // bWheelSpeedOverride=false // true
+        AppliedTreadBrakingRate=0.5 // 3.0
+        // MaxBrakeTorque=0.5
+
+        WheelSuspensionStiffness=800 //350
         WheelSuspensionDamping=25.0
         WheelSuspensionBias=0.1
         WheelLongExtremumSlip=1.5
-        ChassisTorqueScale=1.0//0.0
+        ChassisTorqueScale=0.30 //1.0 //0.0
         StopThreshold=50
-        EngineBrakeFactor=0.00001
-        EngineDamping=4.1
+        EngineBrakeFactor=0.005 //0.00001
+        EngineDamping=0.5 //4.1
         InsideTrackTorqueFactor=0.4
         TurnInPlaceThrottle=0.0
         CollisionGripFactor=0.18
         TurnMaxGripReduction=0.9//995//0.97
         TurnGripScaleRate=1.0
-        MaxEngineTorque=15000//7800.0
+        MaxEngineTorque=25000 //7800.0
         EqualiseTrackSpeed=30.0//10.0
         MaxTreadSteerAngleCurve=(Points=((InVal=0,OutVal=0),(InVal=200.0,OutVal=0.0),(InVal=300.0,OutVal=1.0),(InVal=500.0,OutVal=1.2),(InVal=1500.0,OutVal=1.5)))
         MaxSteerAngleCurve=(Points=((InVal=0,OutVal=30.0f),(InVal=200.0,OutVal=25.0),(InVal=300.0,OutVal=20.0),(InVal=500.0,OutVal=15),(InVal=1500.0,OutVal=10)))
         //MaxSteerAngleCurve=(Points=((InVal=0,OutVal=45),(InVal=600.0,OutVal=15.0),(InVal=1100.0,OutVal=10.0),(InVal=1300.0,OutVal=6.0),(InVal=1600.0,OutVal=1.0)))
         bTurnInPlaceOnSteer=False
-        SteerSpeed=40
+        SteerSpeed=30 // 40
         TurningLongSlipFactor=500
         // Transmission - GearData
         ShiftingThrottle=0.71
-        ChangeUpPoint=2650.000000
+        ChangeUpPoint=3950.000000
         ChangeDownPoint=700.000000
         GearShiftSlopeThreshold=0.25
         GearShiftDownSlopeThreshold=0.3
@@ -526,56 +608,80 @@ Wheels(3)=LFWheel
         MinTimeAtChangePoint=0.9
         GearArray(0)={(
             GearRatio=-5.64,
-            AccelRate=10.25,
+            AccelRate=7, //10.25,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=-2500),
                 (InVal=300,OutVal=-1750),
-                (InVal=2800,OutVal=-2500),
+                (InVal=2800,OutVal=-3500),
                 (InVal=3000,OutVal=-1000),
-                (InVal=3200,OutVal=-0.0)
-                )}),
+                (InVal=4500,OutVal=-0.0)
+            )}),
             TurningThrottle=1.0
-            )}
+        )}
         GearArray(1)={(
             // [N/A]  reserved for neutral
-            )}
+        )}
         GearArray(2)={(
             // Real world - [4.37] ~10.0 kph
-            GearRatio=4.37,
-            AccelRate=12.50,
+            GearRatio=2.18, // 4.37,
+            AccelRate=9, //12.50,
             TorqueCurve=(Points={(
-                (InVal=0,OutVal=2500),
+                (InVal=0,OutVal=1500),
                 (InVal=300,OutVal=1750),
-                (InVal=2800,OutVal=3000),
-                (InVal=3000,OutVal=1000),
-                (InVal=3200,OutVal=0.0)
-                )}),
+                (InVal=2800,OutVal=2250),
+                (InVal=3300,OutVal=3100),
+                (InVal=3500,OutVal=3725),
+                (InVal=4500,OutVal=0.0) // all divided by 2
+            )}),
+            // TorqueCurve=(Points={(
+            //     (InVal=0,OutVal=2500),
+            //     (InVal=300,OutVal=1750),
+            //     (InVal=2800,OutVal=3000),
+            //     (InVal=3000,OutVal=1000),
+            //     (InVal=3200,OutVal=0.0)
+            // )}),
             TurningThrottle=1.0
-            )}
+        )}
         GearArray(3)={(
             // Real world - [2.18] ~20.0 kph
-            GearRatio=2.18,
-            AccelRate=10.00,
+            GearRatio=0.8, // 2.18,
+            AccelRate=15, //10.00,
             TorqueCurve=(Points={(
-                (InVal=0,OutVal=3000),
-                (InVal=2800,OutVal=6200),
-                (InVal=3000,OutVal=2000),
-                (InVal=3200,OutVal=0.0)
-                )}),
-            TurningThrottle=1.0
-            )}
+                (InVal=0,OutVal=3100),
+                (InVal=2800,OutVal=4000),
+                (InVal=3300,OutVal=5000),
+                (InVal=3500,OutVal=6500),
+                (InVal=4500,OutVal=0.0)
+            )}),
+            // TorqueCurve=(Points={(
+            //     (InVal=0,OutVal=3000),
+            //     (InVal=2800,OutVal=6200),
+            //     (InVal=3000,OutVal=2000),
+            //     (InVal=3200,OutVal=0.0)
+            // )}),
+            TurningThrottle=0.8
+        )}
         GearArray(4)={(
             // Real world - [1.46] ~30.0 kph
-            GearRatio=1.46,
-            AccelRate=10.00,
+            GearRatio=0.5, // 1.46,
+            AccelRate=12, //10.00,
             TorqueCurve=(Points={(
-                (InVal=0,OutVal=3500),
-                (InVal=2800,OutVal=9700),
-                (InVal=3000,OutVal=3500),
-                (InVal=3200,OutVal=0.0)
-                )}),
-            TurningThrottle=1.0
-            )}
+                (InVal=0,OutVal=3100),
+                (InVal=2800,OutVal=4000),
+                (InVal=3300,OutVal=5000),
+                (InVal=3500,OutVal=6500),
+                (InVal=4500,OutVal=0.0)
+                /*
+                (InVal=0,OutVal=5000),
+                (InVal=2800,OutVal=6000),
+                (InVal=3300,OutVal=7500),
+                (InVal=3500,OutVal=8750),
+                (InVal=4500,OutVal=0.0)
+                */
+            )}),
+            TurningThrottle=0.75
+        )}
+        /*
         GearArray(5)={(
             // Real world - [1.09] ~40.0 kph
             GearRatio=1.09,
@@ -587,13 +693,20 @@ Wheels(3)=LFWheel
                 (InVal=3200,OutVal=0.0)
                 )}),
             TurningThrottle=1.0
-            )}
+        )}
+        */
         // Transmission - Misc
         FirstForwardGear=2
     End Object
     Components.Remove(SimObject)
     SimObj=SimObjectHalfTrack
     Components.Add(SimObjectHalfTrack)
+
+    // INITIALIZED IN POSTBEGINPLAY!
+    // TODO: Initialize here? (Check wheel init).
+    GearArrayHigh=()
+    GearArrayLow=()
+    TransferCaseRange=ETCR_High
 
     bInfantryCanUse=true
 
@@ -606,7 +719,7 @@ Wheels(3)=LFWheel
     RPM3DGaugeMaxAngle=52793
     EngineIdleRPM=0 // Lowest marker on visible speedo is 300
     EngineNormalRPM=2700
-    EngineMaxRPM=3500 // 3200+300
+    EngineMaxRPM=4500 // 3500 // 3200+300
     Speedo3DGaugeMaxAngle=101944 //50972 // HUD speedo goes to 100, physical only does 50, so divide this value by 0.5
     EngineOil3DGaugeMinAngle=12000
     EngineOil3DGaugeMaxAngle=29768
@@ -841,11 +954,10 @@ Wheels(3)=LFWheel
     ArmorPlates(20)=(PlateName=FRONTVIEWSLITRIGHT,ArmorZoneType=AZT_Front,PlateThickness=10,OverallHardness=340,bHighHardness=false)
     ArmorPlates(21)=(PlateName=DRIVERHATCH,ArmorZoneType=AZT_Front,PlateThickness=10,OverallHardness=340,bHighHardness=false)
 
-    MaxSpeed=723    // 53 km/h
+    MaxSpeed=1365 // ~100 km/h // 723 = 53 km/h
 
     bDestroyedTracksCauseTurn=false
 
     RanOverDamageType=RODmgType_RunOver_HT
-    TransportType=ROTT_UniversalCarrier
+    TransportType=ROTT_Halftrack
 }
-
