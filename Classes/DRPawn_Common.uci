@@ -1,0 +1,97 @@
+function TakeFallingDamage()
+{
+    local float EffectiveSpeed;
+    local float SpeedOverMax, HurtRatio;
+    local float ActualDamage;
+    local float Threshold1;
+    local float Threshold2;
+    local float VelXY;
+    local vector VelXYTemp;
+
+    Threshold1 = -0.5 * MaxFallSpeed;
+    Threshold2 = -1 * MaxFallSpeed;
+    
+    // For exiting vehicles at high speed.
+    // TODO: needs fine tuning.
+    VelXYTemp.X = Velocity.X;
+    VelXYTemp.Y = Velocity.Y;
+    VelXYTemp.Z = 0;
+    VelXY = VSize(VelXYTemp);
+
+    if (Velocity.Z < Threshold1 || VelXY > Abs(Threshold1))
+    {
+        if ( Role == ROLE_Authority )
+        {
+            MakeNoise(1.0);
+            if (Velocity.Z < Threshold2 || VelXY > Abs(Threshold1))
+            {
+                EffectiveSpeed = FMax(Velocity.Z * -1, VelXY);
+                if (TouchingWaterVolume())
+                {
+                    EffectiveSpeed -= 250;
+                    // Velocity.Z += 100;
+                }
+                if (EffectiveSpeed > MaxFallSpeed)
+                {
+                    // See how much we are over the MaxFallSpeed, and scale
+                    // damage as a function of how far over the MaxFallSpeed
+                    // we are in relation to the LethalFallSpeed
+                    SpeedOverMax = EffectiveSpeed - MaxFallSpeed;
+                    HurtRatio = SpeedOverMax/(LethalFallSpeed - MaxFallSpeed);
+
+                    ActualDamage = 100 * HurtRatio;
+
+                    // reduce the zone health by the actual damage, and prevent the player from taking negative zone damage
+                    // Damage the legs
+                    if( ActualDamage > 35 )
+                    {
+                        // Slow the player down if they hurt their legs badly enough
+                        if( ROGameInfo(WorldInfo.Game) != none && ROGameInfo(WorldInfo.Game).bLegDamageSlowsPlayer )
+                        {
+                            LegInjuryTime = WorldInfo.TimeSeconds;
+                            LegInjuryAmount = 255;
+                            SetSprinting(false);
+                        }
+
+                        // Right Thigh
+                        PlayerHitZones[14].ZoneHealth -= Min(ActualDamage, Max(PlayerHitZones[14].ZoneHealth, 0));
+                        PackHitZoneHealth(14); // Pack this Hit Zone's new Health into the replicated array
+
+                        // Left Thigh
+                        PlayerHitZones[18].ZoneHealth -= Min(ActualDamage, Max(PlayerHitZones[18].ZoneHealth, 0));
+                        PackHitZoneHealth(18); // Pack this Hit Zone's new Health into the replicated array
+                    }
+
+                    if( ActualDamage > 15 )
+                    {
+                        // Right Calf
+                        PlayerHitZones[16].ZoneHealth -= Min(ActualDamage, Max(PlayerHitZones[16].ZoneHealth, 0));
+                        PackHitZoneHealth(16); // Pack this Hit Zone's new Health into the replicated array
+
+                        // Left Calf
+                        PlayerHitZones[20].ZoneHealth -= Min(ActualDamage, Max(PlayerHitZones[20].ZoneHealth, 0));
+                        PackHitZoneHealth(20); // Pack this Hit Zone's new Health into the replicated array
+                    }
+
+                    if( ActualDamage > 0 )
+                    {
+                        // Right Foot
+                        PlayerHitZones[17].ZoneHealth -= Min(ActualDamage, Max(PlayerHitZones[17].ZoneHealth, 0));
+                        PackHitZoneHealth(17); // Pack this Hit Zone's new Health into the replicated array
+
+                        // Left Foot
+                        PlayerHitZones[21].ZoneHealth -= Min(ActualDamage, Max(PlayerHitZones[21].ZoneHealth, 0));
+                        PackHitZoneHealth(21); // Pack this Hit Zone's new Health into the replicated array
+                    }
+                    //`log("ActualDamage Is "$ActualDamage$" HurtRatio = "$HurtRatio$" EffectiveSpeed = "$EffectiveSpeed$" MaxFallSpeed = "$MaxFallSpeed$" LethalFallSpeed = "$LethalFallSpeed);
+
+                    TakeDamage(100 * HurtRatio, None, Location, vect(0,0,0), class'DmgType_Fell');
+                }
+            }
+        }
+    }
+    else if (Velocity.Z < -1.4 * JumpZ)
+        MakeNoise(0.5);
+    else if ( Velocity.Z < -0.8 * JumpZ )
+        MakeNoise(0.2);
+}
