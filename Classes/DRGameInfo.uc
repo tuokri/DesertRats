@@ -44,4 +44,9 @@ static event class<GameInfo> SetGameType(string MapName, string Options, string 
 defaultproperties
 {
 	MenuMusicTrack=none
+
+	`DRGICommonDP
+
+	NorthRoleContentClasses=(LevelContentClasses=("DesertRats.DRPawnAxis"))
+	SouthRoleContentClasses=(LevelContentClasses=("DesertRats.DRPawnAllies"))
 }

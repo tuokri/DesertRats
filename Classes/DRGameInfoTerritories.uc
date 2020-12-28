@@ -617,16 +617,944 @@ function class<Pawn> GetPlayerClass(Controller C)
 	return DefaultPawnClass;
 }
 
+function RestartPlayer(Controller NewPlayer)
+{
+	local NavigationPoint StartSpot;
+	local int TeamNum, Idx;
+	local array<SequenceObject> Events;
+	local SeqEvent_PlayerSpawned SpawnedEvent;
+	local ROPlayerReplicationInfo ROPRI;
+	local ROVehicle ROV;
+	local ROPlayerController ROPC, MySL;
+	local rotator MySLRot;
+	local bool bIgnoreRespawnTickets;
+
+	if ( bRestartLevel && WorldInfo.NetMode != NM_DedicatedServer &&
+		WorldInfo.NetMode != NM_ListenServer && WorldInfo.NetMode != NM_StandAlone )
+	{
+		`warn("bRestartLevel && !server, abort from RestartPlayer" @ WorldInfo.NetMode);
+		return;
+	}
+
+	if ( AIController(NewPlayer) != none )
+	{
+		if ( TooManyBots(NewPlayer) )
+		{
+			NewPlayer.Destroy();
+			return;
+		}
+	}
+
+	// if the Player's on a Team
+	if ( NewPlayer.PlayerReplicationInfo != none && NewPlayer.PlayerReplicationInfo.Team != none )
+	{
+		// Use the Team's Index to find a Start Spot
+		TeamNum = NewPlayer.PlayerReplicationInfo.Team.TeamIndex;
+	}
+	else
+	{
+		// Use the default Team Number
+		TeamNum = 255;
+	}
+
+	/*
+	* If we're requesting an Ambush Respawn...
+	* Validate our team is Axis, our VC commander is alive and they have a pawn. Failing to verify if their pawn existed caused a weird edge case where calling Ambush Respawn when in the Spawn Select menu would cause the
+	* reinforcements to spawn in the air and plummet to their death for some reason Possibly because the pawn hadn't been placed yet.
+	*/
+	if(AttemptingAmbushRespawn(NewPlayer))
+	{
+		StartSpot = Spawn(class'ROSpawnNavigationPoint',,,VCAmbushStartLocation);
+	}
+	else // else just use standard 'find me a start spot' logic for this player.
+	{
+		// Find a start spot
+		StartSpot = FindPlayerStart(NewPlayer, TeamNum);
+
+		// If a start spot wasn't found...
+		if ( StartSpot == none )
+		{
+			// Check for a previously assigned spot
+		/*	if ( NewPlayer.StartSpot != none )
+			{
+				StartSpot = NewPlayer.StartSpot;
+				`logd("Player start not found, using last start spot");
+			}
+			else if(NewPlayer.StartSpot == none)
+			{*/
+				// Otherwise abort
+				`logd("Player start not found, failed to restart player");
+				return;
+			//}
+		}
+	}
+
+	// Try to create a pawn to use of the default class for this player
+	if ( NewPlayer.Pawn == none )
+	{
+		NewPlayer.Pawn = SpawnDefaultPawnFor(NewPlayer, StartSpot);
+	}
+
+	// If we couldn't create a new Pawn
+	if ( NewPlayer.Pawn == none )
+	{
+		`log("Failed to spawn player at" @ StartSpot);
+
+		NewPlayer.StartSpot = StartSpot;
+
+		if( !NewPlayer.IsInState('Spectating') )
+		{
+			NewPlayer.GotoState('Dead');
+
+			if ( PlayerController(NewPlayer) != None )
+			{
+				PlayerController(NewPlayer).ClientGotoState('Dead', 'Begin');
+			}
+		}
+	}
+	else
+	{
+	    if( !bSpawnOnSquadLeader && !bSpawnOnSquadTunnel && ROVehicleBase(NewPlayer.Pawn) == none && SpawnProtectionDelay > 0.05)
+	    {
+	        NewPlayer.bGodMode = true;
+			NewPlayer.SetTimer(SpawnProtectionDelay, false, 'RestoreGodMode');
+		}
+		// else
+		// {
+		// 	`Log("Skipping spawn protection");
+		// }
+
+		ROPC = ROPlayerController(NewPlayer);
+		if ( ROPC != none && ROPC.bIsSwappingRole )	// If the player is swapping roles in spawn, don't use tickets to spawn them
+			bIgnoreRespawnTickets = true;
+
+		// RS2PR-5811 - Also, skip ticket consumption if we're in the midst of an Instant Deploy (Force/Ambush respawn) for this player's team. -Nate
+		if(ROPC != None
+			&& TeamNum != 255
+			&& TeamNum != `NEUTRAL_TEAM_INDEX
+			&& TeamNum == CurInstantDeployTeam
+			&& CurReinforcementbForceRespawn)
+		{
+			bIgnoreRespawnTickets = true;
+		}
+
+		if ( !bIgnoreRespawnTickets )
+		{
+			// Reduce the Player's Team's Reinforcement count if Enhanced Logistics is active and this is NOT an Ambush Respawn.
+			if(NewPlayer.PlayerReplicationInfo.GetTeamNum() == `AXIS_TEAM_INDEX
+				&& bEnableEnhancedLogistics
+				&& !bEnableAmbushRespawn)
+			{
+				ELCounter++;
+				if(ELCounter % 2 == 0)
+				{
+					ConsumeReinforcement(NewPlayer);
+				}
+			}
+			else // Must be a regular spawn OR Enhanced Logistics is still active and we're Ambush Respawning, consume a ticket normally.
+			{
+				ConsumeReinforcement(NewPlayer);
+			}
+		}
+
+		// Initialize the Pawn and start it up
+		NewPlayer.Pawn.SetAnchor(StartSpot);
+
+		if ( PlayerController(NewPlayer) != None )
+		{
+			PlayerController(NewPlayer).TimeMargin = -0.1;
+		}
+
+		NewPlayer.Pawn.LastStartSpot = PlayerStart(StartSpot);
+		NewPlayer.Pawn.LastStartTime = WorldInfo.TimeSeconds;
+		NewPlayer.Possess(NewPlayer.Pawn, false);
+		NewPlayer.Pawn.PlayTeleportEffect(true, true);
+		NewPlayer.ClientSetRotation(NewPlayer.Pawn.Rotation, TRUE);
+
+		if ( !WorldInfo.bNoDefaultInventoryForPlayer )
+		{
+			AddDefaultInventory(NewPlayer.Pawn);
+		}
+
+		SetPlayerDefaults(NewPlayer.Pawn);
+		AttachPlayerRadio(NewPlayer.Pawn);
+
+		if ( ROPC != none )
+			ROPC.Spawned();
+
+		// activate spawned events
+		if ( WorldInfo.GetGameSequence() != none )
+		{
+			WorldInfo.GetGameSequence().FindSeqObjectsByClass(class'SeqEvent_PlayerSpawned', true, Events);
+			for ( Idx = 0; Idx < Events.Length; Idx++ )
+			{
+				SpawnedEvent = SeqEvent_PlayerSpawned(Events[Idx]);
+				if ( SpawnedEvent != none && SpawnedEvent.CheckActivate(NewPlayer,NewPlayer) )
+				{
+					SpawnedEvent.SpawnPoint = startSpot;
+					SpawnedEvent.PopulateLinkedVariableValues();
+				}
+			}
+		}
+	}
+
+	ROPRI = ROPlayerReplicationInfo(NewPlayer.PlayerReplicationInfo);
+	`DRLogSpawning(NewPlayer.PlayerReplicationInfo.PlayerName @ "checking for Tank Spawn" @ ROPRI @ ROPRI.RoleInfo @ ROPRI.RoleInfo.bCanBeTankCrew);
+	if ( ROPRI != none && ROPRI.RoleInfo != none && ROPRI.RoleInfo.bCanBeTankCrew && ROVehicleBase(NewPlayer.Pawn) == none )
+	{
+		NewPlayer.Pawn.SetCollision(false, false);
+		AddDefaultInventory(NewPlayer.Pawn);
+
+	/*	ROV = ROMapInfo(WorldInfo.GetMapInfo()).GetFireTeamVehicle(TeamNum, bReverseRolesAndSpawns, ROPRI.SquadIndex, ROPRI.FireTeamIndex);
+		`DRLogSpawning(NewPlayer.PlayerReplicationInfo.PlayerName @ "checking Vehicle" @ ROPRI.RoleInfo.bIsTankCommander @ ROV @ (ROV != none ? ROV.Health : -1));
+		if ( ROPRI.RoleInfo.bIsTankCommander && (ROV == none || ROV.Health <= 0) )
+		{
+			SpawnTankAndCrew(NewPlayer);
+			// reset camera relative to tank
+			NewPlayer.ClientSetRotation(rot(0,0,0));
+		}
+		else if( ROV != none && ROV.Health > 0 )
+		{
+			ROPC = ROPlayerController(NewPlayer);
+
+			if ( ROPC != none )
+			{
+				// Handle the failure of not being able to take over tank AI so you don't just end up floating in space
+				if( !ROPC.TryPossessVehicleAI() )
+				{
+					`DRLogSpawning("TryPossessVehicleAI Failed to take over vehicle AI!!!!!!!!");
+
+					// Get rid of the pawn that was created if we can't get in the vehicle
+					NewPlayer.Pawn.Destroy();
+					NewPlayer.UnPossess();
+
+					NewPlayer.GotoState('Dead');
+
+					if ( PlayerController(NewPlayer) != None )
+					{
+						PlayerController(NewPlayer).ClientGotoState('Dead', 'Begin');
+					}
+				}
+				else
+				{
+				   	// reset camera relative to tank
+					NewPlayer.ClientSetRotation(rot(0,0,0));
+				}
+			}
+		}
+		else
+		{*/
+			// Handle the failure of not spawning a tank or taking over vehicle AI so you don't just end up floating in space
+			`DRLogSpawning("Failed to spawn a tank or spawn in a tank!!!!!!!!");
+
+			 // Get rid of the pawn that was created if we can't get in the vehicle
+			NewPlayer.Pawn.Destroy();
+			NewPlayer.UnPossess();
+
+			NewPlayer.GotoState('Dead');
+
+			if ( PlayerController(NewPlayer) != None )
+			{
+				PlayerController(NewPlayer).ClientGotoState('Dead', 'Begin');
+			}
+	//	}
+	}
+	else if ( ROPRI != none && ROPRI.RoleInfo != none && ROPRI.RoleInfo.bIsPilot && ROVehicleBase(NewPlayer.Pawn) == none )
+	{
+		//NewPlayer.Pawn.SetCollision(false, false);
+		AddDefaultInventory(NewPlayer.Pawn);
+
+		ROPC = ROPlayerController(NewPlayer);
+		if ( ROPC != none )
+			ROV = ROPC.LastFlownHelo;
+
+		if( ROV != none && ROV.Health > 0 )
+		{
+			if( !ROPC.TryPossessHeloCopilot() )
+			{
+				`DRLogSpawning("TryPossessHeloCopilot Failed to take over copilot seat!!!!!!!!");
+
+				// Get rid of the pawn that was created if we can't get in the vehicle
+				NewPlayer.Pawn.Destroy();
+				NewPlayer.UnPossess();
+
+				NewPlayer.GotoState('Dead');
+
+				if ( PlayerController(NewPlayer) != None )
+				{
+					PlayerController(NewPlayer).ClientGotoState('Dead', 'Begin');
+				}
+			}
+			else
+			{
+			   	// reset camera relative to helo
+				NewPlayer.ClientSetRotation(rot(0,0,0));
+				NewPlayer.bGodMode = false;
+				NewPlayer.ClearTimer('RestoreGodMode');
+				ROV.HandleBattleChatterEvent(`BATTLECHATTER_HeloPilotDead);
+			}
+		}
+	}
+
+	if ( bRoundActive && bRoundHasBegun && !bInRoundStartScreen )
+	{
+		if ( ROPlayerController(NewPlayer) != none )
+		{
+			ROPlayerController(NewPlayer).ClientHideRoundStartScreen();
+			ROPlayerController(NewPlayer).SetCinematicMode(false, false, false, true, false, true);
+		}
+	}
+	else if ( bInRoundStartScreen )
+	{
+		if ( ROPlayerController(NewPlayer) != none )
+		{
+			ROPlayerController(NewPlayer).ClientCloseLobbyScene();
+			ROPlayerController(NewPlayer).ClientCloseTeamWinScreen();
+			ROPlayerController(NewPlayer).SetCinematicMode(true, false, false, true, false, true);
+			ROPlayerController(NewPlayer).ClientShowRoundStartScreen(GameReplicationInfo.RemainingTime);
+		}
+
+		if ( ROAIController(NewPlayer) != none )
+		{
+			ROAIController(NewPlayer).AISuspended();
+		}
+	}
+
+	if( ROPRI != none )
+	{
+		ROPRI.bWeaponNeedsResupply = false;
+
+		if( ROPRI.Squad != none && ROPRI.bIsSquadLeader )
+		{
+			ROPRI.Squad.SRI.bIsSquadLeaderAlive = true;
+			ROPRI.Squad.SRI.SquadLeaderLocation = NewPlayer.Pawn.Location;
+			ROPRI.Squad.SRI.SquadLeaderHeadLocation = ROPawn(NewPlayer.Pawn).Mesh.GetBoneLocation(ROPawn(NewPlayer.Pawn).HeadBoneName,0);
+			ROPRI.Squad.SRI.bSLJustGotPromoted = false;
+		}
+
+		if( bSpawnOnSquadTunnel )
+		{
+			if( bSpawnOnSquadLeader && ROPawn(NewPlayer.Pawn).bCanCrouch )
+			{
+				ROPawn(NewPlayer.Pawn).ServerForceCrouch();
+			}
+
+			// Give the SL some points
+			ScoreSquadSpawn(NewPlayer, ROPRI.Squad.GetSquadLeader());
+		}
+		// Re-purposed for CHAR-1369: Face the same direction as our SL. Also adapt their stance (crouch, prone) -Nate.
+		// Sturt: This check MUST now happen after the tunnel spawn check, as we're borrowing bSpawnOnSquadLeader for use there as well
+		else if( bSpawnOnSquadLeader )
+		{
+			// Grab our Squad Leader.
+			MySL = ROPlayerController(ROPRI.Squad.GetSquadLeader());
+
+			if(MySL != None)
+			{
+				// Grab the SL's rotation (Yaw).
+				MySLRot = MySL.Pawn.Rotation;
+				MySLRot.Pitch = 0;
+				MySLRot.Roll = 0;
+
+				// Set our new player's rotation (Yaw) to that of their SL's roation (Yaw).
+				NewPlayer.ClientSetRotation(MySLRot);
+
+				// ---- Attempt to force our new pawn to adapt the stance of our SL (crouched, prone, etc.)
+
+				// Firstly, if our SL is proning, try to force this new pawn to go prone.
+				if((ROPawn(MySL.Pawn).bIsProning || ROPawn(MySL.Pawn).IsProneTransitioning())
+					&& (ROPawn(NewPlayer.Pawn).CanProneTransition() && ROPawn(NewPlayer.Pawn).bCanProne))
+				{
+					ROPawn(NewPlayer.Pawn).ServerForceProne();
+				}
+				// Else if the SL is crouched or our new pawn cannot prone, attempt to force crouch.
+				else if((ROPawn(MySL.Pawn).bIsCrouched && ROPawn(NewPlayer.Pawn).bCanCrouch)
+					|| !ROPawn(NewPlayer.Pawn).bCanProne)
+				{
+					ROPawn(NewPlayer.Pawn).ServerForceCrouch();
+				}
+			}
+
+			// Give the SL some points
+			ScoreSquadSpawn(NewPlayer, ROPRI.Squad.GetSquadLeader());
+		}
+	}
+
+	ROPRI.LastPRIToSpotMeIndex = 255; // reset to handle round end, any other circumstance
+
+	if ( ROPlayerController(NewPlayer) != none )
+		ROPlayerController(NewPlayer).StartTimeInRole = WorldInfo.TimeSeconds;
+}
+
+function NavigationPoint FindPlayerStartWithOverride(Controller Player, int SpawnIndexOverride, optional byte InTeam, optional string IncomingName)
+{
+	local byte Team, SelectedSpawnIndex, SpawnOnSLFailCode;
+	local NavigationPoint BestStart, N;
+	local vector SquadLeaderSpawnPoint;
+	local float /*BestRating, */NewRating;
+	local Teleporter Tel;
+	local ROPlayerStart P;
+	local ROMapInfo ROMI;
+	local ROPlayerReplicationInfo ROPRI, SLROPRI; // MGPRI;
+	// local Pawn MGPawn;
+	local ROTeamInfo TeamInfo;
+	local ROVolumePlayerStartGroup PlayerStartVolume;
+	//local ROVehicle TransportVehicle;
+	local ROVehicleHelicopter HelicopterVehicle;
+	local ROPlaceableSpawn SpawnTunnel;
+	local ROObjective NearestObjective;
+	local bool bTankCrew, bWantsVehicleSpawn, bCanSpawnInHelo, bPilot, bCanSpawnAtTunnel, bRadioMan;
+	local Controller SquadLeader;
+	local int i;
+
+	//BestRating = 0;
+	bSpawnOnSquadLeader = false;
+	bSpawnOnSquadTunnel = false;
+
+	// int failure code.
+	SpawnOnSLFailCode = 255;
+
+	// Reset our cached controller.
+	ControllerFailedSpawnOnSL = None;
+
+	// Use InTeam if player doesn't have a team yet
+	Team = (Player != none && Player.PlayerReplicationInfo != none && Player.PlayerReplicationInfo.Team != None) ? byte(Player.PlayerReplicationInfo.Team.TeamIndex) : InTeam;
+
+	// if the specified Team is invalid(NOTE: Must allow FindPlayerStart to return a NavPoint when creating a new controller)
+	if ( Player != none && Team != `AXIS_TEAM_INDEX && Team != `ALLIES_TEAM_INDEX )
+	{
+		// Don't let them Spawn until they choose a Team
+		return none;
+	}
+
+	// allow GameRulesModifiers to override playerstart selection
+	if (BaseMutator != None)
+	{
+		N = BaseMutator.FindPlayerStart(Player, InTeam, IncomingName);
+		if (N != None)
+		{
+			return N;
+		}
+	}
+
+	// if incoming start is specified, then just use it
+	if ( IncomingName != "" )
+	{
+		foreach WorldInfo.AllNavigationPoints(class 'Teleporter', Tel)
+		{
+			if ( string(Tel.Tag) ~= IncomingName )
+			{
+				return Tel;
+			}
+		}
+	}
+
+	if ( Player != none )
+	{
+		ROPRI = ROPlayerReplicationInfo(Player.PlayerReplicationInfo);
+	}
+
+	if ( ROPRI != none )
+	{
+		if ( ROPRI.RoleInfo != none )
+		{
+			bTankCrew = ROPRI.RoleInfo.bCanBeTankCrew;
+			bPilot = ROPRI.RoleInfo.bIsPilot;
+			bRadioMan = ROPRI.RoleInfo.bIsRadioMan;
+		}
+
+		SelectedSpawnIndex = ROPRI.SpawnSelection;
+
+		if ( SelectedSpawnIndex >= 128 )
+		{
+			SelectedSpawnIndex -= 128;
+		}
+		if( SpawnIndexOverride != -1 )
+		{
+		   SelectedSpawnIndex = SpawnIndexOverride;
+		}
+
+		if( !bTankCrew && !bPilot )
+		{
+			TeamInfo = ROTeamInfo(WorldInfo.GRI.Teams[Team]);
+			if( TeamInfo != none)
+			{
+				if(SelectedSpawnIndex == 123) // U.S. Commander Loach spawn.
+				{
+					if(ROPRI.RoleInfo.bIsTeamLeader && TeamInfo.GetTeamNum() == `ALLIES_TEAM_INDEX)
+						bCanSpawnInHelo = true;
+				}
+				else if(SelectedSpawnIndex == 124)
+				{
+					if( TeamInfo.GetSpawnableHelicopter(ROPRI.SquadIndex,HelicopterVehicle) )
+						bCanSpawnInHelo = true;
+				}
+				else if( SelectedSpawnIndex >= 110 && SelectedSpawnIndex <= 119 )
+				{
+					if( TeamInfo.GetSpawnableHelicopterByIndex(HelicopterVehicle, SelectedSpawnIndex - 110) )
+						bCanSpawnInHelo = true;
+				}
+			}
+		}
+
+		if( ROAIController(Player) != none )
+		{
+			if( bCanSpawnInHelo && FRand() > 0.65 )
+				SelectedSpawnIndex = 124; // +1 because of MG deprecation
+			else if( !bDisableSpawnOnSquadLeader && ROGameReplicationInfo(WorldInfo.GRI) != none && FRand() > 0.85 )
+			{
+				if( ROGameReplicationInfo(WorldInfo.GRI).SquadSpawnMethod[Team] == ROSSM_Tunnel )
+					SelectedSpawnIndex = 125;
+				else if( ROGameReplicationInfo(WorldInfo.GRI).SquadSpawnMethod[Team] == ROSSM_SquadLeader )
+					SelectedSpawnIndex = 126;
+			}
+		}
+	}
+
+	// if we're trying to Spawn on Squad Leader
+	if ( !bTankCrew && !bPilot && Player != none && SelectedSpawnIndex == 126 ) //ROPlayerController(Player) != none changed to Player != none
+	{
+		ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+		SquadLeader = ROPRI.Squad != none ? ROPRI.Squad.GetSquadLeader() : none;
+		SLROPRI = SquadLeader != none ? ROPlayerReplicationInfo(SquadLeader.PlayerReplicationInfo) : none;
+
+		`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "attempting spawn on Squad Leader" @ ROMI @ ROPRI @ ROPRI.Squad @ SquadLeader @ ROPLayerController(Player).SRI.SquadLeaderLocation);
+		if ( ROMI != none && ROPRI != none && ROPRI.Squad != none && SquadLeader != none && SquadLeader != Player )
+		{
+			if( SLROPRI.TeamHelicopterArrayIndex != 255 && ROTeamInfo(ROPRI.Team).TeamHelicopterArray[SLROPRI.TeamHelicopterArrayIndex].CanSpawnInto() ) // spawn into helo if SL is in one and there are seats available
+			{
+				HelicopterVehicle = ROTeamInfo(ROPRI.Team).TeamHelicopterArray[SLROPRI.TeamHelicopterArrayIndex];
+
+				PlayerStartVolume = GetClosestActivePlayerStartVolume(ROPLayerController(Player).SRI.SquadLeaderLocation, Team, false); // in case spawning fails
+
+				if ( ROPlayerController(Player) != none )
+					ROPlayerController(Player).SpawnedInHelicopter();
+
+				return SpawnPlayerInHelicopter(Player, HelicopterVehicle, PlayerStartVolume, Team);
+			}
+			// Try to find a suitable location near the SL
+			else if( FindNearestSpawnablePoint(SquadLeader, SquadLeaderSpawnPoint,, SpawnOnSLFailCode) )
+			{
+				BestStart = Spawn(class'ROSpawnNavigationPoint',,,SquadLeaderSpawnPoint);
+			}
+
+			if ( BestStart != none )
+			{
+				NearestObjective = GetNearestActiveObjective(BestStart.Location);
+				if ( NearestObjective != none )
+				{
+					BestStart.SetRotation(rotator(NearestObjective.Location - BestStart.Location));
+				}
+
+				bSpawnOnSquadLeader = true;
+				return BestStart;
+			}
+			else
+			{
+				// SL in protected spawn volume.
+				if(SpawnOnSLFailCode == 0)
+				{
+					// Message to spawning player.
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSLFailedInSpawnVol,,,Player);
+					// Message to SL.
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailedInSpawnVol);
+				}
+				// SL in Objective volume.
+				else if(SpawnOnSLFailCode == 1)
+				{
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSLFailedInObjVol,,,Player);
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailedInObjVol);
+				}
+				// SL In Tunnel Spawn
+				else if(SpawnOnSLFailCode == 2)
+				{
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSLFailedInTunnel,,,Player);
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailedInTunnel);
+				}
+				// Either SL is dead / gone, or for some strange technical reason we failed to spawn on the SL. Keep trying and put them back in the spawn queue.
+				else
+				{
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSquadLeaderFailed,,,Player);
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailed);
+				}
+
+				// Cache our controller that failed to spawn on the SL.
+				ControllerFailedSpawnOnSL = Player;
+				`DRLogSpawning("Failed to spawn on SL- Caching controller "$ControllerFailedSpawnOnSL$" and will return this controller to spawn queue.");
+
+				// Reset fail code.
+				SpawnOnSLFailCode = 255;
+			}
+		}
+	}
+
+	// if we're trying to Spawn on our Commander
+	if ( bRadioMan && Player != none && SelectedSpawnIndex == 109 )
+	{
+		ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+		SquadLeader = ROPlayerController(Player).GetTeamLeader();
+		SLROPRI = SquadLeader != none ? ROPlayerReplicationInfo(SquadLeader.PlayerReplicationInfo) : none;
+
+		`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "attempting spawn on Squad Leader" @ ROMI @ ROPRI @ ROPRI.Squad @ SquadLeader @ ROPLayerController(Player).SRI.SquadLeaderLocation);
+		if ( ROMI != none && ROPRI != none && ROPRI.Squad != none && SquadLeader != none && SquadLeader != Player )
+		{
+			if( SLROPRI.TeamHelicopterArrayIndex != 255 && ROTeamInfo(ROPRI.Team).TeamHelicopterArray[SLROPRI.TeamHelicopterArrayIndex].CanSpawnInto() ) // spawn into helo if SL is in one and there are seats available
+			{
+				HelicopterVehicle = ROTeamInfo(ROPRI.Team).TeamHelicopterArray[SLROPRI.TeamHelicopterArrayIndex];
+
+				PlayerStartVolume = GetClosestActivePlayerStartVolume(ROPLayerController(Player).SRI.SquadLeaderLocation, Team, false); // in case spawning fails
+
+				if ( ROPlayerController(Player) != none )
+					ROPlayerController(Player).SpawnedInHelicopter();
+
+				return SpawnPlayerInHelicopter(Player, HelicopterVehicle, PlayerStartVolume, Team);
+			}
+			// Try to find a suitable location near the SL
+			else if( FindNearestSpawnablePoint(SquadLeader, SquadLeaderSpawnPoint,, SpawnOnSLFailCode) )
+			{
+				BestStart = Spawn(class'ROSpawnNavigationPoint',,,SquadLeaderSpawnPoint);
+			}
+
+			if ( BestStart != none )
+			{
+				NearestObjective = GetNearestActiveObjective(BestStart.Location);
+				if ( NearestObjective != none )
+				{
+					BestStart.SetRotation(rotator(NearestObjective.Location - BestStart.Location));
+				}
+
+				bSpawnOnSquadLeader = true;
+				return BestStart;
+			}
+			else
+			{
+				// SL in protected spawn volume.
+				if(SpawnOnSLFailCode == 0)
+				{
+					// Message to spawning player.
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSLFailedInSpawnVol,,,Player);
+					// Message to SL.
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailedInSpawnVol);
+				}
+				// SL in Objective volume.
+				else if(SpawnOnSLFailCode == 1)
+				{
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSLFailedInObjVol,,,Player);
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailedInObjVol);
+				}
+				// SL In Tunnel Spawn
+				else if(SpawnOnSLFailCode == 2)
+				{
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSLFailedInTunnel,,,Player);
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailedInTunnel);
+				}
+				// Either SL is dead / gone, or for some strange technical reason we failed to spawn on the SL. Keep trying and put them back in the spawn queue.
+				else
+				{
+					PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnSquadLeaderFailed,,,Player);
+					PlayerController(ROPRI.Squad.GetSquadLeader()).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnOnYouFailed);
+				}
+
+				// Cache our controller that failed to spawn on the SL.
+				ControllerFailedSpawnOnSL = Player;
+				`DRLogSpawning("Failed to spawn on SL- Caching controller "$ControllerFailedSpawnOnSL$" and will return this controller to spawn queue.");
+
+				// Reset fail code.
+				SpawnOnSLFailCode = 255;
+			}
+		}
+	}
+
+	// Trying to spawn at a Placeable Tunnel
+	if ( !bTankCrew && !bPilot && Player != none && SelectedSpawnIndex == 125 )
+	{
+		// Grab our squad's tunnel if it's available and active
+		if( ROPRI.Squad.SRI.bHasSpawnTunnel )
+		{
+			SpawnTunnel = ROPRI.Squad.PlaceableSpawn;
+			if( ROPRI.Squad.SRI.bIsSpawnTunnelActive )
+			{
+				bCanSpawnAtTunnel = true;
+			}
+			else if (SpawnTunnel != none && SpawnTunnel.bEnemyClose)
+			{
+				ControllerFailedSpawnOnSL = Player;
+				`DRLogSpawning("Failed to spawn on SL- Caching controller "$ControllerFailedSpawnOnSL$" and will return this controller to spawn queue.");
+				PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnTunnelEnemyClose,,,Player);
+			}
+			else
+			{
+				ControllerFailedSpawnOnSL = Player;
+				`DRLogSpawning("Failed to spawn on SL- Caching controller "$ControllerFailedSpawnOnSL$" and will return this controller to spawn queue.");
+				PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnTunnelInvalid,,,Player);
+			}
+		}
+
+		`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "attempting spawn at Placeable Tunnel" @ ROPRI @ ROPRI.Squad @ SpawnTunnel @ SpawnTunnel.Location);
+
+		if ( bCanSpawnAtTunnel )
+		{
+			if( FindSpawnablePointForTunnel( SpawnTunnel, SquadLeaderSpawnPoint) )
+			{
+				BestStart = Spawn(class'ROSpawnNavigationPoint',,,SquadLeaderSpawnPoint);
+			}
+
+			if ( BestStart != none )
+			{
+				NearestObjective = GetNearestActiveObjective(BestStart.Location);
+				if ( NearestObjective != none )
+				{
+					BestStart.SetRotation(rotator(NearestObjective.Location - BestStart.Location));
+				}
+
+				bSpawnOnSquadTunnel = true;
+
+				return BestStart;
+			}
+			else
+			{
+				ControllerFailedSpawnOnSL = Player;
+				`DRLogSpawning("Failed to spawn on Tunnel - Caching controller "$ControllerFailedSpawnOnSL$" and will return this controller to spawn queue.");
+				PlayerController(Player).ReceiveLocalizedMessage(class'ROLocalMessageGameAlert', ROMSG_SpawnAtTunnelFailed,,,Player);
+			}
+		}
+	}
+
+	// Trying to spawn in Helicopter
+	if ( Player != none && bCanSpawnInHelo )
+	{
+		if( SelectedSpawnIndex >= 110 && SelectedSpawnIndex <= 119 )
+		{
+			// if our original helicopter choice has died while waiting to spawn, see if another is available
+			if( HelicopterVehicle == none )
+			{
+				// If one isn't available, we can't spawn in a helo, so change the condition
+				if( !TeamInfo.GetSpawnableHelicopterByIndex(HelicopterVehicle, SelectedSpawnIndex - 110) )
+					bCanSpawnInHelo = false;
+			}
+		}
+		else if( SelectedSpawnIndex == 124 )
+		{
+			// if our original helicopter choice has died while waiting to spawn, see if another is available
+			if( HelicopterVehicle == none )
+			{
+				// If one isn't available, we can't spawn in a helo, so change the condition
+				if( !TeamInfo.GetSpawnableHelicopter(ROPRI.SquadIndex,HelicopterVehicle) )
+					bCanSpawnInHelo = false;
+			}
+		}
+		else if(SelectedSpawnIndex == 123)
+		{
+			if(HelicopterVehicle == None)
+			{
+				if(!TeamInfo.GetSpawnableHelicopterForCommander(HelicopterVehicle))
+					bCanSpawnInHelo = false;
+			}
+		}
+
+		`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "attempting spawn in Helicopter" @ ROPRI @ ROPRI.Squad @ HelicopterVehicle @ HelicopterVehicle.Location);
+
+		if ( bCanSpawnInHelo )
+		{
+			if ( ROPlayerController(Player) != none )
+				ROPlayerController(Player).SpawnedInHelicopter();
+
+			return SpawnPlayerInHelicopter(Player, HelicopterVehicle, PlayerStartVolume, Team);
+		}
+	}
+
+	if (ControllerFailedSpawnOnSL == None
+		&& Player != none
+		&& BestStart == none
+		&& SelectedSpawnIndex < `MAX_ACTIVE_SPAWNS
+		&& (Team == `AXIS_TEAM_INDEX || Team == `ALLIES_TEAM_INDEX) )
+	{
+		TeamInfo = ROTeamInfo(WorldInfo.GRI.Teams[Team]);
+
+		`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "attempting to use SelectedSpawnIndex" @ Team @ TeamInfo @ bTankCrew @ SelectedSpawnIndex);
+		if ( TeamInfo != none )
+		{
+			if ( bTankCrew )// || TransportVehicle == none )
+			{
+				// Get selected spawn volume (Bots choose randomly instead)
+				if ( SelectedSpawnIndex == 0 && !Player.IsA('PlayerController'))
+				{
+					PlayerStartVolume = GetRandomVehicleSpawnVolume(TeamInfo);
+					`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Vehicle SelectedSpawn status" @ PlayerStartVolume @ PlayerStartVolume.PlayerStartList[0].bEnabled);
+				}
+				else
+				{
+					PlayerStartVolume = TeamInfo.AvailableVehicleSpawnLocations[SelectedSpawnIndex];
+					`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Vehicle SelectedSpawn status" @ PlayerStartVolume @ PlayerStartVolume.PlayerStartList[0].bEnabled);
+				}
+
+				// If the selected volume is valid then continue
+				if ( PlayerStartVolume != none && PlayerStartVolume.PlayerStartList.Length > 0 && PlayerStartVolume.PlayerStartList[0].bEnabled )
+				{
+					for ( i = 0; i < PlayerStartVolume.PlayerStartList.Length; i++ )
+					{
+						// Select a Random Spawn Point from the list and Rate it
+						P = PlayerStartVolume.PlayerStartList[rand(PlayerStartVolume.PlayerStartList.Length)];
+
+						if ( !P.bOutsidePlayableArea )
+						{
+							NewRating = RatePlayerStart(P, Team, Player);
+
+							// If the random Player Start can be spawned at, use it
+							if ( NewRating > 0.0 )
+							{
+								`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "found TankCrew spawn" @ P @ NewRating @ PlayerStartVolume);
+
+								return P;
+							}
+						}
+					}
+				}
+			}
+			else if( bPilot )
+			{
+				// If player wants to spawn with helicopters
+				PlayerStartVolume = TeamInfo.AvailablePilotSpawnLocations[SelectedSpawnIndex];
+				`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Pilot as Infantry SelectedSpawn status" @ PlayerStartVolume @ PlayerStartVolume.PlayerStartList[0].bEnabled @ PlayerStartVolume.PlayerStartList.Length);
+
+				// If the selected volume is valid then continue
+				if ( PlayerStartVolume != none && PlayerStartVolume.PlayerStartList.Length > 0 && PlayerStartVolume.PlayerStartList[0].bEnabled )
+				{
+					for ( i = 0; i < PlayerStartVolume.PlayerStartList.Length; i++ )
+					{
+						// Select a Random Spawn Point from the list and Rate it
+						P = PlayerStartVolume.PlayerStartList[rand(PlayerStartVolume.PlayerStartList.Length)];
+
+						if ( P != none && !P.bOutsidePlayableArea )
+						{
+							NewRating = RatePlayerStart(P, Team, Player);
+
+							// If the random Player Start can be spawned at, use it
+							if ( NewRating > 0.0 )
+							{
+								`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "found Pilot spawn" @ P @ NewRating @ PlayerStartVolume);
+
+								return P;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				// Get selected spawn volume (Bots choose randomly instead)
+				if ( SelectedSpawnIndex == 0 && !Player.IsA('PlayerController'))
+				{
+					PlayerStartVolume = GetRandomSpawnVolume(TeamInfo);
+					`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Infantry SelectedSpawn status" @ PlayerStartVolume @ PlayerStartVolume.PlayerStartList[0].bEnabled @ PlayerStartVolume.PlayerStartList.Length);
+				}
+				else
+				{
+					PlayerStartVolume = TeamInfo.AvailableSpawnLocations[SelectedSpawnIndex];
+					`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Infantry SelectedSpawn status" @ PlayerStartVolume @ PlayerStartVolume.PlayerStartList[0].bEnabled @ PlayerStartVolume.PlayerStartList.Length);
+				}
+
+				// If the selected volume is valid then continue
+				if ( PlayerStartVolume != none && PlayerStartVolume.PlayerStartList.Length > 0 && PlayerStartVolume.PlayerStartList[0].bEnabled )
+				{
+					for ( i = 0; i < PlayerStartVolume.PlayerStartList.Length; i++ )
+					{
+						// Select a Random Spawn Point from the list and Rate it
+						P = PlayerStartVolume.PlayerStartList[rand(PlayerStartVolume.PlayerStartList.Length)];
+
+						if ( P != none && !P.bOutsidePlayableArea )
+						{
+							NewRating = RatePlayerStart(P, Team, Player);
+
+							`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Infantry SelectedSpawn status - Checking" @ P @ P.bOutsidePlayableArea @ NewRating);
+							// If the random Player Start can be spawned at, use it
+							if ( NewRating > 0.0 )
+							{
+								`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "found infantry spawn" @ P @ NewRating @ PlayerStartVolume);
+								return P;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// if we're not trying to Spawn on Squad Leader or MGer or there wasn't a good place to Spawn near one of them
+	if ( ControllerFailedSpawnOnSL == None
+		&& Player != none
+		&& BestStart == none )
+	{
+		bWantsVehicleSpawn = (bTankCrew || (/*TransportVehicle == none &&*/ SelectedSpawnIndex == 125));		// bumped to 125 from 124
+
+		foreach AllActors(class'ROVolumePlayerStartGroup', PlayerStartVolume)
+		{
+			if ( PlayerStartVolume.PlayerStartList.Length > 0 )
+			`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Checking PlayerStartVolume" @ PlayerStartVolume.PlayerStartList.Length @ PlayerStartVolume.PlayerStartList[0].bEnabled @ PlayerStartVolume.PlayerStartList[0].TeamIndex @ bTankCrew @ ROVolumePlayerStartGroupTankCrew(PlayerStartVolume) @ SelectedSpawnIndex);
+			if ( PlayerStartVolume.PlayerStartList.Length <= 0 || !PlayerStartVolume.PlayerStartList[0].bEnabled || PlayerStartVolume.PlayerStartList[0].TeamIndex != Team ||
+				 (bWantsVehicleSpawn && ROVolumePlayerStartGroupTankCrew(PlayerStartVolume) == none) ||
+				 (!bWantsVehicleSpawn && ROVolumePlayerStartGroupTankCrew(PlayerStartVolume) != none) ||
+				  (bPilot && ROVolumePlayerStartGroupPilot(PlayerStartVolume) == none) ||
+				 (!bPilot && ROVolumePlayerStartGroupPilot(PlayerStartVolume) != none))
+			{
+				continue;
+			}
+
+			`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Looping through all PlayerStarts" @ PlayerStartVolume);
+			for ( i = 0; i < PlayerStartVolume.PlayerStartList.Length; i++ )
+			{
+				// Select a Random Spawn Point from the list and Rate it
+				P = PlayerStartVolume.PlayerStartList[rand(PlayerStartVolume.PlayerStartList.Length)];
+
+				if ( !P.bOutsidePlayableArea )
+				{
+					NewRating = RatePlayerStart(P, Team, Player);
+
+					// If the random Player Start can be spawned at, use it
+					if ( NewRating > 0.0 )
+					{
+						`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Found Player Start" @ P @ NewRating @ PlayerStartVolume);
+
+						if ( SelectedSpawnIndex == 125 ) 	// bumped to 125 from 124
+						{
+							SpawnPlayerInTransport(Player, ROPRI.SquadIndex, none, false, P.Location, P.Rotation);
+						}
+
+						return P;
+					}
+				}
+			}
+		}
+	}
+
+	if (ControllerFailedSpawnOnSL == None
+		&& BestStart == none
+		&& Player == none )
+	{
+		// No playerstart found, so pick any NavigationPoint to keep player from failing to enter game
+		foreach WorldInfo.AllNavigationPoints(class 'NavigationPoint', N)
+		{
+			`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Defaulted to NavigationPoint");
+			return N;
+		}
+	}
+
+	`DRLogSpawning(Player.PlayerReplicationInfo.PlayerName @ "Every other test failed - returning" @ BestStart);
+
+	if(ControllerFailedSpawnOnSL == None)
+	{
+		return BestStart;
+	}
+	else
+	{
+		return None;
+	}
+}
+
+
 defaultproperties
 {
-	PlayerControllerClass=		class'DRPlayerController'
-	AIControllerClass=			class'DRAIController'
-	AIPawnClass=				class'DRPawn'
-	DefaultPawnClass=			class'DRPawn'
-	// HUDType=					class'DRHUD'
-	TeamInfoClass=				class'DRTeamInfo'
-	// PawnHandlerClass=			class'DRPawnHandler'
-	// PlayerReplicationInfoClass=	class'DRPlayerReplicationInfo';
+	`DRGICommonDP
 	
 	bDisableCharCustMenu=true
 	
