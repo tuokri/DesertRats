@@ -6,20 +6,37 @@
 `define dr(msg,type) class'DRLogger'.static.DRDebugLog(`msg, class.name$"::"$GetFuncName(),`type)
 `define drtrace class'DRLogger'.static.DRDebugTrace("[TRACE]" @ default.class.name$"::"$GetFuncName())
 
-`define RI_RIFLEMAN			0
-`define RI_ASSAULT			1
-`define RI_MACHINE_GUNNER	2
-`define RI_SNIPER			3
-`define RI_SAPPER			4
-`define RI_COMMANDER		5
-`define RI_TANK_CREW		6
+`define DRLogSpawning(msg) `log("SPAWNING:" @ `msg)
 
-`define WI_BINOCS			0
-`define WI_THOMPSON			1
-`define WI_MP40				2
-`define WI_WEBLEY			3
-`define WI_KAR98			4
-`define WI_ENFIELD			5
-`define WI_LUGER			6
+`define RI_RIFLEMAN         0
+`define RI_ASSAULT          1
+`define RI_MACHINE_GUNNER   2
+`define RI_SNIPER           3
+`define RI_SAPPER           4
+`define RI_COMMANDER        5
+`define RI_TANK_CREW        6
+
+`define WI_BINOCS           0
+`define WI_THOMPSON         1
+`define WI_MP40             2
+`define WI_WEBLEY           3
+`define WI_KAR98            4
+`define WI_ENFIELD          5
+`define WI_LUGER            6
 
 
+// Pawn common macros.
+`define DRPCommonDP \
+    PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full'\n\
+    bCanCamouflage=False\n\
+
+// GameInfo common macros.
+`define DRGICommonDP \
+    PlayerControllerClass=          class'DRPlayerController'           \n\
+    AIControllerClass=              class'DRAIController'               \n\
+    HUDType=                        class'DRHUD'                        \n\
+    TeamInfoClass=                  class'DRTeamInfo'                   \n\
+    // AIPawnClass=                 class'DRPawn'                       \n\
+    // DefaultPawnClass=            class'DRPawn'                       \n\
+    // PawnHandlerClass=            class'DRPawnHandler'                \n\
+    // PlayerReplicationInfoClass=  class'DRPlayerReplicationInfo'      \n\
