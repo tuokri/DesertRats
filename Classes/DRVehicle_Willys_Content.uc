@@ -121,11 +121,12 @@ DefaultProperties
     DestroyedTurretClass=none
 
     // HUD
-    HUDBodyTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_VehicleBase'
+    HUDBodyTexture=Texture2D'DR_UI.Vehicle.UI_HUD_VH_Jeep_Body'
     HUDTurretTexture=none
     DriverOverlayTexture=none
 
     HUDMainCannonTexture=none
+    /* TODO: Willys HUD Textures
     HUDGearBoxTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_Transmission'
     HUDFrontArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_FrontArmor'
     HUDBackArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_RearArmor'
@@ -133,6 +134,7 @@ DefaultProperties
     HUDRightArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_RightArmor'
     HUDRightSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
     HUDLeftSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
+    */
 
     RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
 
