@@ -1,5 +1,5 @@
 
-class DRPawn extends ROPawn
+class DRPawn_OLD extends ROPawn
 	abstract;
 
 simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlayerReplicationInfo OverrideROPRI) {}
@@ -384,6 +384,7 @@ simulated function LoaderLHIKoff()
 defaultproperties
 {
 	PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full'
+	bCanCamouflage=False
 	
 	ArmsOnlyMesh=none
 	
@@ -423,8 +424,6 @@ defaultproperties
 	BulletHitMyHeadSound=none
 	BulletHitMyHelmetSound=none
 	MyBulletHitHelmetSound=none
-	
-	bCanCamouflage=false
 	
 	FootstepSounds.Add((MaterialType=EMT_Default,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Dirt')()
 	FootstepSounds.Add((MaterialType=EMT_Rock,Sound=AkEvent'WW_FOL_US.Play_FS_US_Jog_Gravel'))
