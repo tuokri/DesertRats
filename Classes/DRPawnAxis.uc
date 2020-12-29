@@ -11,7 +11,7 @@ DefaultProperties
     
     FieldgearMesh=SkeletalMesh'DR__PLACEHOLDER_CHR.Mesh.ger_rr_gear_rifleman'
     
-    ArmsOnlyMeshFPSkeletalMesh'DR_CHR.Mesh.DAK_Hands_Tunic'
+    ArmsOnlyMeshFP=SkeletalMesh'DR_CHR.Mesh.DAK_Hands_Tunic'
     
     HeadAndArmsMesh=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head6_Mesh'
     HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_06_Long_INST'
