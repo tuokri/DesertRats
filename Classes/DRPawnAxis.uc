@@ -1,6 +1,8 @@
 
 class DRPawnAxis extends RONorthPawn;
 
+`include(DesertRats\Classes\DRPawn_Common.uci)
+
 DefaultProperties
 {
     `DRPCommonDP
