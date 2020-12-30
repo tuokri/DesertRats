@@ -1,3 +1,182 @@
+simulated function SetPawnElementsByConfig(bool bViaReplication,
+    optional ROPlayerReplicationInfo OverrideROPRI)
+{
+}
+
+simulated function CreatePawnMesh()
+{
+    local ROMapInfo ROMI;
+
+    if( Health <= 0 )
+        return;
+
+    if( HeadAndArmsMIC == none )
+        HeadAndArmsMIC = new class'MaterialInstanceConstant';
+    if( BodyMIC == none )
+        BodyMIC = new class'MaterialInstanceConstant';
+    if( HeadgearMIC == none )
+        HeadgearMIC = new class'MaterialInstanceConstant';
+    if( HairMIC == none && HairMICTemplate != none )
+        HairMIC = new class'MaterialInstanceConstant';
+    if( FPArmsSleeveMaterial == none && FPArmsSleeveMaterialTemplate != none )
+        FPArmsSleeveMaterial = new class'MaterialInstanceConstant';
+
+    if( bUseSingleCharacterVariant && BodyMICTemplate_SV != none )
+        BodyMIC.SetParent(BodyMICTemplate_SV);
+    else
+        BodyMIC.SetParent(BodyMICTemplate);
+
+    HeadAndArmsMIC.SetParent(HeadAndArmsMICTemplate);
+    HeadgearMIC.SetParent(HeadgearMICTemplate);
+
+    if( FPArmsSleeveMaterial != none )
+        FPArmsSleeveMaterial.SetParent(FPArmsSleeveMaterialTemplate);
+
+    if( HairMIC != none )
+        HairMIC.SetParent(HairMICTemplate);
+
+    MeshMICs.Length = 0;
+    MeshMICs.AddItem(BodyMIC);
+    MeshMICs.AddItem(HeadAndArmsMIC);
+    // MeshMICs.AddItem(HeadgearMIC);
+
+    if( HairMIC != none )
+        MeshMICs.AddItem(HairMIC);
+
+    if( ThirdPersonHeadgearMeshComponent.AttachedToSkelComponent != none )
+        mesh.DetachComponent(ThirdPersonHeadgearMeshComponent);
+    if( FaceItemMeshComponent.AttachedToSkelComponent != none )
+        mesh.DetachComponent(FaceItemMeshComponent);
+    if( FacialHairMeshComponent.AttachedToSkelComponent != none )
+        mesh.DetachComponent(FacialHairMeshComponent);
+    if( ThirdPersonHeadAndArmsMeshComponent.AttachedToSkelComponent != none )
+        DetachComponent(ThirdPersonHeadAndArmsMeshComponent);
+    if( TrapDisarmToolMeshTP.AttachedToSkelComponent != none )
+        mesh.DetachComponent(TrapDisarmToolMeshTP);
+
+    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+
+    CompositedBodyMesh = ROMI.GetCachedCompositedPawnMesh(TunicMesh, FieldgearMesh);
+    CompositedBodyMesh.Characterization = PlayerHIKCharacterization;
+
+    ROSkeletalMeshComponent(mesh).ReplaceSkeletalMesh(CompositedBodyMesh);
+
+    // mesh.SetMaterial(0, BodyMIC);
+
+    // Be careful here. Soviets need to have their BodyMic applied to their gear mesh
+    // for proper wrappings/boot textures but it also seems to run on Finns sometimes.
+    // Hopefully this will mitigate that.
+
+//  if (GetTeamNum() == `ALLIES_TEAM_INDEX)
+    // if (self.IsA('WWPawnAllies'))
+    // {
+        // mesh.SetMaterial(1, BodyMIC);
+    // }
+
+    ROSkeletalMeshComponent(mesh).GenerateAnimationOverrideBones(HeadAndArmsMesh);
+
+    ThirdPersonHeadAndArmsMeshComponent.SetSkeletalMesh(HeadAndArmsMesh);
+    ThirdPersonHeadAndArmsMeshComponent.SetMaterial(0, HeadAndArmsMIC);
+    ThirdPersonHeadAndArmsMeshComponent.SetParentAnimComponent(mesh);
+    ThirdPersonHeadAndArmsMeshComponent.SetShadowParent(mesh);
+    ThirdPersonHeadAndArmsMeshComponent.SetLODParent(mesh);
+
+    AttachComponent(ThirdPersonHeadAndArmsMeshComponent);
+
+    if( HeadgearMesh != none )
+    {
+        AttachNewHeadgear(HeadgearMesh);
+    }
+
+    if( FaceItemMesh != none )
+    {
+        AttachNewFaceItem(FaceItemMesh);
+    }
+
+    if( FacialHairMesh != none )
+    {
+        AttachNewFacialHair(FacialHairMesh);
+    }
+
+    if ( ClothComponent != None )
+    {
+        ClothComponent.SetParentAnimComponent(mesh);
+        ClothComponent.SetShadowParent(mesh);
+        AttachComponent(ClothComponent);
+        ClothComponent.SetEnableClothSimulation(true);
+        ClothComponent.SetAttachClothVertsToBaseBody(true);
+    }
+
+    if ( ArmsMesh != None )
+    {
+        ArmsMesh.SetSkeletalMesh(ArmsOnlyMeshFP);
+    }
+
+    if ( BandageMesh != none )
+    {
+        BandageMesh.SetSkeletalMesh(BandageMeshFP);
+        BandageMesh.SetHidden(true);
+    }
+
+    if ( ROMI != none )
+    {
+        if ( TrapDisarmToolMesh != none )
+        {
+            TrapDisarmToolMesh.SetSkeletalMesh(GetTrapDisarmToolMesh(true));
+        }
+        if ( TrapDisarmToolMeshTP != none )
+        {
+            TrapDisarmToolMeshTP.SetSkeletalMesh(GetTrapDisarmToolMesh(false));
+        }
+    }
+
+    if ( TrapDisarmToolMesh != none )
+    {
+        TrapDisarmToolMesh.SetHidden(true);
+    }
+
+    if ( TrapDisarmToolMeshTP != none )
+    {
+        Mesh.AttachComponentToSocket(TrapDisarmToolMeshTP, GrenadeSocket);
+        TrapDisarmToolMeshTP.SetHidden(true);
+    }
+
+    if ( bOverrideLighting )
+    {
+        ThirdPersonHeadAndArmsMeshComponent.SetLightingChannels(LightingOverride);
+        ThirdPersonHeadgearMeshComponent.SetLightingChannels(LightingOverride);
+    }
+
+    if( WorldInfo.NetMode == NM_DedicatedServer )
+    {
+        mesh.ForcedLODModel = 1000;
+        ThirdPersonHeadAndArmsMeshComponent.ForcedLodModel = 1000;
+        ThirdPersonHeadgearMeshComponent.ForcedLodModel = 1000;
+        FaceItemMeshComponent.ForcedLodModel = 1000;
+        FacialHairMeshComponent.ForcedLodModel = 1000;
+    }
+}
+
+simulated function AttachNewHeadgear(SkeletalMesh NewHeadgearMesh)
+{
+    local SkeletalMeshSocket HeadSocket;
+
+    ThirdPersonHeadgearMeshComponent.SetSkeletalMesh(NewHeadgearMesh);
+    // ThirdPersonHeadgearMeshComponent.SetMaterial(0, HeadgearMIC);
+
+    HeadSocket = ThirdPersonHeadAndArmsMeshComponent.GetSocketByName(HeadgearAttachSocket);
+
+    if( HeadSocket != none )
+    {
+        if( mesh.MatchRefBone(HeadSocket.BoneName) != INDEX_NONE )
+        {
+            ThirdPersonHeadgearMeshComponent.SetShadowParent(mesh);
+            ThirdPersonHeadgearMeshComponent.SetLODParent(mesh);
+            mesh.AttachComponent( ThirdPersonHeadgearMeshComponent, HeadSocket.BoneName, HeadSocket.RelativeLocation, HeadSocket.RelativeRotation, HeadSocket.RelativeScale);
+        }
+    }
+}
+
 function TakeFallingDamage()
 {
     local float EffectiveSpeed;
