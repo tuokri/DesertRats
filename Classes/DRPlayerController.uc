@@ -1244,6 +1244,32 @@ reliable protected server function ServerLeanLeft(bool leanstate)
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function vector MakeVector(float X, float Y, float Z)
+{
+    local vector V;
+
+    V.X = X;
+    V.Y = Y;
+    V.Z = Z;
+
+    return V;
+}
+
+simulated exec function SetScopePosition(float X, float Y, float Z)
+{
+    ROSniperWeapon(Pawn.Weapon).ScopePosition = MakeVector(X, Y, Z);
+}
+
+exec function SetScopeZ(float NewScopeZ)
+{
+    ROSniperWeapon(Pawn.Weapon).ScopeLenseMIC.SetScalarParameterValue('v_position', NewScopeZ);
+}
+
+simulated exec function SetShoulderedPosition(float X, float Y, float Z)
+{
+    ROWeapon(Pawn.Weapon).ShoulderedPosition = MakeVector(X, Y, Z);
+}
+
 simulated exec function SetSightPitch(int RangeIndex, int NewSightPitch)
 {
     ROWeapon(Pawn.Weapon).SightRanges[RangeIndex].SightPitch = NewSightPitch;
