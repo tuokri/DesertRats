@@ -1244,6 +1244,18 @@ reliable protected server function ServerLeanLeft(bool leanstate)
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Temporary Bren 3rd person left hand debugging.
+simulated exec function SetLeftHandYaw(float YawValue)
+{
+    local DRWeapAttach_Bren_LMG Bren;
+
+    Bren = DRWeapAttach_Bren_LMG(ROPawn(Pawn).CurrentWeaponAttachment);
+    if (Bren != None)
+    {
+        Bren.SetLeftHandYaw(YawValue);
+    }
+}
+
 function vector MakeVector(float X, float Y, float Z)
 {
     local vector V;
