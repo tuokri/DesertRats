@@ -1,4 +1,3 @@
-
 [DRGameInfo]
 AxisBotNames[0]="Erhard"
 AxisBotNames[1]="Viktor"
@@ -96,6 +95,12 @@ MyName="ASSAULT"
 [DRRoleInfoAlliesAssault]
 MyName="ASSAULT"
 
+[DRRoleInfoAxisSapper]
+MyName="SAPPER"
+
+[DRRoleInfoAlliesSapper]
+MyName="SAPPER"
+
 [DRRoleInfoAxisMachineGunner]
 MyName="MACHINE GUNNER"
 
@@ -108,6 +113,12 @@ MyName="SNIPER"
 [DRRoleInfoAlliesSniper]
 MyName="SNIPER"
 
+[DRRoleInfoAxisCommander]
+MyName="COMMANDER"
+
+[DRRoleInfoAlliesCommander]
+MyName="COMMANDER"
+
 
 
 
@@ -117,3 +128,14 @@ ShortDisplayName="Webley"
 CapitalizedDisplayName="WEBLEY REVOLVER"
 Description=""
 
+[DRWeapon_Lewis_LMG]
+DisplayName="Lewis LMG"
+ShortDisplayName="Lewis"
+CapitalizedDisplayName="LEWIS"
+Description=""
+
+[DRWeapon_Bren_LMG]
+DisplayName="Bren Mk. II"
+ShortDisplayName="Bren"
+CapitalizedDisplayName="BREN MK. II"
+Description=""
