@@ -1,12 +1,11 @@
-
 class DRRoleInfoAxis extends DRRoleInfo
-	abstract;
+    abstract;
 
 DefaultProperties
 {
-	Items[RORIGM_Default]={(
-		SecondaryWeapons=(class'DRWeapon_Luger')
-	)}
-	
-	RoleRootClass=class'DRRoleInfoAxis'
+    Items[RORIGM_Default]={(
+        SecondaryWeapons=(class'DRWeapon_Luger')
+    )}
+
+    RoleRootClass=class'DRRoleInfoAxis'
 }

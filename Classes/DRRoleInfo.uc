@@ -1,10 +1,9 @@
-
 class DRRoleInfo extends RORoleInfo
-	abstract;
+    abstract;
 
 DefaultProperties
 {
-	Items[RORIGM_Default]={(
-		SquadLeaderItems=(class'DRWeapon_Binoculars')
-	)}
+    Items[RORIGM_Default]={(
+        SquadLeaderItems=(class'DRWeapon_Binoculars')
+    )}
 }

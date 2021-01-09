@@ -1,12 +1,11 @@
-
 class DRRoleInfoAllies extends DRRoleInfo
-	abstract;
+    abstract;
 
 DefaultProperties
 {
-	Items[RORIGM_Default]={(
-		SecondaryWeapons=(class'DRWeapon_Webley')
-	)}
-	
-	RoleRootClass=class'DRRoleInfoAllies'
+    Items[RORIGM_Default]={(
+        SecondaryWeapons=(class'DRWeapon_Webley')
+    )}
+
+    RoleRootClass=class'DRRoleInfoAllies'
 }
