@@ -42,10 +42,10 @@ DefaultProperties
 
     // PlayerViewOffset=(X=0,Y=0,Z=0)
 
-    IronSightPosition=(X=0.02,Y=0,Z=0)
+    IronSightPosition=(X=0,Y=0.02,Z=0)
 
     bHasScopePosition=True
-    ScopePosition=(X=0.02,Y=0,Z=-1)
+    ScopePosition=(X=-3.5,Y=0.02,Z=-1)
 
     /*
     // 2D scene capture
