@@ -36,7 +36,9 @@ var int PayloadDropHeight;
 
 var bool bAccelerating;
 
-var vector CurveCenterEnterDive;
+// TODO: replication.
+var repnotify vector CurveCenterEnterDive;
+var repnotify vector CurveCenterExitDive;
 
 var AudioComponent AmbientComponentCustom;
 var SoundCue AmbientSoundCustom;
@@ -46,7 +48,17 @@ var vector DebugLastPointLocation;
 
 simulated function PostBeginPlay()
 {
+    local rotator PlaneRot;
+
     super.PostBeginPlay();
+
+    /*
+    // TODO: Temp fix to backwards-flying mesh.
+    PlaneRot = Rotation;
+    PlaneRot.Yaw -= 180 * DegToUnrRot;
+    SetRotation(PlaneRot);
+    */
+
     SetTimer(InboundDelay + 5, False, 'PlayAmbientAudio');
     DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
     DebugLastPointLocation = Location;
@@ -107,6 +119,8 @@ simulated function Tick(float DeltaTime)
                 break;
         }
     }
+
+    // `log("Speed = " $ VSize(Velocity));
 }
 
 simulated function PlayAmbientAudio()
@@ -116,8 +130,8 @@ simulated function PlayAmbientAudio()
         if (AmbientComponentCustom != None)
         {
             AmbientComponentCustom.SoundCue = AmbientSoundCustom;
-            AmbientComponentCustom.FadeIn(0.5, 1.0 );
-            AmbientComponentCustom.OcclusionCheckInterval = 0.1;
+            AmbientComponentCustom.FadeIn(0.5, 1.0);
+            //? AmbientComponentCustom.OcclusionCheckInterval = 0.1;
         }
     }
 }
@@ -157,6 +171,7 @@ function StartExitFlight()
 {
     `log("StartExitFlight()");
     DivingState = EDBDS_None;
+    bCheckMapBounds = True;
 }
 
 // Solve trajectory geometry with given height,
@@ -168,6 +183,9 @@ function CalculateTrajectory()
 
     local vector TargetLocElevated;
     local vector StrikeDir3D;
+    local vector VTemp1;
+    local vector VTemp2;
+    local rotator RTemp;
 
     local float RollDuration;
     local float PitchArcLengthEnter;
@@ -177,7 +195,7 @@ function CalculateTrajectory()
     local float PitchArcAngleInRadExit;
     local float PitchArcTravelTimeExit;
     local float Height;
-    local float ExitCurveCenterHeight;
+    // TODO: used? local float ExitCurveCenterHeight;
 
     // Helper constants.
     local float SinAODFZA;
@@ -202,17 +220,20 @@ function CalculateTrajectory()
     local float Eta;
     local float Xi;
     local float Lambda;
-    local float Psi;
-    local float Phi;
+    // TODO: used? local float Psi;
+    // TODO: used? local float Phi;
     local float AngleOfAscension;
     local float Theta;
     local float Rho;
+    local float Iota;
 
     // Line lengths in UU.
     local float Line_FD;
     local float Line_DH;
     local float Line_CH;
     local float Line_CD;
+    local float Line_B1;
+    local float Line_HA;
     local float Line_HE_1;
 
     AngleOfDiveFromZAxis = 270 - AngleOfDive;
@@ -279,7 +300,7 @@ function CalculateTrajectory()
 
     CurveCenterEnterDive = TargetLocElevated;
     CurveCenterEnterDive.Z -= CurveRadiusEnterDive;
-    DrawDebugSphere(CurveCenterEnterDive, CurveRadiusEnterDive, 64, 0, 255, 0, True);
+    //? DrawDebugSphere(CurveCenterEnterDive, CurveRadiusEnterDive, 64, 0, 255, 0, True);
 
     Eta = ((90 - AngleOfDiveFromZAxis) * 0.5) * DegToRad;
     // Xi = (90 - AngleOfDiveFromZAxis) * DegToRad;
@@ -390,22 +411,48 @@ function CalculateTrajectory()
     `log("TimeTillDrop = " $ TimeTillDrop);
     `log("TimeTillMaxSpeed = " $ TimeTillMaxSpeed);
 
-    DRTI = DRTeamInfo(WorldInfo.GRI.Teams[TeamIndex]);
-    // StrikeDir3D = Normal(Location - TargetLocElevated);
-    StrikeDir3D.X = DRTI.StrikeDirection.X;
-    StrikeDir3D.Y = DRTI.StrikeDirection.Y;
+    Iota = (90 - AngleOfDiveFromZAxis) * DegToRad;
+    Line_HA = SinAODFZA / (Sin(Iota) / (Line_FD + Line_DH));
+    `log("Iota (deg) = " $ Iota * RadToDeg);
+    `log("Line_HA = " $ Line_HA);
+
+    //? DRTI = DRTeamInfo(WorldInfo.GRI.Teams[TeamIndex]);
+    StrikeDir3D = Normal(TargetLocElevated - Location);
+    //? StrikeDir3D.X = DRTI.StrikeDirection.X;
+    //? StrikeDir3D.Y = DRTI.StrikeDirection.Y;
+
+    Line_B1 = Line_CH * SinAODFZA;
+    `log("Line_B1 = " $ Line_B1);
+
+    // Travel from TargetLocation to Payload Drop Point (H).
+    // RTemp = Rotator(TargetLocation);
+    // RTemp.Pitch = AngleOfDiveFromZAxis * DegToUnrRot;
+    // RTemp.Yaw = rotator(StrikeDir3D).Yaw;
+    // VTemp = TargetLocation;
+    // VTemp += (Normal(Vector(RTemp)) * Line_CH);
+    VTemp1 = TargetLocation;
+    VTemp1.Z += PayloadDropHeight;
+    VTemp1 += Normal(StrikeDir3D) * Line_B1;
+
+    // Travel from Payload Drop Point (H) to CurveCenterExitDive.
+    CurveCenterExitDive = VTemp1;
+    VTemp2 = -StrikeDir3D;
+    // RTemp = rotator(VTemp2);
+    // VTemp2 = vector(RTemp);
+    CurveCenterExitDive += Normal(VTemp2) * Line_HA;
+    CurveCenterExitDive.Z *= 1.1; // Approximation...
 
     // ExitCurveCenterHeight = (Line_RA / Sin(AngleOfAscension + Theta)) * Sin(AngleOfAscension + Theta);
     // CurveCenterExitDive = Normal(TargetLocation - (StrikeDir3D * Line_RA));
     // CurveCenterExitDive.Z = ExitCurveCenterHeight;
     // CurveCenterExitDive = CurveCenterEnterDive;
 
+    //? DrawDebugSphere(CurveCenterExitDive, CurveRadiusExitDive, 64, 255, 35, 0, True);
+
     /*
     StrikeDir3D.Z = ExitCurveCenterHeight;
     DrawDebugLine(Location, StrikeDir3D, 0, 255, 0, True);
     `log("StrikeDir3D = " $ StrikeDir3D);
-
-    DrawDebugSphere(CurveCenterExitDive, CurveRadiusExitDive, 64, 255, 35, 0, True);
 
     `log("CurveCenterEnterDive = " $ CurveCenterEnterDive);
     `log("CurveCenterExitDive = " $ CurveCenterExitDive);
@@ -483,6 +530,8 @@ function DropPayload()
     local float FallDist, ImpactVelPct;
     local ROVolumeTest RVT;
     local ROGameReplicationInfo ROGRI;
+
+    `log("DropPayload(), Height = " $ Location.Z);
 
     if( !bAbortStrike )
     {
@@ -596,10 +645,11 @@ function HandleExitingDiveUpdate(float DeltaTime)
 {
     local rotator NewRot;
     local vector AccelToApply;
-    local vector CurveCenterExitDive;
 
+    /*
     `log("Rotation.Pitch (deg) = " $ Rotation.Pitch * UnrRotToDeg
         $ " AscensionAngle (deg) = " $ AscensionAngleInURT * UnrRotToDeg);
+    */
 
     NewRot = Rotation;
     NewRot.Pitch += PitchUnitsPerSecondExit * DeltaTime;
@@ -613,9 +663,6 @@ function HandleExitingDiveUpdate(float DeltaTime)
 
     SetRotation(NewRot);
 
-    // TODO:
-    // CurveRadiusExitDive = Location;
-
     AccelToApply = AccelPerSecondExit * Normal(CurveCenterExitDive - Location) * DeltaTime;
     Velocity += AccelToApply;
 }
@@ -628,7 +675,7 @@ function HandleDivingUpdate(float DeltaTime)
     {
         AccelToApply = AccelPerSecondDive * Normal(TargetLocation - Location) * DeltaTime;
         Velocity += AccelToApply;
-        `log("Speed = " $ VSize(Velocity));
+        // `log("Speed = " $ VSize(Velocity));
     }
 }
 
@@ -636,18 +683,23 @@ function HandleEnteringDiveUpdate(float DeltaTime)
 {
     local rotator NewRot;
     local vector AccelToApply;
+    local rotator TempRot;
 
     NewRot = Rotation;
     NewRot.Pitch += PitchUnitsPerSecondEnter * DeltaTime;
 
+    /*
     `log("Rotation.Pitch (deg) = " $ Rotation.Pitch * UnrRotToDeg
         $ " DiveAngle (deg) = " $ DiveAngleInURT * UnrRotToDeg);
+    */
 
     if (Rotation.Pitch < DiveAngleInURT)
     {
         NewRot.Pitch = DiveAngleInURT;
+        SetRotation(NewRot);
         Dive();
         `log("Finished entering dive");
+        return;
     }
 
     SetRotation(NewRot);
@@ -674,10 +726,11 @@ DefaultProperties
 {
     TeamIndex = `ALLIES_TEAM_INDEX; // TODO: Actually Axis.
 
-    Speed=3756 // 146 knots or 75 m/s.
-    DiveSpeed=7156 // 150 m/s (constant dive speed after initial acceleration).
+    Speed=3800 //3756 // 146 knots or 75 m/s.
+    DiveSpeed=8000 //7156 // 150 m/s (constant dive speed after initial acceleration).
     Altitude=50000 // 50kUU = 1000m.
-    PayloadDropHeight=15000 // 15kUU = 300m.
+    //? PayloadDropHeight=15000 // 15kUU = 300m.
+    PayloadDropHeight=25000 // 15kUU = 300m.
 
     AngleOfDive=260 // From mesh 0 rotation position.
     AngleOfRoll=180
@@ -689,7 +742,14 @@ DefaultProperties
 
     AmbientSound=None
     AmbientComponent=None
-    //? AmbientSoundCustom=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
+    AmbientSoundCustom=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
+
+    Begin Object Name=PlaneMesh
+        SkeletalMesh=SkeletalMesh'DR_VH_CMD.Mesh.JU87_BOMB_SKEL'
+        PhysicsAsset=PhysicsAsset'VH_VN_ARVN_Skyraider.Phys.Skyraider_Physics'
+        AnimSets[0]=AnimSet'VH_VN_ARVN_Skyraider.Animation.AUS_Skyraider_anim'
+        Materials[0]=MaterialInstanceConstant'DR_VH_CMD.MIC.M_JU87'
+    End Object
 
     Begin Object Class=AudioComponent name=AmbientSoundComponentCustom
         OcclusionCheckInterval=1.0
