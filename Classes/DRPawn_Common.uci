@@ -180,31 +180,36 @@ simulated function AttachNewHeadgear(SkeletalMesh NewHeadgearMesh)
 function TakeFallingDamage()
 {
     local float EffectiveSpeed;
-    local float SpeedOverMax, HurtRatio;
+    local float SpeedOverMax;
+    local float HurtRatio;
     local float ActualDamage;
     local float Threshold1;
     local float Threshold2;
-    local float VelXY;
-    local vector VelXYTemp;
+    local float SpeedXY;
 
     Threshold1 = -0.5 * MaxFallSpeed;
     Threshold2 = -1 * MaxFallSpeed;
-    
+
     // For exiting vehicles at high speed.
     // TODO: needs fine tuning.
-    VelXYTemp.X = Velocity.X;
-    VelXYTemp.Y = Velocity.Y;
-    VelXYTemp.Z = 0;
-    VelXY = VSize(VelXYTemp);
+    SpeedXY = VSize2D(Velocity);
 
-    if (Velocity.Z < Threshold1 || VelXY > Abs(Threshold1))
+    if (Velocity.Z < Threshold1 || SpeedXY > Abs(Threshold1))
     {
-        if ( Role == ROLE_Authority )
+        if (Role == ROLE_Authority)
         {
             MakeNoise(1.0);
-            if (Velocity.Z < Threshold2 || VelXY > Abs(Threshold1))
+            if (Velocity.Z < Threshold2 || SpeedXY > Abs(Threshold2))
             {
-                EffectiveSpeed = FMax(Velocity.Z * -1, VelXY);
+                if (DRPlayerController(Controller).bLeftVehicleRecently)
+                {
+                    EffectiveSpeed = FMax(Velocity.Z * -1, SpeedXY);
+                }
+                else
+                {
+                    EffectiveSpeed = Velocity.Z * -1;
+                }
+
                 if (TouchingWaterVolume())
                 {
                     EffectiveSpeed -= 250;
