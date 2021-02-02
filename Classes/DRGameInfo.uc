@@ -1,4 +1,3 @@
-
 class DRGameInfo extends ROGameInfo
 	config(Game_DesertRats_GameInfo)
 	HideDropDown;
@@ -13,17 +12,17 @@ static event class<GameInfo> SetGameType(string MapName, string Options, string 
 	local ROUIDataProvider_GameModeInfo Provider;
 	local string ThisMapPrefix;
 	local int i, MapPrefixPos;
-	
+
 	ReplaceText(MapName, "UEDPIE", "");
-	
+
 	if (Left(MapName, InStr(MapName, "-")) ~= "DRTE")
 	{
 		return class'DRGameInfoTerritories';
 	}
-	
+
 	MapPrefixPos = InStr(MapName,"-");
 	ThisMapPrefix = left(MapName,MapPrefixPos);
-	
+
 	class'ROUIDataStore_MenuItems'.static.GetAllResourceDataProviders(class'ROUIDataProvider_GameModeInfo', ProviderList);
 	for (i = 0; i < ProviderList.Length; i++)
 	{
@@ -37,13 +36,26 @@ static event class<GameInfo> SetGameType(string MapName, string Options, string 
 			}
 		}
 	}
-	
+
 	return default.class;
 }
 
-defaultproperties
+function RestartPlayer(Controller NewPlayer)
 {
-	MenuMusicTrack=none
+	local DRPlayerController DRPC;
+
+	super.RestartPlayer(NewPlayer);
+
+	DRPC = DRPlayerController(NewPlayer);
+	if (DRPC != None)
+	{
+		DRPC.ClearLeftVehicleFlag();
+	}
+}
+
+DefaultProperties
+{
+	MenuMusicTrack=None
 
 	`DRGICommonDP
 
