@@ -1,13 +1,19 @@
-
 class DRPlayerController extends ROPlayerController
     config(Game_DesertRats_Client);
 
-var bool RoundEnd, MatchEnd, Ducking;
+var bool RoundEnd;
+var bool MatchEnd;
+var bool Ducking;
+
+var bool bLeftVehicleRecently;
+
 var MusicTrackStruct PendingSong;
 
 var AudioComponent StingerComp;
 
-var(Sounds) SoundCue AxisWinTheme, AlliesWinTheme;
+var(Sounds) SoundCue AxisWinTheme
+var(Sounds) SoundCue AlliesWinTheme;
+
 
 simulated event PostBeginPlay()
 {
@@ -1240,6 +1246,18 @@ reliable protected server function ServerLeanLeft(bool leanstate)
     }
 }
 
+function ClearLeftVehicleFlag()
+{
+    bLeftVehicleRecently = False;
+    ClearTimer('ClearLeftVehicleFlag');
+}
+
+function SetLeftVehicleFlag()
+{
+    bLeftVehicleRecently = True;
+    SetTimer(3, False, 'ClearLeftVehicleFlag');
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1342,7 +1360,6 @@ reliable private server function DoTestStukaStrike(bool bAircraftPOV,
 
     //? KillsWithCurrentNapalm = 0; // Reset Napalm Kills as We call it in!!!
 }
-
 
 // Temporary Bren 3rd person left hand debugging.
 simulated exec function SetLeftHandYaw(float YawValue)
