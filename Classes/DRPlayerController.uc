@@ -11,7 +11,7 @@ var MusicTrackStruct PendingSong;
 
 var AudioComponent StingerComp;
 
-var(Sounds) SoundCue AxisWinTheme
+var(Sounds) SoundCue AxisWinTheme;
 var(Sounds) SoundCue AlliesWinTheme;
 
 
