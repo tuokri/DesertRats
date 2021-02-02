@@ -1,6 +1,8 @@
 class DRMapInfo extends ROMapInfo
     HideCategories(SinglePlayer,Modding,Skirmish,Supremacy);
 
+var(CommanderNorth) int DiveBomberHeightOffset <Tooltip=Dive bomber spawn location height offset.>;
+
 /*
 var(WinterWar) AirSupportLevel  FinnishAirSupportLevel      <ToolTip=What type of Air Support is allowed on the map.>;
 var(WinterWar) int              FinnishFighterPlaneCallLimit<ToolTip=How many times the Fighter Planes ability can be used before the ability is disabled, cooldown time is automatically calulated from this variable. Use Air Support Level to disable completely.|ClampMin=1>;
@@ -355,6 +357,8 @@ DefaultProperties
     SovietArtilleryStats(0)=(BatterySize=8,SalvoAmount=4,StrikeDelay=8,SalvoInterval=7.0,StrikePattern=1800,ShellClass=class'ROArtilleryShell')
     SovietArtilleryStats(1)=(BatterySize=2,SalvoAmount=8,StrikeDelay=10,SalvoInterval=15.0,StrikePattern=400,ShellClass=class'WW203mmArtilleryShell')
     */
+
+    DiveBomberHeightOffset=0
 
     DefendingTeam=DT_None
     DefendingTeam16=DT_None
