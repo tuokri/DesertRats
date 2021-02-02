@@ -1244,18 +1244,35 @@ reliable protected server function ServerLeanLeft(bool leanstate)
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-exec function ForceStukaStrike(optional bool bAircraftPOV = False)
+/*
+simulated exec function DisableRagdoll()
 {
-    DoTestStukaStrike(bAircraftPOV);
+    ROPawn(Pawn).DisableRagdoll();
 }
 
-reliable private server function DoTestStukaStrike(bool bAircraftPOV)
+simulated exec function EnableRagdoll()
 {
+    ROPawn(Pawn).EnableRagdoll();
+}
+*/
+
+exec function ForceStukaStrike(optional bool bAircraftPOV = False,
+    optional int Altitude = -1, optional int PayloadDropHeight = -1,
+    optional int AngleOfDive = -1)
+{
+    DoTestStukaStrike(bAircraftPOV, Altitude, PayloadDropHeight, AngleOfDive);
+}
+
+reliable private server function DoTestStukaStrike(bool bAircraftPOV,
+    int Altitude, int PayloadDropHeight, int AngleOfDive)
+{
+    local int SpawnAltitude;
     local vector TargetLocation;
     local vector SpawnLocation;
     local class<DRDiveBomberAircraft> AircraftClass;
     local DRDiveBomberAircraft Aircraft;
     local ROTeamInfo ROTI;
+    local DRMapInfo DRMI;
 
     if ( ROPlayerReplicationInfo(PlayerReplicationInfo) == none ||
          ROPlayerReplicationInfo(PlayerReplicationInfo).RoleInfo == none ||
@@ -1278,9 +1295,21 @@ reliable private server function DoTestStukaStrike(bool bAircraftPOV)
 
     AircraftClass = class'DRDiveBomberAircraft';
 
-    SpawnLocation = GetBestAircraftSpawnLoc(
-        TargetLocation, AircraftClass.default.Altitude,
-        /*ROMapInfo(WorldInfo.GetMapInfo()).NapalmStrikeHeightOffset*/ AircraftClass);
+    DRMI = DRMapInfo(WorldInfo.GetMapInfo());
+
+    if (Altitude >= 0)
+    {
+        SpawnAltitude = Altitude;
+    }
+    else
+    {
+        SpawnAltitude = AircraftClass.default.Altitude;
+    }
+
+    SpawnAltitude += TargetLocation.Z + DRMI.DiveBomberHeightOffset;
+
+    SpawnLocation = GetBestAircraftSpawnLoc(TargetLocation, SpawnAltitude, AircraftClass);
+
     TargetLocation.Z = SpawnLocation.Z;
 
     Aircraft = Spawn(AircraftClass,self,, SpawnLocation, rotator(TargetLocation - SpawnLocation));
@@ -1291,6 +1320,16 @@ reliable private server function DoTestStukaStrike(bool bAircraftPOV)
     }
     else
     {
+        if (PayloadDropHeight >= 0)
+        {
+            Aircraft.PayloadDropHeight = PayloadDropHeight;
+        }
+
+        if (AngleOfDive >= 0)
+        {
+            Aircraft.AngleOfDive = AngleOfDive;
+        }
+
         Aircraft.TargetLocation = ROTI.ArtyStrikeLocation;
         Aircraft.CalculateTrajectory();
         Aircraft.SetDropPoint();
@@ -1564,7 +1603,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 `endif
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-defaultproperties
+DefaultProperties
 {
     // TeamSelectSceneTemplate=     WWUISceneTeamSelect'WinterWar_UI.UIScene.WWUIScene_TeamSelect'
     // UnitSelectSceneTemplate=     WWUISceneUnitSelect'WinterWar_UI.UIScene.WWUIScene_UnitSelect'
