@@ -27,8 +27,8 @@
 
 // Pawn common macros.
 `define DRPCommonDP \
-    PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full'\n\
-    bCanCamouflage=False\n\
+    PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full' \n\
+    bCanCamouflage=False                               \n\
 
 // GameInfo common macros.
 `define DRGICommonDP \
