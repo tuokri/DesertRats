@@ -113,6 +113,12 @@ MyName="SNIPER"
 [DRRoleInfoAlliesSniper]
 MyName="SNIPER"
 
+[DRRoleInfoAxisRadioman]
+MyName="RADIOMAN"
+
+[DRRoleInfoAlliesRadioman]
+MyName="RADIOMAN"
+
 [DRRoleInfoAxisCommander]
 MyName="COMMANDER"
 
