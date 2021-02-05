@@ -6,9 +6,6 @@ DefaultProperties
 {
     `DRPCommonDP
 
-    // TODO: Why doesn't this work in the macro?
-    bCanCamouflage=False
-
     TunicMesh=SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Tunic_Long'
 
     FieldgearMesh=SkeletalMesh'DR__PLACEHOLDER_CHR.Mesh.ger_rr_gear_rifleman'

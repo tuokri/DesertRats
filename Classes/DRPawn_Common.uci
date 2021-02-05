@@ -279,3 +279,8 @@ function TakeFallingDamage()
     else if ( Velocity.Z < -0.8 * JumpZ )
         MakeNoise(0.2);
 }
+
+function bool IsInCamo()
+{
+    return False;
+}
