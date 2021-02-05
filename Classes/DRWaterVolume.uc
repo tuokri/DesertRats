@@ -1,7 +1,7 @@
 class DRWaterVolume extends ROWaterVolume
     placeable;
 
-simulated event Touch( Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vector HitNormal )
+simulated event Touch(Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vector HitNormal)
 {
     local ROVehicleTreaded ROVHT;
     ROVHT = ROVehicleTreaded(Other);
