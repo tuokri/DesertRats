@@ -1,5 +1,3 @@
-// TODO: calculate trajectory on server but replicate pre-calculated values to clients?
-
 class DRDiveBomberAircraft extends RONapalmStrikeAircraftARVN;
 
 enum EDiveBomberDiveState
@@ -10,68 +8,114 @@ enum EDiveBomberDiveState
     EDBDS_EnteringDive,
     EDBDS_ExitingDive,
     EDBDS_RollingIn,
+    EDBDS_RollingOut,
 };
 
+var AudioComponent DiveSoundComponent;
+var AudioComponent FlightSoundComponent;
+
+var SoundCue DiveSound;
+var SoundCue FlightSound;
+
+var int Altitude;
+var int AngleOfRoll;
+var int AngleOfDive;
+var int DiveSpeed;
+var int PayloadDropHeight;
+var int AscensionRollAngle;
+
+var float InterpSpeedAscend;
+
+// TODO: Optimize what needs to be replicated.
+// REPLICATED VARS BEGIN //
 var EDiveBomberDiveState DivingState;
+
+var int AscensionAngleInURT;
+var int PitchUnitsPerSecondEnter;
+var int PitchUnitsPerSecondExit;
+var int RollUnitsPerSecond;
+var int DiveAngleInURT;
+var int RollAngleInURT;
+var int AscensionRollAngleInURT;
+var int YawUnitsPerSecondExit;
 
 var float AccelPerSecondEnter;
 var float AccelPerSecondExit;
 var float CurveRadiusEnterDive;
 var float CurveRadiusExitDive;
 var float AngleOfDiveFromZAxis;
-var float DistDive;
 var float AccelPerSecondDive;
-
-var int Altitude;
-var int PitchUnitsPerSecondEnter;
-var int PitchUnitsPerSecondExit;
-var int RollUnitsPerSecond;
-var int AngleOfRoll;
-var int AngleOfDive;
-var int DiveAngleInURT;
-var int RollAngleInURT;
-var int AscensionAngleInURT;
-var int DiveSpeed;
-var int PayloadDropHeight;
 
 var bool bAccelerating;
 
-// TODO: replication.
-var repnotify vector CurveCenterEnterDive;
-var repnotify vector CurveCenterExitDive;
+var vector CurveCenterEnterDive;
+var vector CurveCenterExitDive;
+// REPLICATED VARS END //
 
-var AudioComponent AmbientComponentCustom;
-var SoundCue AmbientSoundCustom;
+// Debugging.
+// var vector DebugLastPointLocation;
+// var float Line_CH;
+// var float StartTime;
 
-var vector DebugLastPointLocation;
-
+replication
+{
+    if (bNetDirty && (Role == ROLE_Authority))
+        CurveCenterEnterDive, CurveCenterExitDive, RollAngleInURT, DiveAngleInURT,
+        DivingState, AscensionAngleInURT, RollUnitsPerSecond, PitchUnitsPerSecondExit,
+        PitchUnitsPerSecondEnter, bAccelerating, AccelPerSecondEnter,
+        AccelPerSecondExit, CurveRadiusEnterDive, CurveRadiusExitDive, AngleOfDiveFromZAxis,
+        AccelPerSecondDive, AscensionRollAngleInURT, YawUnitsPerSecondExit;
+}
 
 simulated function PostBeginPlay()
 {
-    local rotator PlaneRot;
-
     super.PostBeginPlay();
 
-    /*
-    // TODO: Temp fix to backwards-flying mesh.
-    PlaneRot = Rotation;
-    PlaneRot.Yaw -= 180 * DegToUnrRot;
-    SetRotation(PlaneRot);
-    */
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
+    {
+        PlayAmbientAudio();
+    }
 
-    SetTimer(InboundDelay + 5, False, 'PlayAmbientAudio');
-    DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
-    DebugLastPointLocation = Location;
+    if (DiveSound != None)
+    {
+        if (DiveSoundComponent != None)
+        {
+            DiveSoundComponent.SoundCue = DiveSound;
+            // DiveSoundComponent.VolumeMultiplier *= 1.2;
+        }
+    }
+
+    // DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
+    // DebugLastPointLocation = Location;
+
+    SetTimer(45, False, 'StartExitFlight');
+    SetTimer(55, False, 'Destroy');
+}
+
+simulated function Explode()
+{
+    super.Explode();
+    DiveSoundComponent.FadeOut(1.0, 0.0);
+    FlightSoundComponent.FadeOut(1.0, 0.0);
 }
 
 simulated function Destroyed()
 {
-    if (AmbientSoundCustom != None)
+    if (DiveSound != None)
     {
-        if (AmbientComponentCustom != None)
+        if (DiveSoundComponent != None)
         {
-            AmbientComponentCustom.Stop();
-            AmbientComponentCustom.SoundCue = None;
+            DiveSoundComponent.FadeOut(2.0, 0.0);
+            DiveSoundComponent.SoundCue = None;
+        }
+    }
+
+    if (FlightSound != None)
+    {
+        if (FlightSoundComponent != None)
+        {
+            FlightSoundComponent.FadeOut(2.0, 0.0);
+            FlightSoundComponent.SoundCue = None;
         }
     }
 
@@ -80,19 +124,33 @@ simulated function Destroyed()
     ClearTimer('StartEnterDive');
     ClearTimer('DropPayload');
     ClearTimer('StartExitDive');
-    ClearTimer('StopAccelerating');
     ClearTimer('StartExitFlight');
+
+    // ClearTimer('StopAccelerating');
 }
 
 simulated function Tick(float DeltaTime)
 {
+    // local DRPlayerController PC;
+
     super.Tick(DeltaTime);
 
+    /*
+    foreach WorldInfo.AllControllers(class'DRPlayerController', PC)
+    {
+        PC.ClientMessage("[" $ DivingState $ "]" $ " S="
+            $ VSize(Velocity) $ " P=" $ Rotation.Pitch * UnrRotToDeg $ " R="
+            $ Rotation.Roll * UnrRotToDeg);
+    }
+    */
+
+    /*
     if (DebugLastPointLocation != Location)
     {
         DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
         DebugLastPointLocation = Location;
     }
+    */
 
     // DrawDebugCoordinateSystem(Location, Rotation, 5000);
 
@@ -115,6 +173,9 @@ simulated function Tick(float DeltaTime)
             case EDBDS_Ascending:
                 HandleAscendingUpdate(DeltaTime);
                 break;
+            case EDBDS_RollingOut:
+                HandleRollingOutUpdate(DeltaTime);
+                break;
             default:
                 break;
         }
@@ -125,67 +186,114 @@ simulated function Tick(float DeltaTime)
 
 simulated function PlayAmbientAudio()
 {
-    if (AmbientSoundCustom != None)
+    if (FlightSound != None)
     {
-        if (AmbientComponentCustom != None)
+        if (FlightSoundComponent != None)
         {
-            AmbientComponentCustom.SoundCue = AmbientSoundCustom;
-            AmbientComponentCustom.FadeIn(0.5, 1.0);
-            //? AmbientComponentCustom.OcclusionCheckInterval = 0.1;
+            FlightSoundComponent.SoundCue = FlightSound;
+            // FlightSoundComponent.VolumeMultiplier *= 0.5;
+            FlightSoundComponent.FadeIn(6.5, 1.0);
         }
     }
 }
 
 function StartEnterDive()
 {
-    `log("StartEnterDive()");
+    // `log("StartEnterDive() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_EnteringDive;
+
+    if (DiveSound != None)
+    {
+        if (DiveSoundComponent != None)
+        {
+            DiveSoundComponent.FadeIn(2, 1.0);
+        }
+    }
+
+    if (FlightSound != None)
+    {
+        if (FlightSoundComponent != None)
+        {
+            FlightSoundComponent.FadeOut(2, 0.3);
+        }
+    }
+
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
 function StartExitDive()
 {
-    `log("StartExitDive()");
+    // `log("StartExitDive() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_ExitingDive;
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
+
+    // `log("Dist to target = " $ VSize(TargetLocation - Location));
+    // `log("Line_CH        = " $ Line_CH);
 }
 
 function Dive()
 {
-    `log("Dive()");
+    // `log("Dive() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_Diving;
     bAccelerating = True;
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
+}
+
+function Ascend()
+{
+    // `log("Ascend() TimeActual = " $ WorldInfo.TimeSeconds);
+    DivingState = EDBDS_Ascending;
+    bCheckMapBounds = True;
+
+    if (FlightSound != None)
+    {
+        if (FlightSoundComponent != None)
+        {
+            FlightSoundComponent.FadeIn(2, 1.0);
+        }
+    }
+
+    if (DiveSound != None)
+    {
+        if (DiveSoundComponent != None)
+        {
+            DiveSoundComponent.FadeOut(2, 0.0);
+        }
+    }
+
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
 function StopAccelerating()
 {
-    `log("StopAccelerating()");
+    // `log("StopAccelerating() TimeActual = " $ WorldInfo.TimeSeconds);
     bAccelerating = False;
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
 function Roll()
 {
-    `log("Roll()");
+    // `log("Roll() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_RollingIn;
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
 function StartExitFlight()
 {
-    `log("StartExitFlight()");
+    // `log("StartExitFlight() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_None;
     bCheckMapBounds = True;
+    bAccelerating = False;
+    // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
 // Solve trajectory geometry with given height,
 // dive angle and payload drop height.
-// https://www.geogebra.org/m/ys53zuap
+// https://www.geogebra.org/geometry/v4jyuram
 function CalculateTrajectory()
 {
-    local DRTeamInfo DRTI;
-
     local vector TargetLocElevated;
     local vector StrikeDir3D;
-    local vector VTemp1;
-    local vector VTemp2;
-    local rotator RTemp;
 
     local float RollDuration;
     local float PitchArcLengthEnter;
@@ -195,92 +303,120 @@ function CalculateTrajectory()
     local float PitchArcAngleInRadExit;
     local float PitchArcTravelTimeExit;
     local float Height;
-    // TODO: used? local float ExitCurveCenterHeight;
+    local float Temp;
 
     // Helper constants.
     local float SinAODFZA;
     local float TanAODFZA;
+    local float Rad90;
+    local float Rad180;
 
     // Flight distances in UU.
     local float DistMaxDiveSpeed;
     local float DistToTarget;
     local float DistPitchBeginOffset;
+    local float DistDive;
 
     // Flight times in seconds.
     local float TimeTillDrop;
     local float TimeTillMaxSpeed;
     local float TimeTillTarget;
-    local float TimeTillStopAccel;
-    local float TimeTillExitFlight;
     local float TimeDiving;
     local float TimeTillBeginRoll;
+    //? local float TimeTillStopAccel;
+    //? local float TimeTillExitFlight;
 
     // Angles in radians.
-    local float Beta;
-    local float Eta;
-    local float Xi;
-    local float Lambda;
-    // TODO: used? local float Psi;
-    // TODO: used? local float Phi;
     local float AngleOfAscension;
+    local float Beta;
+    local float Xi;
     local float Theta;
-    local float Rho;
-    local float Iota;
+    local float Mu;
+    // local float Lambda;
+    // local float Eta;
 
     // Line lengths in UU.
+    local float Line_CA;
     local float Line_FD;
-    local float Line_DH;
-    local float Line_CH;
     local float Line_CD;
+    local float Line_VA;
     local float Line_B1;
-    local float Line_HA;
+    local float Line_CH;
     local float Line_HE_1;
+    local float Line_CF_1;
+    local float Line_AF_1;
+
+    // Only calculated on server OR when standalone.
+    if ((Role != ROLE_Authority) || (WorldInfo.NetMode != NM_Standalone))
+    {
+        return;
+    }
 
     AngleOfDiveFromZAxis = 270 - AngleOfDive;
-    `log("AngleOfDiveFromZAxis = " $ AngleOfDiveFromZAxis);
+    // `log("AngleOfDiveFromZAxis = " $ AngleOfDiveFromZAxis);
 
     SinAODFZA = Sin(AngleOfDiveFromZAxis * DegToRad);
     TanAODFZA = Tan(AngleOfDiveFromZAxis * DegToRad);
 
+    Rad90 = 90 * DegToRad;
+    Rad180 = 180 * DegToRad;
+
     DiveAngleInURT = AngleOfDive * DegToUnrRot;
     RollAngleInURT = AngleOfRoll * DegToUnrRot;
+
+    Beta = (90 - AngleOfDiveFromZAxis) * DegToRad;
+    Line_CH = PayloadDropHeight / Sin(Beta);
+    Line_B1 = Line_CH * SinAODFZA;
 
     TargetLocElevated = TargetLocation;
     TargetLocElevated.Z = Location.Z;
 
-    `log("Location = " $ Location);
-    `log("TargetLocation = " $ TargetLocation);
-    `log("TargetLocElevated = " $ TargetLocElevated);
+    StrikeDir3D = Normal(TargetLocElevated - Location);
+
+    // Adjust target by offset to improve accuracy.
+    // E.g. if AngleOfDiveFromZAxis = 15 deg,
+    // we shift target in dive direction by Line_B1 * 0.15 * 0.75.
+    // `log("________________________________________________________");
+    // `log("Offset = " $ -(Line_B1 * (AngleOfDiveFromZAxis / 100.0) * 0.75));
+    // `log("TargetLocation (before) = " $ TargetLocation);
+    TargetLocation += StrikeDir3D * -(Line_B1 * (AngleOfDiveFromZAxis / 100.0) * 0.75);
+    TargetLocElevated = TargetLocation;
+    TargetLocElevated.Z = Location.Z;
+    // `log("TargetLocation (after)  = " $ TargetLocation);
+    // `log("________________________________________________________");
+
+    // `log("Location           = " $ Location);
+    // `log("TargetLocElevated  = " $ TargetLocElevated);
 
     DistToTarget = VSize(TargetLocElevated - Location);
-    `log("DistToTarget = " $ DistToTarget);
+    // `log("DistToTarget = " $ DistToTarget);
 
     TimeTillTarget = InboundDelay + (DistToTarget / Speed);
-    `log("TimeTillTarget = " $ TimeTillTarget);
+    // `log("TimeTillTarget = " $ TimeTillTarget);
 
     // Arbitrary duration. Larger divisor means faster rolling.
-    RollDuration = (TimeTillTarget / 15);
+    RollDuration = (TimeTillTarget / 8);
     TimeTillBeginRoll = TimeTillTarget - (RollDuration * 1.05); // 1.05 "safety margin".
-    `log("TimeTillBeginRoll = " $ TimeTillBeginRoll);
+    // `log("TimeTillBeginRoll = " $ TimeTillBeginRoll);
 
     Height = Location.Z - TargetLocation.Z;
-    `log("Height = " $ Height);
+    // `log("Height = " $ Height);
 
     DistPitchBeginOffset = Height * TanAODFZA;
-    `log("DistPitchBeginOffset = " $ DistPitchBeginOffset);
+    // `log("DistPitchBeginOffset = " $ DistPitchBeginOffset);
 
     RollUnitsPerSecond = RollAngleInURT / RollDuration;
-    `log("RollUnitsPerSecond = " $ RollUnitsPerSecond);
+    // `log("RollUnitsPerSecond = " $ RollUnitsPerSecond);
 
     CurveRadiusEnterDive = Tan(DegToRad * ((90 - AngleOfDiveFromZAxis) * 0.5)) * DistPitchBeginOffset;
     AccelPerSecondEnter = Square(Speed) / CurveRadiusEnterDive;
 
-    `log("CurveRadiusEnterDive = " $ CurveRadiusEnterDive);
-    `log("AccelPerSecondEnter = " $ AccelPerSecondEnter);
+    // `log("CurveRadiusEnterDive = " $ CurveRadiusEnterDive);
+    // `log("AccelPerSecondEnter = " $ AccelPerSecondEnter);
 
     if(WorldEdgeExitBuffer < CurveRadiusEnterDive)
     {
-        `log("Extending world edge limits (CurveRadiusEnterDive)");
+        // `log("Extending world edge limits (CurveRadiusEnterDive)");
         SetWorldEdgeLimits(CurveRadiusEnterDive + 25);
     }
 
@@ -288,188 +424,182 @@ function CalculateTrajectory()
     PitchArcLengthEnter = PitchArcAngleInRadEnter * CurveRadiusEnterDive;
     PitchArcTravelTimeEnter = PitchArcLengthEnter / Speed;
 
-    `log("PitchArcAngleInRadEnter = " $ PitchArcAngleInRadEnter);
-    `log("PitchArcAngleEnter (deg) = " $ PitchArcAngleInRadEnter * RadToDeg);
-    `log("PitchArcLengthEnter = " $ PitchArcLengthEnter);
-    `log("PitchArcTravelTimeEnter = " $ PitchArcTravelTimeEnter);
+    // `log("PitchArcAngleInRadEnter = " $ PitchArcAngleInRadEnter);
+    // `log("PitchArcAngleEnter (deg) = " $ PitchArcAngleInRadEnter * RadToDeg);
+    // `log("PitchArcLengthEnter = " $ PitchArcLengthEnter);
+    // `log("PitchArcTravelTimeEnter = " $ PitchArcTravelTimeEnter);
 
     // Upside-down during the actual dive.
     DiveAngleInURT -= 360 * DegToUnrRot;
     PitchUnitsPerSecondEnter = DiveAngleInURT / PitchArcTravelTimeEnter;
-    `log("PitchUnitsPerSecondEnter = " $ PitchUnitsPerSecondEnter);
+    // `log("PitchUnitsPerSecondEnter = " $ PitchUnitsPerSecondEnter);
 
     CurveCenterEnterDive = TargetLocElevated;
     CurveCenterEnterDive.Z -= CurveRadiusEnterDive;
-    //? DrawDebugSphere(CurveCenterEnterDive, CurveRadiusEnterDive, 64, 0, 255, 0, True);
 
-    Eta = ((90 - AngleOfDiveFromZAxis) * 0.5) * DegToRad;
-    // Xi = (90 - AngleOfDiveFromZAxis) * DegToRad;
-    Xi = ((360 - (PitchArcAngleInRadEnter * RadToDeg)) * 0.5) * DegToRad;
-    Lambda = (90 * DegToRad) - Eta;
-    Beta = (90 - AngleOfDiveFromZAxis) * DegToRad;
-    Rho = (90 * DegToRad) - Lambda;
+    // Eta = ((90 - AngleOfDiveFromZAxis) * 0.5) * DegToRad;
+    // Xi = ((360 - (PitchArcAngleInRadEnter * RadToDeg)) * 0.5) * DegToRad;
+    // Xi = 75 * DegToRad; // TODO: Temporarily hard-coded.
+    // Xi = ((360 * DegToRad) - (4 * Lambda)) * 0.5;
+    Xi = (90 - AngleOfDiveFromZAxis) * DegToRad;
+    // Lambda = Rad90 - Eta;
 
-    `log("Eta            (deg) = " $ Eta * RadToDeg);
-    `log("Xi             (deg) = " $ Xi * RadToDeg);
-    `log("Xi_Old         (deg) = " $ (90 - AngleOfDiveFromZAxis) * DegToRad);
-    `log("Lambda         (deg) = " $ Lambda * RadToDeg);
-    `log("Lambda (check) (deg) = " $ (PitchArcAngleInRadEnter * 0.5) * RadToDeg);
-    `log("Beta           (deg) = " $ Beta * RadToDeg);
-    `log("Rho            (deg) = " $ Rho * RadToDeg);
+    // `log("Eta            (deg) = " $ Eta * RadToDeg);
+    // `log("Xi             (deg) = " $ Xi * RadToDeg);
+    // `log("Lambda         (deg) = " $ Lambda * RadToDeg);
+    // `log("Lambda (check) (deg) = " $ (PitchArcAngleInRadEnter * 0.5) * RadToDeg);
+    // `log("Beta           (deg) = " $ Beta * RadToDeg);
 
     // Check calculations.
-    `log("PitchArcAngleEnter (check) (deg) = " $ 2 * Lambda * RadToDeg);
+    // `log("PitchArcAngleEnter (check) (deg) = " $ 2 * Lambda * RadToDeg);
 
-    Line_FD = CurveRadiusEnterDive / Tan(Eta);
-    Line_CH = PayloadDropHeight / Sin(Beta);
+    //? Line_FD = CurveRadiusEnterDive / Tan(Eta);
+    Line_FD = CurveRadiusEnterDive;
     Line_HE_1 = TanAODFZA * Line_CH;
     Line_CD = (Line_CH / Line_HE_1) * CurveRadiusEnterDive;
-    Line_DH = Line_CD - Line_CH;
-    DistDive = Line_DH;
+    DistDive = Line_CD - Line_CH; // Line_DH.
 
-    `log("Line_FD   = " $ Line_FD);
-    `log("Line_CH   = " $ Line_CH);
-    `log("Line_HE_1 = " $ Line_HE_1);
-    `log("Line_CD   = " $ Line_CD);
-    `log("Line_DH   = " $ Line_DH);
+    // `log("Line_CH    = " $ Line_CH);
+    // `log("Line_B1    = " $ Line_B1);
+    // `log("Line_FD    = " $ Line_FD);
+    // `log("Line_HE_1  = " $ Line_HE_1);
+    // `log("Line_CD    = " $ Line_CD);
+    // `log("DistDive   = " $ DistDive);
 
-    CurveRadiusExitDive = (Line_DH + Line_FD) / (Line_FD / CurveRadiusEnterDive);
-    `log("CurveRadiusExitDive = " $ CurveRadiusExitDive);
+    CurveRadiusExitDive = (DistDive + Line_FD) / (Line_FD / CurveRadiusEnterDive);
+    Line_CA = Sqrt(CurveRadiusExitDive**2 + Line_CH**2);
 
-    /*
-    Line_ZC = TanAODFZA * PayloadDropHeight;
-    Line_HE = (Line_HC * Sin(Xi)) * SinAODFZA;
-    DistDive = ((CurveRadiusEnterDive / Line_HE) * Line_HC) - Line_HC;
-    Line_EC = Line_HE / SinAODFZA;
-    Line_BE = ((CurveRadiusEnterDive / Line_HE) * Line_EC) - Line_EC;
-    Line_HX = SinAODFZA * Line_HC;
-    Line_HK = TanAODFZA * Line_HC;
-
-    `log("Line_ZC  = " $ Line_ZC);
-    `log("Line_HE  = " $ Line_HE);
-    `log("DistDive = " $ DistDive);
-    `log("Line_EC  = " $ Line_EC);
-    `log("Line_BE  = " $ Line_BE);
-    `log("Line_HX  = " $ Line_HX);
-    `log("Line_HK  = " $ Line_HK);
-    */
-
-    /*
-
-    `log("Psi   (deg) = " $ Psi * RadToDeg);
-
-    CurveRadiusExitDive = Line_BE + Line_HE;
-    `log("CurveRadiusExitDive = " $ CurveRadiusExitDive);
-    */
+    // `log("CurveRadiusExitDive = " $ CurveRadiusExitDive);
+    // `log("Line_CA             = " $ Line_CA);
 
     AccelPerSecondExit = Square(DiveSpeed) / CurveRadiusExitDive;
-    `log("AccelPerSecondExit = " $ AccelPerSecondExit);
+    // `log("AccelPerSecondExit = " $ AccelPerSecondExit);
 
-    PitchArcAngleInRadExit = Xi - (Lambda / 2);
-    Theta = ((180 * DegToRad) - PitchArcAngleInRadExit) * 0.5;
+    Mu = ASin(Line_CH / Line_CA);
+    Theta = Rad90 - Mu;
 
-    `log("Theta (deg) = " $ Theta * RadToDeg);
+    // `log("Theta (deg) = " $ Theta * RadToDeg);
+    // `log("Mu    (deg) = " $ Mu * RadToDeg);
+    // `log("Gamma (deg) = " $ Gamma * RadToDeg);
+
+    PitchArcAngleInRadExit = Rad180 - (2 * Theta);
 
     if(WorldEdgeExitBuffer < CurveRadiusExitDive)
     {
-        `log("Extending world edge limits (CurveRadiusExitDive)");
+        // `log("Extending world edge limits (CurveRadiusExitDive)");
         SetWorldEdgeLimits(CurveRadiusExitDive + 25);
     }
 
-    AngleOfAscension = (90 * DegToRad) - (2 * Theta);
+    AngleOfAscension = PitchArcAngleInRadExit - Xi;
+
+    // TODO: Dirty hack to take absolute value...
+    if ((AngleOfAscension * RadToDeg) < 0)
+    {
+        AngleOfAscension = Abs(AngleOfAscension);
+        // Also correct PitchArcAngleInRadExit...
+        PitchArcAngleInRadExit = AngleOfAscension + Xi;
+    }
     AscensionAngleInURT = AngleOfAscension * RadToUnrRot;
 
-    `log("AngleOfAscension (deg) = " $ AngleOfAscension * RadToDeg);
+    // `log("AngleOfAscension (deg) = " $ AngleOfAscension * RadToDeg);
 
-    // PitchArcAngleInRadExit = (180 * DegToRad) - (2 * Theta);
     PitchArcLengthExit = PitchArcAngleInRadExit * CurveRadiusExitDive;
     PitchArcTravelTimeExit = PitchArcLengthExit / DiveSpeed;
 
     // Upside-down during actual dive.
     AscensionAngleInURT = (-180 * DegToUnrRot) - (AngleOfAscension * RadToUnrRot);
-    `log("AscensionAngleInURT (deg) (actual) = " $ AscensionAngleInURT * UnrRotToDeg);
+    // `log("AscensionAngleInURT (deg) (actual) = " $ AscensionAngleInURT * UnrRotToDeg);
     PitchUnitsPerSecondExit = AscensionAngleInURT / PitchArcTravelTimeExit;
-    `log("PitchUnitsPerSecondExit = " $ PitchUnitsPerSecondExit);
+    // `log("PitchUnitsPerSecondExit = " $ PitchUnitsPerSecondExit);
 
-    // 3000 UU / 5 s^2 (arbitrary value chosen for now).
-    AccelPerSecondDive = Abs(PhysicsVolume.GetGravityZ()) * Sin(AngleOfDiveFromZAxis * DegToRad) + (3000 / 5);
-    `log("AccelPerSecondDive = " $ AccelPerSecondDive);
+    // 3000 UU / 2 s^2 (arbitrary value chosen for now).
+    AccelPerSecondDive = (Abs(PhysicsVolume.GetGravityZ()) * SinAODFZA) + (3000 / 2);
+    // `log("AccelPerSecondDive = " $ AccelPerSecondDive);
 
     TimeTillMaxSpeed = (DiveSpeed - Speed) / AccelPerSecondDive;
     DistMaxDiveSpeed = (Speed * TimeTillMaxSpeed) + (0.5 * AccelPerSecondDive * Square(TimeTillMaxSpeed));
     TimeDiving = TimeTillMaxSpeed + ((DistDive - DistMaxDiveSpeed) / DiveSpeed);
     TimeTillDrop = TimeTillTarget + PitchArcTravelTimeEnter + TimeDiving;
 
-    `log("PitchArcAngleInRadExit = " $ PitchArcAngleInRadExit);
-    `log("PitchArcAngleExit (deg) = " $ PitchArcAngleInRadExit * RadToDeg);
-    `log("PitchArcLengthExit = " $ PitchArcLengthExit);
-    `log("PitchArcTravelTimeExit = " $ PitchArcTravelTimeExit);
+    // if (DistMaxDiveSpeed > DistDive)
+    // {
+    //     `log("ERROR: DIVE BOMBER CAN'T REACH DIVESPEED!");
+    // }
 
-    `log("DistMaxDiveSpeed = " $ DistMaxDiveSpeed);
-    `log("DistDive = " $ DistDive);
-    `log("TimeDiving = " $ TimeDiving);
-    `log("TimeTillDrop = " $ TimeTillDrop);
-    `log("TimeTillMaxSpeed = " $ TimeTillMaxSpeed);
+    // `log("PitchArcAngleInRadExit  = " $ PitchArcAngleInRadExit);
+    // `log("PitchArcAngleExit (deg) = " $ PitchArcAngleInRadExit * RadToDeg);
+    // `log("PitchArcLengthExit      = " $ PitchArcLengthExit);
+    // `log("PitchArcTravelTimeExit  = " $ PitchArcTravelTimeExit);
 
-    Iota = (90 - AngleOfDiveFromZAxis) * DegToRad;
-    Line_HA = SinAODFZA / (Sin(Iota) / (Line_FD + Line_DH));
-    `log("Iota (deg) = " $ Iota * RadToDeg);
-    `log("Line_HA = " $ Line_HA);
+    // `log("DistMaxDiveSpeed = " $ DistMaxDiveSpeed);
+    // `log("DistDive         = " $ DistDive);
+    // `log("TimeDiving       = " $ TimeDiving);
+    // `log("TimeTillDrop     = " $ TimeTillDrop);
+    // `log("TimeTillMaxSpeed = " $ TimeTillMaxSpeed);
 
-    //? DRTI = DRTeamInfo(WorldInfo.GRI.Teams[TeamIndex]);
-    StrikeDir3D = Normal(TargetLocElevated - Location);
-    //? StrikeDir3D.X = DRTI.StrikeDirection.X;
-    //? StrikeDir3D.Y = DRTI.StrikeDirection.Y;
+    Line_VA = (CurveRadiusExitDive / Sin(Rad90)) * Sin(Rad90 - (AngleOfDiveFromZAxis * DegToRad));
+    Line_CF_1 = Line_VA - Line_B1;
+    Line_AF_1 = Sqrt(Line_CA**2 - Line_CF_1**2);
 
-    Line_B1 = Line_CH * SinAODFZA;
-    `log("Line_B1 = " $ Line_B1);
+    // `log("Line_VA    = " $ Line_VA);
+    // `log("Line_CF_1  = " $ Line_CF_1);
+    // `log("Line_AF_1  = " $ Line_AF_1);
 
-    // Travel from TargetLocation to Payload Drop Point (H).
-    // RTemp = Rotator(TargetLocation);
-    // RTemp.Pitch = AngleOfDiveFromZAxis * DegToUnrRot;
-    // RTemp.Yaw = rotator(StrikeDir3D).Yaw;
-    // VTemp = TargetLocation;
-    // VTemp += (Normal(Vector(RTemp)) * Line_CH);
-    VTemp1 = TargetLocation;
-    VTemp1.Z += PayloadDropHeight;
-    VTemp1 += Normal(StrikeDir3D) * Line_B1;
+    CurveCenterExitDive = TargetLocation;
+    CurveCenterExitDive -= StrikeDir3D * Line_CF_1;
+    CurveCenterExitDive.Z += Line_AF_1;
 
-    // Travel from Payload Drop Point (H) to CurveCenterExitDive.
-    CurveCenterExitDive = VTemp1;
-    VTemp2 = -StrikeDir3D;
-    // RTemp = rotator(VTemp2);
-    // VTemp2 = vector(RTemp);
-    CurveCenterExitDive += Normal(VTemp2) * Line_HA;
-    CurveCenterExitDive.Z *= 1.1; // Approximation...
+    // Manual correction due to some error in trajectory calculation.
+    if (CurveRadiusExitDive >= CurveCenterExitDive.Z)
+    {
+        // `log("ERROR: DIVE BOMBER WILL CRASH, CORRECTING CurveCenterExitDive!");
+        CurveCenterExitDive.Z += (CurveRadiusExitDive - CurveCenterExitDive.Z) * 1.5;
+    }
 
-    // ExitCurveCenterHeight = (Line_RA / Sin(AngleOfAscension + Theta)) * Sin(AngleOfAscension + Theta);
-    // CurveCenterExitDive = Normal(TargetLocation - (StrikeDir3D * Line_RA));
-    // CurveCenterExitDive.Z = ExitCurveCenterHeight;
-    // CurveCenterExitDive = CurveCenterEnterDive;
+    // DrawDebugSphere(CurveCenterEnterDive, CurveRadiusEnterDive, 64, 0, 255, 0, True);
+    // DrawDebugSphere(CurveCenterExitDive, CurveRadiusExitDive, 64, 255, 35, 0, True);
 
-    //? DrawDebugSphere(CurveCenterExitDive, CurveRadiusExitDive, 64, 255, 35, 0, True);
+    // `log("CurveCenterEnterDive = " $ CurveCenterEnterDive);
+    // `log("CurveCenterExitDive  = " $ CurveCenterExitDive);
 
-    /*
-    StrikeDir3D.Z = ExitCurveCenterHeight;
-    DrawDebugLine(Location, StrikeDir3D, 0, 255, 0, True);
-    `log("StrikeDir3D = " $ StrikeDir3D);
+    //? TimeTillStopAccel = TimeTillTarget + PitchArcTravelTimeEnter + TimeTillMaxSpeed;
+    //? TimeTillExitFlight = TimeTillStopAccel + PitchArcTravelTimeExit;
 
-    `log("CurveCenterEnterDive = " $ CurveCenterEnterDive);
-    `log("CurveCenterExitDive = " $ CurveCenterExitDive);
-    */
+    //? `log("TimeTillStopAccel  = " $ TimeTillStopAccel);
+    //? `log("TimeTillExitFlight = " $ TimeTillExitFlight);
 
-    TimeTillStopAccel = TimeTillTarget + PitchArcTravelTimeEnter + TimeTillMaxSpeed;
-    `log("TimeTillStopAccel = " $ TimeTillStopAccel);
+    // StartTime = WorldInfo.TimeSeconds;
 
-    TimeTillExitFlight = TimeTillStopAccel + PitchArcTravelTimeExit;
-    `log("TimeTillExitFlight = " $ TimeTillExitFlight);
+    // `log("*************************************************");
+    // `log("RollTime   = " $ StartTime + TimeTillBeginRoll);
+    // `log("TargetTime = " $ StartTime + TimeTillTarget);
+    // `log("DropTime   = " $ StartTime + TimeTillDrop);
+    // `log("*************************************************");
+
+    // `log("-------------------------------------------------");
+    // `log("SHOULD BE VERY VERY VERY CLOSE TO THE SAME VALUE!");
+    // `log("CenterEnter + Radius = " $ CurveCenterEnterDive.Z + CurveRadiusEnterDive);
+    // `log("CenterExit  + Radius = " $ CurveCenterExitDive.Z + CurveRadiusExitDive);
+    // `log("-------------------------------------------------");
+
+    if (FRand() > 0.5)
+    {
+        Temp = -AscensionRollAngle;
+        YawUnitsPerSecondExit = PitchUnitsPerSecondExit * 0.5;
+    }
+    else
+    {
+        Temp = AscensionRollAngle;
+        YawUnitsPerSecondExit = PitchUnitsPerSecondExit * -0.5;
+    }
+    AscensionRollAngleInURT = (180 + Temp) * DegToUnrRot;
 
     SetTimer(TimeTillBeginRoll, False, 'Roll');
     SetTimer(TimeTillTarget, False, 'StartEnterDive');
     SetTimer(TimeTillDrop, False, 'DropPayload');
     SetTimer(TimeTillDrop, False, 'StartExitDive');
-    SetTimer(TimeTillStopAccel, False, 'StopAccelerating');
-    SetTimer(TimeTillExitFlight, False, 'StartExitFlight');
+    //? SetTimer(TimeTillStopAccel, False, 'StopAccelerating');
+    //? SetTimer(TimeTillExitFlight, False, 'StartExitFlight');
 }
 
 // Using basic physics, work out where each payload needs to be released in order to hit the target.
@@ -481,9 +611,8 @@ function SetDropPoint()
     // local float TimeTillDrop;
     // local float ImpactVelPct;
 
-    // TODO: We will actually be dropping the payload later.
     FallDist = PayloadDropHeight;
-    `log("FallDist = " $ FallDist);
+    // `log("FallDist = " $ FallDist);
 
     if( FallDist < 0 )
     {
@@ -499,7 +628,7 @@ function SetDropPoint()
     */
 
     FallTime = Sqrt((FallDist * 2) / Abs(PhysicsVolume.GetGravityZ()));
-    `log("FallTime = " $ FallTime);
+    // `log("FallTime = " $ FallTime);
 
     // Now calculate how early the payload must be dropped in order to hit the target (payload inherits half the aircraft's speed)
     // DropLocationOne = TargetLocation;
@@ -513,7 +642,7 @@ function SetDropPoint()
     // Now set a timer to drop the payload at the correct location (the timer is less CPU intensive and less error prone than location checks every tick)
     // TimeTillDrop = VSize(DropLocationOne - Location) / Speed;
     // TimeTweenDrops = (VSize(DropLocationTwo - Location) / Speed) - TimeTillDrop;
-    TimeTweenDrops = 1;
+    TimeTweenDrops = 0.05;
     // TimeTillDrop += InboundDelay;
     // SetTimer(TimeTillDrop, false, 'DropPayload');
 
@@ -531,7 +660,7 @@ function DropPayload()
     local ROVolumeTest RVT;
     local ROGameReplicationInfo ROGRI;
 
-    `log("DropPayload(), Height = " $ Location.Z);
+    // `log("DropPayload(), Height = " $ Location.Z);
 
     if( !bAbortStrike )
     {
@@ -572,7 +701,7 @@ function DropPayload()
 
     GetAxes(Rotation,X,Y,Z);
     FallDist = PayloadDropHeight;
-    `log("FallDist = " $ FallDist);
+    // `log("FallDist = " $ FallDist);
 
     if( !bDroppedFirstBomb )
     {
@@ -600,7 +729,7 @@ function DropPayload()
         //Accel.Z = -490;   // 9.8 m/s^2
         SpawnedPayload.AccelToApply = Accel;    // Replicated variable so that the client can correctly calculate its own change in velocity
         SpawnedPayload.Acceleration = Accel;
-        SpawnedPayload.Velocity = Vector(AddSpreadY(rotator(Velocity))) * Speed;
+        SpawnedPayload.Velocity = Vector(AddSpreadY(rotator(Velocity))) * VSize(Velocity);
         SpawnedPayload.FallDist = FallDist;
         SpawnedPayload.Lifespan = FallTime + 0.5;   // This should stop situations where a canister gets stuck on something and isn't able to actually impact the ground
         SpawnedPayload.SetExplosionTime(FallTime);
@@ -608,11 +737,11 @@ function DropPayload()
 
     if( !bDroppedFirstBomb )
     {
-        // We've reached the target, so it's now safe to starting checking for despawn
+        // We've reached the target, so it's now safe to starting checking for despawn.
         bCheckMapBounds = true;
         bDroppedFirstBomb = true;
 
-        `log("bCheckMapBounds = True");
+        // `log("bCheckMapBounds = True");
 
         SetTimer(TimeTweenDrops, false, 'DropPayload');
 
@@ -635,7 +764,7 @@ function HandleRollUpdate(float DeltaTime)
     {
         NewRot.Roll = RollAngleInURT;
         DivingState = EDBDS_None;
-        `log("Roll finished");
+        // `log("Roll finished");
     }
 
     SetRotation(NewRot);
@@ -645,6 +774,8 @@ function HandleExitingDiveUpdate(float DeltaTime)
 {
     local rotator NewRot;
     local vector AccelToApply;
+    local vector FinalVelocity;
+    local float AircraftSpeed;
 
     /*
     `log("Rotation.Pitch (deg) = " $ Rotation.Pitch * UnrRotToDeg
@@ -654,17 +785,45 @@ function HandleExitingDiveUpdate(float DeltaTime)
     NewRot = Rotation;
     NewRot.Pitch += PitchUnitsPerSecondExit * DeltaTime;
 
-    if (Rotation.Pitch < AscensionAngleInURT)
+    AircraftSpeed = VSize(Velocity);
+    // TODO: Final velocity should be AircraftSpeed * vector(FinalRotation)?
+    FinalVelocity = AircraftSpeed * vector(Rotation);
+
+    // If we are getting close to the final angle,
+    // interpolate velocity towards the "final velocity" & pitch.
+    // Add some roll for cinematic effect.
+    // 1820 ~= 10 * DegToUnrRot.
+    if (((Abs(AscensionAngleInURT) - Abs(Rotation.Pitch)) < 1820)
+        && (Rotation.Pitch > AscensionAngleInURT))
     {
-        NewRot.Pitch = AscensionAngleInURT;
+
+        Velocity = VInterpTo(Velocity, FinalVelocity, DeltaTime, 1);
+        //? NewRot.Pitch = FInterpTo(Rotation.Pitch, AscensionAngleInURT, DeltaTime, 1);
+    }
+    else if (Rotation.Pitch < AscensionAngleInURT)
+    {
+        //? NewRot.Pitch = AscensionAngleInURT;
+        //? SetRotation(NewRot);
+        //? Velocity = FinalVelocity;
         DivingState = EDBDS_None;
+        Ascend();
         `log("Finished exiting dive");
+        return;
     }
 
     SetRotation(NewRot);
 
     AccelToApply = AccelPerSecondExit * Normal(CurveCenterExitDive - Location) * DeltaTime;
     Velocity += AccelToApply;
+
+    // Correction to adjust trajectory due to errors in the trajectory calculations.
+    if (AircraftSpeed < DiveSpeed)
+    {
+        AccelToApply = ((DiveSpeed - AircraftSpeed) * 3) * Normal(
+            CurveCenterExitDive - Location) * DeltaTime;
+        Velocity += AccelToApply;
+        // `dr("C=" $ VSize(AccelToApply) $ " A=" $ VSize(AccelToApply));
+    }
 }
 
 function HandleDivingUpdate(float DeltaTime)
@@ -675,7 +834,11 @@ function HandleDivingUpdate(float DeltaTime)
     {
         AccelToApply = AccelPerSecondDive * Normal(TargetLocation - Location) * DeltaTime;
         Velocity += AccelToApply;
-        // `log("Speed = " $ VSize(Velocity));
+
+        if (VSize(Velocity) >= DiveSpeed)
+        {
+            bAccelerating = False;
+        }
     }
 }
 
@@ -683,7 +846,6 @@ function HandleEnteringDiveUpdate(float DeltaTime)
 {
     local rotator NewRot;
     local vector AccelToApply;
-    local rotator TempRot;
 
     NewRot = Rotation;
     NewRot.Pitch += PitchUnitsPerSecondEnter * DeltaTime;
@@ -698,51 +860,81 @@ function HandleEnteringDiveUpdate(float DeltaTime)
         NewRot.Pitch = DiveAngleInURT;
         SetRotation(NewRot);
         Dive();
-        `log("Finished entering dive");
+        // `log("Finished entering dive");
         return;
     }
 
     SetRotation(NewRot);
 
-    // `log("Velocity = " $ Velocity);
     AccelToApply = AccelPerSecondEnter * Normal(CurveCenterEnterDive - Location) * DeltaTime;
     Velocity += AccelToApply;
-    // `log("AccelToApply = " $ AccelToApply);
-    // `log("AFTER ACCEL:");
-    // `log("Velocity = " $ Velocity);
+}
 
-    // DrawDebugLine(Location, AccelToApply, 0, 255, 0, True);
-    // DrawDebugLine(Location, Velocity, 0, 0, 255, True);
-    // DrawDebugLine(Location, CurveCenterEnterDive, 255, 0, 0, True);
+function HandleRollingOutUpdate(float DeltaTime)
+{
+    local rotator NewRot;
+    local matrix M;
+
+    NewRot = Rotation;
+
+    // 910 ~= 10 * DegToUnrRot.
+    if (Abs(Abs(Rotation.Roll) - Abs(AscensionRollAngleInURT)) > 910.0)
+    {
+        NewRot.Roll = int(FInterpTo(float(Rotation.Roll), float(AscensionRollAngleInURT), DeltaTime, 1));
+        // `log("Rotation.Roll            = " $ Rotation.Roll);
+        // `log("AscensionRollAngleInURT  = " $ AscensionRollAngleInURT);
+        // `log("Diff                     = " $ Abs(Abs(Rotation.Roll) - Abs(AscensionRollAngleInURT)));
+    }
+    else
+    {
+        // We're actually "yawing" now because the aircraft is rolled.
+        // TODO: Find a way to pitch in actual "aircraft space",
+        // instead of world space. (Check UE4 implementation of FVector::RotateAngleAxis).
+        NewRot.Yaw += YawUnitsPerSecondExit * DeltaTime;
+
+        M = MakeRotationMatrix(Rotation);
+        Velocity += AccelPerSecondExit * Normal(MatrixGetAxis(M, AXIS_Z)) * DeltaTime * 0.5;
+    }
+
+    SetRotation(NewRot);
 }
 
 function HandleAscendingUpdate(float DeltaTime)
 {
-    // local rotator NewRot;
-    // NewRot = Rotation;
+    if (Abs(VSize(Velocity) - Speed) > 10.0)
+    {
+        Velocity = VInterpTo(Velocity, vector(Rotation) * Speed, DeltaTime, InterpSpeedAscend);
+    }
+    else
+    {
+        DivingState = EDBDS_RollingOut;
+    }
 }
 
 DefaultProperties
 {
-    TeamIndex = `ALLIES_TEAM_INDEX; // TODO: Actually Axis.
+    TeamIndex = `AXIS_TEAM_INDEX;
 
-    Speed=3800 //3756 // 146 knots or 75 m/s.
-    DiveSpeed=8000 //7156 // 150 m/s (constant dive speed after initial acceleration).
-    Altitude=50000 // 50kUU = 1000m.
-    //? PayloadDropHeight=15000 // 15kUU = 300m.
-    PayloadDropHeight=25000 // 15kUU = 300m.
+    Speed=3756 // 3756 = 146 knots or 75 m/s.
+    DiveSpeed=7156 // 7156 = 150 m/s (constant dive speed after initial acceleration).
+    Altitude=55000 // 1100m. // 50kUU = 1000m.
+    PayloadDropHeight=22500 // 450m. // 15kUU = 300m.
 
-    AngleOfDive=260 // From mesh 0 rotation position.
+    InterpSpeedAscend=5
+
+    AngleOfDive=255 // From mesh 0 rotation position.
     AngleOfRoll=180
+
+    AscensionRollAngle=85
 
     DivingState=EDBDS_None
 
     bCheckMapBounds=False
     bAccelerating=False
 
-    AmbientSound=None
-    AmbientComponent=None
-    AmbientSoundCustom=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
+    // TODO: 1 big bomb? Need new mesh for big bomb?
+    FirstPayloadClass=class'ROCarpetBomb'
+    SecondPayloadClass=class'ROCarpetBomb'
 
     Begin Object Name=PlaneMesh
         SkeletalMesh=SkeletalMesh'DR_VH_CMD.Mesh.JU87_BOMB_SKEL'
@@ -751,12 +943,27 @@ DefaultProperties
         Materials[0]=MaterialInstanceConstant'DR_VH_CMD.MIC.M_JU87'
     End Object
 
-    Begin Object Class=AudioComponent name=AmbientSoundComponentCustom
+    AmbientSound=None
+    AmbientComponent=None
+
+    DiveSound=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
+    FlightSound=SoundCue'DR_AUD_Stuka.Stuka_Flight_1_Cue'
+
+    Begin Object Class=AudioComponent name=DiveSoundComponent_01
         OcclusionCheckInterval=1.0
         bShouldRemainActiveIfDropped=true
         bStopWhenOwnerDestroyed=true
         bAutoPlay=false
     End Object
-    AmbientComponentCustom=AmbientSoundComponentCustom
-    Components.Add(AmbientSoundComponentCustom)
+    DiveSoundComponent=DiveSoundComponent_01
+    Components.Add(DiveSoundComponent_01)
+
+    Begin Object Class=AudioComponent name=FlightSoundComponent_01
+        OcclusionCheckInterval=1.0
+        bShouldRemainActiveIfDropped=true
+        bStopWhenOwnerDestroyed=true
+        bAutoPlay=false
+    End Object
+    FlightSoundComponent=FlightSoundComponent_01
+    Components.Add(FlightSoundComponent_01)
 }
