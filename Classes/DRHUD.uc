@@ -4,10 +4,16 @@ event PostBeginPlay()
 {
     super.PostBeginPlay();
 
+    VehicleListWidget = Spawn(DefaultVehicleListWidget, PlayerOwner);
+    VehicleListWidget.Initialize(PlayerOwner);
+    HUDWidgetList.AddItem(VehicleListWidget);
+
     HUDWidgetList.RemoveItem(CamoIndicatorWidget);
+    CamoIndicatorWidget.Destroy();
     CamoIndicatorWidget=None;
 
     HUDWidgetList.RemoveItem(HelicopterInfoWidget);
+    HelicopterInfoWidget.Destroy();
     HelicopterInfoWidget=None;
 }
 
