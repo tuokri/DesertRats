@@ -1,0 +1,35 @@
+static event class<GameInfo> SetGameType(string MapName, string Options, string Portal)
+{
+    local string ThisMapPrefix;
+
+    ReplaceText(MapName, "UEDPIE", "");
+    ThisMapPrefix = Left(MapName, InStr(MapName, "-"));
+
+    if (ThisMapPrefix ~= "DRTE")
+    {
+        return class'DRGameInfoTerritories';
+    }
+    /*
+    else if (ThisMapPrefix ~= "DRSU")
+    {
+        return class'DRGameInfoSupremacy';
+    }
+    else if (ThisMapPrefix ~= "DRSK")
+    {
+        return class'DRGameInfoSkirmish';
+    }
+    */
+
+    return super.SetGameType(MapName, Options, Portal);
+}
+
+function RestartPlayerCommon(Controller NewPlayer)
+{
+    local DRPlayerController DRPC;
+
+    DRPC = DRPlayerController(NewPlayer);
+    if (DRPC != None)
+    {
+        DRPC.ClearLeftVehicleFlag();
+    }
+}
