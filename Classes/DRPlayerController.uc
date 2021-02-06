@@ -1471,20 +1471,35 @@ exec function SetSightZ(float NewZ)
     ROWeapon(Pawn.Weapon).PlayerViewOffset.Z = NewZ;
 }
 
-exec function Camera(optional bool free = false)
+exec function Camera(name NewMode)
 {
-    ServerCamera(free);
+    ServerCamera(NewMode);
 }
 
-unreliable server function ServerCamera(bool free)
+reliable server function ServerCamera(name NewMode)
 {
-    if (free)
+    if (NewMode == '1st')
     {
-        SetCameraMode('FreeCam');
+        NewMode = 'FirstPerson';
     }
-    else
+    else if (NewMode == '3rd')
     {
-        SetCameraMode('ThirdPerson');
+        NewMode = 'ThirdPerson';
+    }
+    else if (NewMode == 'free')
+    {
+        NewMode = 'FreeCam';
+    }
+    else if (NewMode == 'fixed')
+    {
+        NewMode = 'Fixed';
+    }
+
+    SetCameraMode(NewMode);
+
+    if (PlayerCamera != None)
+    {
+        `dr("CameraStyle=" $ PlayerCamera.CameraStyle);
     }
 }
 
