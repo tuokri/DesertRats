@@ -88,8 +88,8 @@ simulated function PostBeginPlay()
     // DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
     // DebugLastPointLocation = Location;
 
-    SetTimer(45, False, 'StartExitFlight');
-    SetTimer(55, False, 'Destroy');
+    SetTimer(55, False, 'StartExitFlight');
+    SetTimer(65, False, 'Destroy');
 }
 
 simulated function Explode()
@@ -243,7 +243,7 @@ function Ascend()
 {
     // `log("Ascend() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_Ascending;
-    bCheckMapBounds = True;
+    // bCheckMapBounds = True;
 
     if (FlightSound != None)
     {
@@ -577,7 +577,6 @@ function CalculateTrajectory()
     // `log("*************************************************");
 
     // `log("-------------------------------------------------");
-    // `log("SHOULD BE VERY VERY VERY CLOSE TO THE SAME VALUE!");
     // `log("CenterEnter + Radius = " $ CurveCenterEnterDive.Z + CurveRadiusEnterDive);
     // `log("CenterExit  + Radius = " $ CurveCenterExitDive.Z + CurveRadiusExitDive);
     // `log("-------------------------------------------------");
@@ -738,7 +737,7 @@ function DropPayload()
     if( !bDroppedFirstBomb )
     {
         // We've reached the target, so it's now safe to starting checking for despawn.
-        bCheckMapBounds = true;
+        // bCheckMapBounds = true;
         bDroppedFirstBomb = true;
 
         // `log("bCheckMapBounds = True");
