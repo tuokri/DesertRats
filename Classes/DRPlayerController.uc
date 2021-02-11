@@ -1637,11 +1637,11 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 
 DefaultProperties
 {
-    // TeamSelectSceneTemplate=     WWUISceneTeamSelect'WinterWar_UI.UIScene.WWUIScene_TeamSelect'
+    TeamSelectSceneTemplate       = DRUISceneTeamSelect'DR_UI.UIScene.DRUIScene_TeamSelect'
     // UnitSelectSceneTemplate=     WWUISceneUnitSelect'WinterWar_UI.UIScene.WWUIScene_UnitSelect'
     // CharacterSceneTemplate=          WWUISceneCharacter'WinterWar_UI.UIScene.WWUIScene_Character'
     // AfterActionReportSceneTemplate=  WWUISceneAfterActionReport'WinterWar_UI.UIScene.WWUIScene_AfterAction'
-    StoreSceneTemplate=             none
+    StoreSceneTemplate            = None
 
     Begin Object Class=AudioComponent name=StingerComponent
         OcclusionCheckInterval=0.1

@@ -23,8 +23,8 @@ DefaultProperties
                         CappingObjWhite   = Texture2D'DR_UI.Objective.128x128.Objective_128_Neutral_Taking',
                         CappingObjRed     = Texture2D'DR_UI.Objective.128x128.Objective_128_Neutral_Taking',
                         CappingObjBlue    = Texture2D'DR_UI.Objective.128x128.Objective_128_Neutral_Taking',
-                        HomeObjRedBorder  = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ',
-                        HomeObjBlueBorder = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ',
+                        // HomeObjRedBorder  = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ',
+                        // HomeObjBlueBorder = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ',
                         SatchelObjIcon         = None,
                         EnemyCappingSatchelObj = None,
                         UpperEdgeMargin=0.22, // 28px
@@ -39,8 +39,8 @@ DefaultProperties
                         CappingObjWhite   = Texture2D'DR_UI.Objective.128x128.Objective_128_Neutral_Taking',
                         CappingObjRed     = Texture2D'DR_UI.Objective.128x128.Objective_128_Neutral_Taking',
                         CappingObjBlue    = Texture2D'DR_UI.Objective.128x128.Objective_128_Neutral_Taking',
-                        HomeObjRedBorder  = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ'
-                        HomeObjBlueBorder = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ',
+                        // HomeObjRedBorder  = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ'
+                        // HomeObjBlueBorder = Texture2D'DR_UI.Objective.128x128.Objective_128_NeutralHQ',
                         SatchelObjIcon         = None,
                         EnemyCappingSatchelObj = None,
                         UpperEdgeMargin=0.22, // 28px
