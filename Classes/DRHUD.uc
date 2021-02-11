@@ -23,5 +23,6 @@ DefaultProperties
     DefaultCommanderWidget=class'DRHUDWidgetCommander'
     // DefaultCommanderAbilitiesWidgetNorth=class'DRHUDWidgetCommanderAbilitiesNorth'
     // DefaultCommanderAbilitiesWidgetSouth=class'DRHUDWidgetCommanderAbilitiesSouth'
+    DefaultObjectiveOverviewWidget=class'DRHUDWidgetObjectiveOverview'
     DefaultObjectiveWidget=class'DRHUDWidgetObjective'
 }
