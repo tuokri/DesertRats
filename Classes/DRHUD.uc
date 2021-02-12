@@ -12,9 +12,11 @@ event PostBeginPlay()
     CamoIndicatorWidget.Destroy();
     CamoIndicatorWidget=None;
 
+    /*
     HUDWidgetList.RemoveItem(HelicopterInfoWidget);
     HelicopterInfoWidget.Destroy();
     HelicopterInfoWidget=None;
+    */
 }
 
 DefaultProperties
@@ -25,4 +27,7 @@ DefaultProperties
     // DefaultCommanderAbilitiesWidgetSouth=class'DRHUDWidgetCommanderAbilitiesSouth'
     DefaultObjectiveOverviewWidget=class'DRHUDWidgetObjectiveOverview'
     DefaultObjectiveWidget=class'DRHUDWidgetObjective'
+    DefaultOverheadMapWidget=class'DRHUDWidgetOverheadMap'
+    DefaultWorldWidget=class'DRHUDWidgetWorld'
+    DefaultCompassWidget=class'DRHUDWidgetSimpleCompass'
 }
