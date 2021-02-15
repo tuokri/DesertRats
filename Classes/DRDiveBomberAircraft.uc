@@ -1,3 +1,4 @@
+// TODO: Randomize payload drop height, spawn altitude, and diving angle.
 class DRDiveBomberAircraft extends RONapalmStrikeAircraftARVN;
 
 enum EDiveBomberDiveState
@@ -201,23 +202,6 @@ function StartEnterDive()
 {
     // `log("StartEnterDive() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_EnteringDive;
-
-    if (DiveSound != None)
-    {
-        if (DiveSoundComponent != None)
-        {
-            DiveSoundComponent.FadeIn(2, 1.0);
-        }
-    }
-
-    if (FlightSound != None)
-    {
-        if (FlightSoundComponent != None)
-        {
-            FlightSoundComponent.FadeOut(2, 0.3);
-        }
-    }
-
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
@@ -275,6 +259,23 @@ function Roll()
 {
     // `log("Roll() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_RollingIn;
+
+    if (DiveSound != None)
+    {
+        if (DiveSoundComponent != None)
+        {
+            DiveSoundComponent.FadeIn(2, 1.0);
+        }
+    }
+
+    if (FlightSound != None)
+    {
+        if (FlightSoundComponent != None)
+        {
+            FlightSoundComponent.FadeOut(2, 0.3);
+        }
+    }
+
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
@@ -916,12 +917,12 @@ DefaultProperties
 
     Speed=3756 // 3756 = 146 knots or 75 m/s.
     DiveSpeed=7156 // 7156 = 150 m/s (constant dive speed after initial acceleration).
-    Altitude=55000 // 1100m. // 50kUU = 1000m.
+    Altitude=65000 // 1300m. // 50kUU = 1000m.
     PayloadDropHeight=22500 // 450m. // 15kUU = 300m.
 
     InterpSpeedAscend=5
 
-    AngleOfDive=255 // From mesh 0 rotation position.
+    AngleOfDive=260 // From mesh 0 rotation position.
     AngleOfRoll=180
 
     AscensionRollAngle=85
