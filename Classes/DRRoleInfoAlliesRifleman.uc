@@ -9,7 +9,7 @@ DefaultProperties
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeapon_Enfield'),
 
-        OtherItems=(class'ROWeap_M61_GrenadeSingle')
+        OtherItems=(class'DRWeap_Mills_Grenade')
     )}
 
     ClassIcon=Texture2D'DR_UI.RoleIcons.Small_Class_Icon_Rifleman'
