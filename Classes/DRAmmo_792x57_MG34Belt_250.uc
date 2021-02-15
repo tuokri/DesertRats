@@ -1,4 +1,4 @@
-class DRAmmo_762x57_MG34Belt_250 extends ROAmmo_762x63_M1919Belt_250
+class DRAmmo_792x57_MG34Belt_250 extends ROAmmo_762x63_M1919Belt_250
 	abstract;
 
 DefaultProperties
