@@ -38,7 +38,7 @@ simulated event ReplicatedEvent(name VarName)
 simulated event PostBeginPlay()
 {
 	super.PostBeginPlay();
-	
+
 	TrackIndex = rand(TotalTrackSets);
 }
 
@@ -47,16 +47,16 @@ simulated function SetMoraleMusic()
 	local string CRef_NewMoralMusicTrack;
 	local float TransitionWaitTimer;
 	local DRPlayerController PC;
-	
+
 	if (ROPlayerController(GetALocalPlayerController()).GetTeamNum() != TeamIndex)
 	{
 		return;
 	}
-	
+
 	`dr("",'M');
-	
+
 	NewMoraleMusicTrack.TheSoundCue = none;
-	
+
 	/*
 	if (Morale < 50)
 	{
@@ -92,11 +92,11 @@ simulated function SetMoraleMusic()
 		}
 	}
 	*/
-	
+
 	CRef_NewMoralMusicTrack = "SoundCue'DR__PLACEHOLDER_MUS.TEMPCUE'";
-	
+
 	LoadAsyncMoraleMusicTrack(CRef_NewMoralMusicTrack);
-	
+
 	if (OldMorale == 255 || NoTransitionCheck)
 	{
 		NoTransitionCheck = false;
@@ -105,7 +105,7 @@ simulated function SetMoraleMusic()
 	else
 	{
 		TransitionWaitTimer = 7.0;
-		
+
 		foreach WorldInfo.LocalPlayerControllers(class'DRPlayerController', PC)
 		{
 			if (PC.RoundEnd)
@@ -114,7 +114,7 @@ simulated function SetMoraleMusic()
 				break;
 			}
 		}
-		
+
 		if (OldMorale < Morale)
 		{
 			SetTimer(TransitionWaitTimer, false, 'PlayMoraleTransitionUp');
@@ -132,11 +132,11 @@ simulated function LoadAsyncMoraleMusicTrack(string MusicTrack)
 	{
 		return;
 	}
-	
+
 	`dr(MusicTrack,'M');
-	
+
 	NewMoraleMusicTrack.TheSoundCue = SoundCue(DynamicLoadObject(MusicTrack, class'SoundCue'));
-	
+
 	if (NewMoraleMusicTrack.TheSoundCue == none)
 	{
 		`dr("Failed to load cue!!!",'M');
@@ -179,11 +179,11 @@ simulated function PlayTransitionMusicTrack(bool bMoraleUp)
 			TransitionMusicTrack = AlliesLowerMoraleTransitionTrack;
 		}
 	}
-	
+
 	// Update immediately for transition stinger
 	NewMoraleMusicTrack = TransitionMusicTrack;
 	UpdateMoraleMusicTrack();
-	
+
 	// Update later for post-transition music
 	NoTransitionCheck = true;
 	SetTimer(NewMoraleMusicTrack.TheSoundCue.GetCueDuration(), false, 'SetMoraleMusic');
@@ -198,7 +198,7 @@ simulated function NotifyLocalPlayerTeamReceived()
 simulated function UpdateMoraleMusicTrack()
 {
 	local DRPlayerController PC;
-	
+
 	if (NewMoraleMusicTrack.TheSoundCue == none)
 	{
 		// `dr("Waiting for morale track to load. Retry in 1 sec",'M');
@@ -207,7 +207,7 @@ simulated function UpdateMoraleMusicTrack()
 	else
 	{
 		ClearTimer('UpdateMoraleMusicTrack');
-		
+
 		foreach WorldInfo.LocalPlayerControllers(class'DRPlayerController', PC)
 		{
 			PC.SetNewMoraleMusicTrack(NewMoraleMusicTrack);
@@ -222,7 +222,7 @@ simulated function class<ROAerialReconPlane> GetAerialReconPlaneClass()
 	{
 		// return class 'WWAerialReconPlaneSoviet';
 	}
-	
+
 	return none;
 }
 
@@ -230,9 +230,9 @@ defaultproperties
 {
 	OldMorale=255
 	NoTransitionCheck=false
-	
+
 	NewMoraleMusicTrack=(bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=1.0,FadeInVolumeLevel=1.0,FadeOutTime=0.5,FadeOutVolumeLevel=0.0)
-	
+
 	// Don't forget to update this as more tracks are added
 	TotalTrackSets=1
 	/*
@@ -242,7 +242,7 @@ defaultproperties
 			"SoundCue'WinterWar_AUD_MUS.FIN.F_L_1_Cue'"
 		)
 	)}
-	
+
 	AxisNormalMoralePlayList={(
 		PlaylistName=Axis_NeutralMorale,
 		CRef_MusicTracks=(
@@ -250,7 +250,7 @@ defaultproperties
 			"SoundCue'WinterWar_AUD_MUS.FIN.F_N_2_Cue'"
 		)
 	)}
-	
+
 	AxisHighMoralePlayList={(
 		PlaylistName=Axis_HighMorale,
 		CRef_MusicTracks=(
@@ -258,7 +258,7 @@ defaultproperties
 			"SoundCue'WinterWar_AUD_MUS.FIN.F_H_2_Cue'"
 		)
 	)}
-	
+
 	AlliesLowMoralePlayList={(
 		PlaylistName=Allies_LowMorale,
 		CRef_MusicTracks=(
@@ -266,7 +266,7 @@ defaultproperties
 			"SoundCue'WinterWar_AUD_MUS.SOV.R_L_1_Cue'"
 		)
 	)}
-	
+
 	AlliesNormalMoralePlayList={(
 		PlaylistName=Allies_NeutralMorale,
 		CRef_MusicTracks=(
@@ -274,7 +274,7 @@ defaultproperties
 			"SoundCue'WinterWar_AUD_MUS.SOV.R_N_1_Cue'"
 		)
 	)}
-	
+
 	AlliesHighMoralePlayList={(
 		PlaylistName=Allies_HighMorale,
 		CRef_MusicTracks=(
@@ -282,10 +282,10 @@ defaultproperties
 			"SoundCue'WinterWar_AUD_MUS.SOV.R_H_1_Cue'"
 		)
 	)}
-	
+
 	AxisHigherMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.FIN.F_Trans_2H_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
 	AxisLowerMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.FIN.F_Trans_2L_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
-	
+
 	AlliesHigherMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.SOV.R_Trans_2H_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
 	AlliesLowerMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.SOV.R_Trans_2L_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
 	 */
