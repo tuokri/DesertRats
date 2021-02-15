@@ -7,7 +7,7 @@ DefaultProperties
     ClassIndex=`ROCI_ENGINEER // 4
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'DRWeapon_Kar98k'),
+        PrimaryWeapons=(class'DRWeap_Kar98_Rifle'),
     )}
 
     bAllowPistolsInRealism=false
