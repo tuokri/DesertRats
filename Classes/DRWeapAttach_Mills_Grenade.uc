@@ -2,7 +2,7 @@ class DRWeapAttach_Mills_Grenade extends ROWeapAttach_EggGrenade;
 
 DefaultProperties
 {
-    ThirdPersonHandsAnim=F1_Grenade_Handpose
+    ThirdPersonHandsAnim=F1_Grenade_Handpose // TODO: M61_Grenade_Handpose?
     IKProfileName=F1
 
     // Weapon SkeletalMesh

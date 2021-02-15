@@ -6,7 +6,7 @@ DefaultProperties
 {
     TossZ=300
     UnderhandTossZ=100
-    AccelRate = 1.0;
+    AccelRate=1.0
     ProjExplosionTemplate=ParticleSystem'FX_VN_Weapons.Explosions.FX_VN_Grenade_explosion'
     Damage=200
     DamageRadius=500
@@ -17,12 +17,14 @@ DefaultProperties
     MaxSpeed=1000
     MinTossSpeed=300
     MaxTossSpeed=500
-    bUpdateSimulatedPosition = true;
-    Bounces=10
+    bUpdateSimulatedPosition=true
+    Bounces=5
     ExplosionSound=AkEvent'WW_EXP_Shared.Play_EXP_Grenade_Explosion'
     bWaitForEffects=false
     bRotationFollowsVelocity=true
     MyDamageType=class'DRDmgType_MillsGrenade'
+
+    DampenFactor=0.33
 
     Begin Object Name=CollisionCylinder
         CollisionRadius=4
@@ -32,9 +34,12 @@ DefaultProperties
     End Object
 
     Begin Object Name=ThowableMeshComponent
-        SkeletalMesh=SkeletalMesh'WP_VN_3rd_Projectile.Mesh.M61_Grenade_Projectile'
+        SkeletalMesh=SkeletalMesh'DR_WP_UK_MillsBomb.Mesh.MillsBomb_3rd'
         PhysicsAsset=PhysicsAsset'WP_VN_3rd_Projectile.Phy.M61Grenade_Projectile_3rd_Physics'
     End Object
 
     SpottedBattleChatterIndex=`BATTLECHATTER_Grenade
+
+    DecalHeight=625
+    DecalWidth=625
 }

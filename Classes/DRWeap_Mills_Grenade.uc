@@ -24,8 +24,8 @@ DefaultProperties
 
     //? RoleSelectionImage(0)=Texture'ui_textures.Textures.sov_wp_f1nade'
 
-    InvIndex=36
-    InventoryWeight=1
+    InvIndex=`DRII_MILLS_GRENADE
+    InventoryWeight=0
 
     Category=ROIC_Grenade
 
@@ -54,6 +54,7 @@ DefaultProperties
     // Mantling
     WeaponMantleOverAnim=Mills_Mantle
 
+    /*
     // Cover/Blind Fire Anims
     WeaponBF_LeftPullpin=Mills_L_Pullpin
     WeaponBF_RightPullpin=Mills_R_Pullpin
@@ -96,6 +97,7 @@ DefaultProperties
     ArmedBF_Idle2UpReady=Mills_idleHold_TO_Up_Hold
     ArmedBF_Idle2LeftReady=Mills_idleHold_TO_L_Hold
     ArmedBF_Idle2RightReady=Mills_idleHold_TO_R_Hold
+    */
 
     // Melee anims
     WeaponMeleeAnims(0)=Mills_Bash
@@ -108,7 +110,7 @@ DefaultProperties
 
     FuzeLength=4.2
 
-    MuzzleFlashSocket=MuzzleFlashSocket
+    MuzzleFlashSocket=None
 
     AmmoClass=class'DRAmmo_Mills_Grenade'
 
@@ -130,13 +132,13 @@ DefaultProperties
     ExplosiveBlindFireLeftAnim(ALTERNATE_FIREMODE)=Mills_L_throw
     ExplosiveBlindFireUpAnim(ALTERNATE_FIREMODE)=Mills_toss
 
-    Weight=0.00 //KG
+    Weight=0.59 //KG
 
     MaxAmmoCount=1
     InitialNumPrimaryMags=2
 
-    ThrowSpawnModifier=1.5
-    TossSpawnModifier=2.8
+    ThrowSpawnModifier=0.525 // 1.5
+    TossSpawnModifier=2.8 // 0.4
 
     ThrowingBattleChatterIndex=`BATTLECHATTER_ThrowingGrenade
 
@@ -144,4 +146,7 @@ DefaultProperties
     MinBurstAmount=1
     MaxBurstAmount=1
     BurstWaitTime=2.5
+
+
+    bCanBeQuickThrown=True
 }
