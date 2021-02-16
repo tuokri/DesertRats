@@ -1,4 +1,3 @@
-
 `define BUILDVER "0.1"
 
 // `define RELEASE
@@ -20,9 +19,13 @@
 `define WI_THOMPSON         1
 `define WI_MP40             2
 `define WI_WEBLEY           3
-`define WI_KAR98            4
+`define DRII_KAR98_RIFLE    4
 `define WI_ENFIELD          5
 `define WI_LUGER            6
+
+`define DRII_DYNAMITE       34
+`define DRII_TNT            35
+`define DRII_MILLS_GRENADE  36
 
 
 // Pawn common macros.
