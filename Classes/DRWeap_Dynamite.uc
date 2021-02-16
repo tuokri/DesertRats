@@ -11,4 +11,6 @@ DefaultProperties
 
     WeaponProjectiles(0)=class'DRProjectile_Dynamite'
     WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_Dynamite'
+
+    PlayerViewOffset=(X=5,Y=5,Z=-3.5)
 }
