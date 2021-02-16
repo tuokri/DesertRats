@@ -8,7 +8,7 @@ DefaultProperties
 
     InvIndex=`DRII_TNT
 
-    //? PlayerViewOffset=(X=1,Y=5,Z=-2)
+    PlayerViewOffset=(X=1,Y=5,Z=-2)
     //? ShoulderedPosition=(X=3,Y=3.5,Z=-1.0)
     //? ShoulderRotation=(Pitch=-300,Yaw=500,Roll=1500)
     //? RoleEncumbranceModifier=0.25
