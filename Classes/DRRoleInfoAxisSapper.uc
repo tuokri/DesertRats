@@ -8,6 +8,7 @@ DefaultProperties
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeap_Kar98_Rifle'),
+        OtherItems=(class'DRWeap_Dynamite'),
     )}
 
     bAllowPistolsInRealism=false
