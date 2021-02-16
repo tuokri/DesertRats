@@ -34,7 +34,7 @@ DefaultProperties
     End Object
 
     Begin Object Name=ThowableMeshComponent
-        SkeletalMesh=SkeletalMesh'DR_WP_UK_MillsBomb.Mesh.MillsBomb_3rd'
+        SkeletalMesh=SkeletalMesh'DR_WP_UK_MillsBomb.Mesh.Mills_Projectile'
         PhysicsAsset=PhysicsAsset'WP_VN_3rd_Projectile.Phy.M61Grenade_Projectile_3rd_Physics'
     End Object
 
