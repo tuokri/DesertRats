@@ -1423,6 +1423,11 @@ simulated exec function SetAddedPitch(int RangeIndex, int NewAddedPitch)
     ROWeapon(Pawn.Weapon).SightIndexUpdated();
 }
 
+exec function SetPlayerViewOffset(float X, float Y, float Z)
+{
+    ROWeapon(Pawn.Weapon).PlayerViewOffset = MakeVector(X, Y, Z);
+}
+
 exec function SetIronsightPosX(float NewX)
 {
     ROWeapon(Pawn.Weapon).IronSightPosition.X = NewX;
