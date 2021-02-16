@@ -32,78 +32,77 @@ DefaultProperties
     InstantHitDamageTypes(0)=class'DRDmgType_MillsGrenade'
     InstantHitDamageTypes(1)=class'DRDmgType_MillsGrenade'
 
-    PlayerViewOffset=(X=-1.557,Y=2.077,Z=-1.914)
+    //? PlayerViewOffset=(X=-1.557,Y=2.077,Z=-1.914)
+    PlayerViewOffset=(X=5,Y=4.5,Z=-1.75)
 
     // Anims
-    WeaponPullPinAnim=Mills_pullpin
-    WeaponPutDownAnim=Mills_Putaway
-    WeaponEquipAnim=Mills_Pullout
-    WeaponDownAnim=Mills_Down
-    WeaponUpAnim=Mills_Up
+    WeaponPullPinAnim=M61_pullpin
+    WeaponPutDownAnim=M61_Putaway
+    WeaponEquipAnim=M61_Pullout
+    WeaponDownAnim=M61_Down
+    WeaponUpAnim=M61_Up
 
     // Prone Crawl
-    WeaponCrawlingAnims(0)=Mills_CrawlF
-    WeaponCrawlStartAnim=Mills_Crawl_into
-    WeaponCrawlEndAnim=Mills_Crawl_out
+    WeaponCrawlingAnims(0)=M61_CrawlF
+    WeaponCrawlStartAnim=M61_Crawl_into
+    WeaponCrawlEndAnim=M61_Crawl_out
 
     // Sprinting
-    WeaponSprintStartAnim=Mills_sprint_into
-    WeaponSprintLoopAnim=Mills_Sprint
-    WeaponSprintEndAnim=Mills_sprint_out
+    WeaponSprintStartAnim=M61_sprint_into
+    WeaponSprintLoopAnim=M61_Sprint
+    WeaponSprintEndAnim=M61_sprint_out
 
     // Mantling
-    WeaponMantleOverAnim=Mills_Mantle
+    WeaponMantleOverAnim=M61_Mantle
 
-    /*
     // Cover/Blind Fire Anims
-    WeaponBF_LeftPullpin=Mills_L_Pullpin
-    WeaponBF_RightPullpin=Mills_R_Pullpin
-    WeaponBF_UpPullpin=Mills_Up_Pullpin
+    WeaponBF_LeftPullpin=M61_L_Pullpin
+    WeaponBF_RightPullpin=M61_R_Pullpin
+    WeaponBF_UpPullpin=M61_Up_Pullpin
     // Blind Fire ready
-    WeaponBF_Rest2LeftReady=Mills_idleTO_L_ready
-    WeaponBF_Rest2RightReady=Mills_idleTO_R_ready
-    WeaponBF_Rest2UpReady=Mills_idleTO_Up_ready
-    WeaponBF_LeftReady2Rest=Mills_L_readyTOidle
-    WeaponBF_RightReady2Rest=Mills_R_readyTOidle
-    WeaponBF_UpReady2Rest=Mills_Up_readyTOidle
-    WeaponBF_LeftReady2Up=Mills_L_ready_toUp_ready
-    WeaponBF_LeftReady2Right=Mills_Up_ready_toL_ready
-    WeaponBF_UpReady2Left=Mills_Up_ready_toL_ready
-    WeaponBF_UpReady2Right=Mills_Up_ready_toR_ready
-    WeaponBF_RightReady2Up=Mills_R_ready_toUp_ready
-    WeaponBF_RightReady2Left=Mills_R_ready_toL_ready
-    WeaponBF_LeftReady2Idle=Mills_L_readyTOidle
-    WeaponBF_RightReady2Idle=Mills_R_readyTOidle
-    WeaponBF_UpReady2Idle=Mills_Up_readyTOidle
-    WeaponBF_Idle2UpReady=Mills_idleTO_Up_ready
-    WeaponBF_Idle2LeftReady=Mills_idleTO_L_ready
-    WeaponBF_Idle2RightReady=Mills_idleTO_R_ready
+    WeaponBF_Rest2LeftReady=M61_idleTO_L_ready
+    WeaponBF_Rest2RightReady=M61_idleTO_R_ready
+    WeaponBF_Rest2UpReady=M61_idleTO_Up_ready
+    WeaponBF_LeftReady2Rest=M61_L_readyTOidle
+    WeaponBF_RightReady2Rest=M61_R_readyTOidle
+    WeaponBF_UpReady2Rest=M61_Up_readyTOidle
+    WeaponBF_LeftReady2Up=M61_L_ready_toUp_ready
+    WeaponBF_LeftReady2Right=M61_Up_ready_toL_ready
+    WeaponBF_UpReady2Left=M61_Up_ready_toL_ready
+    WeaponBF_UpReady2Right=M61_Up_ready_toR_ready
+    WeaponBF_RightReady2Up=M61_R_ready_toUp_ready
+    WeaponBF_RightReady2Left=M61_R_ready_toL_ready
+    WeaponBF_LeftReady2Idle=M61_L_readyTOidle
+    WeaponBF_RightReady2Idle=M61_R_readyTOidle
+    WeaponBF_UpReady2Idle=M61_Up_readyTOidle
+    WeaponBF_Idle2UpReady=M61_idleTO_Up_ready
+    WeaponBF_Idle2LeftReady=M61_idleTO_L_ready
+    WeaponBF_Idle2RightReady=M61_idleTO_R_ready
     // Blind Fire ready (Armed)
-    ArmedBF_Rest2LeftReady=Mills_idleHold_TO_L_Hold
-    ArmedBF_Rest2RightReady=Mills_idleHold_TO_R_Hold
-    ArmedBF_Rest2UpReady=Mills_idleHold_TO_Up_Hold
-    ArmedBF_LeftReady2Rest=Mills_L_HoldTOidleHold
-    ArmedBF_RightReady2Rest=Mills_R_HoldTOidleHold
-    ArmedBF_UpReady2Rest=Mills_Up_HoldTOidleHold
-    ArmedBF_LeftReady2Up=Mills_L_Hold_toUp_Hold
-    ArmedBF_LeftReady2Right=Mills_LHold_ready_toR_Hold
-    ArmedBF_UpReady2Left=Mills_Up_Hold_toL_Hold
-    ArmedBF_UpReady2Right=Mills_Up_Hold_toR_Hold
-    ArmedBF_RightReady2Up=Mills_R_Hold_toUp_Hold
-    ArmedBF_RightReady2Left=Mills_R_Hold_toL_Hold
-    ArmedBF_LeftReady2Idle=Mills_L_HoldTOidleHold
-    ArmedBF_RightReady2Idle=Mills_R_HoldTOidleHold
-    ArmedBF_UpReady2Idle=Mills_Up_HoldTOidleHold
-    ArmedBF_Idle2UpReady=Mills_idleHold_TO_Up_Hold
-    ArmedBF_Idle2LeftReady=Mills_idleHold_TO_L_Hold
-    ArmedBF_Idle2RightReady=Mills_idleHold_TO_R_Hold
-    */
+    ArmedBF_Rest2LeftReady=M61_idleHold_TO_L_Hold
+    ArmedBF_Rest2RightReady=M61_idleHold_TO_R_Hold
+    ArmedBF_Rest2UpReady=M61_idleHold_TO_Up_Hold
+    ArmedBF_LeftReady2Rest=M61_L_HoldTOidleHold
+    ArmedBF_RightReady2Rest=M61_R_HoldTOidleHold
+    ArmedBF_UpReady2Rest=M61_Up_HoldTOidleHold
+    ArmedBF_LeftReady2Up=M61_L_Hold_toUp_Hold
+    ArmedBF_LeftReady2Right=M61_LHold_ready_toR_Hold
+    ArmedBF_UpReady2Left=M61_Up_Hold_toL_Hold
+    ArmedBF_UpReady2Right=M61_Up_Hold_toR_Hold
+    ArmedBF_RightReady2Up=M61_R_Hold_toUp_Hold
+    ArmedBF_RightReady2Left=M61_R_Hold_toL_Hold
+    ArmedBF_LeftReady2Idle=M61_L_HoldTOidleHold
+    ArmedBF_RightReady2Idle=M61_R_HoldTOidleHold
+    ArmedBF_UpReady2Idle=M61_Up_HoldTOidleHold
+    ArmedBF_Idle2UpReady=M61_idleHold_TO_Up_Hold
+    ArmedBF_Idle2LeftReady=M61_idleHold_TO_L_Hold
+    ArmedBF_Idle2RightReady=M61_idleHold_TO_R_Hold
 
     // Melee anims
-    WeaponMeleeAnims(0)=Mills_Bash
-    WeaponMeleeHardAnim=Mills_BashHard
-    MeleePullbackAnim=Mills_Pullback
-    MeleeHoldAnim=Mills_Pullback_Hold
+    WeaponMeleeAnims(0)=M61_Bash
+    WeaponMeleeHardAnim=M61_BashHard
+    MeleePullbackAnim=M61_Pullback
+    MeleeHoldAnim=M61_Pullback_Hold
 
     // Sounds
     PrimeSound=AkEvent'WW_EXP_Shared.Play_EXP_Grenade_Safety_Release'
@@ -117,20 +116,20 @@ DefaultProperties
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
     WeaponProjectiles(0)=class'DRProjectile_MillsGrenade'
-    WeaponThrowAnim(0)=Mills_throw
-    WeaponIdleAnims(0)=Mills_idle
-    ExplosiveBlindFireRightAnim(0)=Mills_R_throw
-    ExplosiveBlindFireLeftAnim(0)=Mills_L_throw
-    ExplosiveBlindFireUpAnim(0)=Mills_Up_throw
+    WeaponThrowAnim(0)=M61_throw
+    WeaponIdleAnims(0)=M61_idle
+    ExplosiveBlindFireRightAnim(0)=M61_R_throw
+    ExplosiveBlindFireLeftAnim(0)=M61_L_throw
+    ExplosiveBlindFireUpAnim(0)=M61_Up_throw
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponSingleFiring
     WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_MillsGrenade'
-    WeaponThrowAnim(ALTERNATE_FIREMODE)=Mills_toss
-    WeaponIdleAnims(ALTERNATE_FIREMODE)=Mills_idle
-    ExplosiveBlindFireRightAnim(ALTERNATE_FIREMODE)=Mills_R_toss
-    ExplosiveBlindFireLeftAnim(ALTERNATE_FIREMODE)=Mills_L_throw
-    ExplosiveBlindFireUpAnim(ALTERNATE_FIREMODE)=Mills_toss
+    WeaponThrowAnim(ALTERNATE_FIREMODE)=M61_toss
+    WeaponIdleAnims(ALTERNATE_FIREMODE)=M61_idle
+    ExplosiveBlindFireRightAnim(ALTERNATE_FIREMODE)=M61_R_toss
+    ExplosiveBlindFireLeftAnim(ALTERNATE_FIREMODE)=M61_L_throw
+    ExplosiveBlindFireUpAnim(ALTERNATE_FIREMODE)=M61_toss
 
     Weight=0.59 //KG
 

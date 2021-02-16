@@ -6,15 +6,15 @@ DefaultProperties
         DepthPriorityGroup=SDPG_Foreground
         SkeletalMesh=SkeletalMesh'DR_WP_UK_MillsBomb.Mesh.MillsBomb'
         PhysicsAsset=None
-        AnimSets(0)=AnimSet'DR_WP_UK_MillsBomb.Anim.WP_MillsBombhands'
-        Animations=AnimTree'DR_WP_UK_MillsBomb.Anim.MillsBomb_Tree'
+        AnimSets(0)=AnimSet'WP_VN_USA_M61_Grenade.Animation.WP_M61GrenadeHands'
+        AnimTreeTemplate=AnimTree'WP_VN_USA_M61_Grenade.Animation.USA_M61_Tree'
         Scale=1.0
         FOV=70
     End Object
 
     Begin Object Name=PickupMesh
         SkeletalMesh=SkeletalMesh'DR_WP_UK_MillsBomb.Mesh.MillsBomb_3rd'
-        PhysicsAsset=PhysicsAsset'WP_VN_3rd_Projectile.Phy.M61Grenade_Projectile_3rd_Physics'
+        PhysicsAsset=PhysicsAsset'WP_VN_3rd_Master.Phy.M61Grenade_3rd_Physics'
         CollideActors=true
         BlockActors=true
         BlockZeroExtent=true
@@ -31,5 +31,5 @@ DefaultProperties
 
     AttachmentClass=class'DRWeapAttach_Mills_Grenade'
 
-    ArmsAnimSet=AnimSet'DR_WP_UK_MillsBomb.Anim.WP_MillsBombhands'
+    ArmsAnimSet=AnimSet'WP_VN_USA_M61_Grenade.Animation.WP_M61GrenadeHands'
 }
