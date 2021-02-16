@@ -22,7 +22,7 @@ DefaultProperties
     WeaponClassType=ROWCT_Grenade
     TeamIndex=`ALLIES_TEAM_INDEX
 
-    //? RoleSelectionImage(0)=Texture'ui_textures.Textures.sov_wp_f1nade'
+    RoleSelectionImage(0)=Texture'ui_textures.Textures.sov_wp_f1nade'
 
     InvIndex=`DRII_MILLS_GRENADE
     InventoryWeight=0
