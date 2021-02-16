@@ -39,6 +39,7 @@ function ShowTeamInfo()
     Container.SetVisibility(TeamInfoTeamIndex < 2);
 }
 
+/*
 function bool AllowTeamSwitch()
 {
 `ifndef(RELEASE)
@@ -46,6 +47,7 @@ function bool AllowTeamSwitch()
 `endif
     return super.AllowTeamSwitch();
 }
+*/
 
 DefaultProperties
 {
