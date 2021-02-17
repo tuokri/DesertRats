@@ -6,8 +6,9 @@ DefaultProperties
     ClassTier=2
     ClassIndex=`RI_ASSAULT
 
+    // TODO: Should MP41 be part of standard loadout?
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'DRWeapon_MP40'),
+        PrimaryWeapons=(class'DRWeapon_MP40',class'DRWeap_MP41_SMG'),
 
         OtherItems=(class'ROWeap_Type67_Grenade',class'ROWeap_RDG1_Smoke')
     )}
