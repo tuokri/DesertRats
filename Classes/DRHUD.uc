@@ -30,4 +30,5 @@ DefaultProperties
     DefaultOverheadMapWidget=class'DRHUDWidgetOverheadMap'
     DefaultWorldWidget=class'DRHUDWidgetWorld'
     DefaultCompassWidget=class'DRHUDWidgetSimpleCompass'
+    DefaultWeaponWidget=class'DRHUDWidgetWeapon'
 }
