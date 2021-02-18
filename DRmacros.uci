@@ -22,6 +22,7 @@
 `define DRII_KAR98_RIFLE    4
 `define WI_ENFIELD          5
 `define WI_LUGER            6
+`define DRII_MP41_SMG       7
 
 `define DRII_DYNAMITE       34
 `define DRII_TNT            35
