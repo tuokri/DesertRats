@@ -12,11 +12,8 @@ enum EDiveBomberDiveState
     EDBDS_RollingOut,
 };
 
-var AudioComponent DiveSoundComponent;
-var AudioComponent FlightSoundComponent;
-
-var SoundCue DiveSound;
-var SoundCue FlightSound;
+var DRAudioComponent DiveSoundComponent;
+var DRAudioComponent FlightSoundComponent;
 
 var int Altitude;
 var int AngleOfRoll;
@@ -68,23 +65,33 @@ replication
         AccelPerSecondDive, AscensionRollAngleInURT, YawUnitsPerSecondExit;
 }
 
+// TODO: Make this a macro or somethinge reusable.
+simulated function AudioInit()
+{
+    local DRAudioComponent DRAC;
+    local DRPlayerController DRPC;
+
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
+    {
+        ForEach LocalPlayerControllers(class'DRPlayerController', DRPC)
+        {
+            if (DRPC.AudioManager != None)
+            {
+                ForEach ComponentList(class'DRAudioComponent', DRAC)
+                {
+                    DRPC.AudioManager.RegisterAudioComponent(DRAC);
+                }
+            }
+        }
+    }
+}
+
 simulated function PostBeginPlay()
 {
     super.PostBeginPlay();
 
-    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
-    {
-        PlayAmbientAudio();
-    }
-
-    if (DiveSound != None)
-    {
-        if (DiveSoundComponent != None)
-        {
-            DiveSoundComponent.SoundCue = DiveSound;
-            // DiveSoundComponent.VolumeMultiplier *= 1.2;
-        }
-    }
+    AudioInit();
+    PlayAmbientAudio();
 
     // DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
     // DebugLastPointLocation = Location;
@@ -96,28 +103,23 @@ simulated function PostBeginPlay()
 simulated function Explode()
 {
     super.Explode();
-    DiveSoundComponent.FadeOut(1.0, 0.0);
-    FlightSoundComponent.FadeOut(1.0, 0.0);
+
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
+    {
+        DiveSoundComponent.FadeOut(1.0, 0.0);
+        FlightSoundComponent.FadeOut(1.0, 0.0);
+    }
 }
 
 simulated function Destroyed()
 {
-    if (DiveSound != None)
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
     {
-        if (DiveSoundComponent != None)
-        {
-            DiveSoundComponent.FadeOut(2.0, 0.0);
-            DiveSoundComponent.SoundCue = None;
-        }
-    }
+        DiveSoundComponent.FadeOut(2.0, 0.0);
+        DiveSoundComponent.SoundCue = None;
 
-    if (FlightSound != None)
-    {
-        if (FlightSoundComponent != None)
-        {
-            FlightSoundComponent.FadeOut(2.0, 0.0);
-            FlightSoundComponent.SoundCue = None;
-        }
+        FlightSoundComponent.FadeOut(2.0, 0.0);
+        FlightSoundComponent.SoundCue = None;
     }
 
     DivingState = EDBDS_None;
@@ -187,14 +189,9 @@ simulated function Tick(float DeltaTime)
 
 simulated function PlayAmbientAudio()
 {
-    if (FlightSound != None)
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
     {
-        if (FlightSoundComponent != None)
-        {
-            FlightSoundComponent.SoundCue = FlightSound;
-            // FlightSoundComponent.VolumeMultiplier *= 0.5;
-            FlightSoundComponent.FadeIn(6.5, 1.0);
-        }
+        FlightSoundComponent.FadeIn(6.5, 1.0);
     }
 }
 
@@ -229,20 +226,10 @@ function Ascend()
     DivingState = EDBDS_Ascending;
     // bCheckMapBounds = True;
 
-    if (FlightSound != None)
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
     {
-        if (FlightSoundComponent != None)
-        {
-            FlightSoundComponent.FadeIn(2, 1.0);
-        }
-    }
-
-    if (DiveSound != None)
-    {
-        if (DiveSoundComponent != None)
-        {
-            DiveSoundComponent.FadeOut(2, 0.0);
-        }
+        FlightSoundComponent.FadeIn(2, 1.0);
+        DiveSoundComponent.FadeOut(2, 0.0);
     }
 
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
@@ -260,20 +247,10 @@ function Roll()
     // `log("Roll() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_RollingIn;
 
-    if (DiveSound != None)
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
     {
-        if (DiveSoundComponent != None)
-        {
-            DiveSoundComponent.FadeIn(2, 1.0);
-        }
-    }
-
-    if (FlightSound != None)
-    {
-        if (FlightSoundComponent != None)
-        {
-            FlightSoundComponent.FadeOut(2, 0.3);
-        }
+        DiveSoundComponent.FadeIn(2, 1.0);
+        FlightSoundComponent.FadeOut(2, 0.3);
     }
 
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
@@ -946,23 +923,24 @@ DefaultProperties
     AmbientSound=None
     AmbientComponent=None
 
-    DiveSound=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
-    FlightSound=SoundCue'DR_AUD_Stuka.Stuka_Flight_1_Cue'
-
-    Begin Object Class=AudioComponent name=DiveSoundComponent_01
+    Begin Object Class=DRAudioComponent name=DiveSoundComponent_01
         OcclusionCheckInterval=1.0
         bShouldRemainActiveIfDropped=true
         bStopWhenOwnerDestroyed=true
         bAutoPlay=false
+        AudioClass=EAC_SFX
+        SoundCue=SoundCue'DR_AUD_Stuka.Stuka_1_Cue'
     End Object
     DiveSoundComponent=DiveSoundComponent_01
     Components.Add(DiveSoundComponent_01)
 
-    Begin Object Class=AudioComponent name=FlightSoundComponent_01
+    Begin Object Class=DRAudioComponent name=FlightSoundComponent_01
         OcclusionCheckInterval=1.0
         bShouldRemainActiveIfDropped=true
         bStopWhenOwnerDestroyed=true
         bAutoPlay=false
+        AudioClass=EAC_SFX
+        SoundCue=SoundCue'DR_AUD_Stuka.Stuka_Flight_1_Cue'
     End Object
     FlightSoundComponent=FlightSoundComponent_01
     Components.Add(FlightSoundComponent_01)
