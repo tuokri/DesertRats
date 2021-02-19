@@ -14,6 +14,26 @@ var AudioComponent StingerComp;
 var(Sounds) SoundCue AxisWinTheme;
 var(Sounds) SoundCue AlliesWinTheme;
 
+var DRAudioManager AudioManager;
+
+
+simulated event PreBeginPlay()
+{
+    super.PreBeginPlay();
+
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
+    {
+        AudioManager = new(self) class'DRAudioManager';
+        if (AudioManager != None)
+        {
+            AudioManager.InitSoundClassVolumes();
+        }
+        else
+        {
+            `warn("ERROR! Unable to create AudioManager!");
+        }
+    }
+}
 
 simulated event PostBeginPlay()
 {
@@ -1262,6 +1282,11 @@ function SetLeftVehicleFlag()
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+exec function SetSFXVolume(float NewVolume)
+{
+    AudioManager.UpdateVolume(NewVolume, EAC_SFX);
+}
+
 /*
 simulated exec function DisableRagdoll()
 {
@@ -1273,6 +1298,45 @@ simulated exec function EnableRagdoll()
     ROPawn(Pawn).EnableRagdoll();
 }
 */
+
+exec function ForceAerialRecon()
+{
+    ServerForceAerialRecon();
+}
+
+reliable private server function ServerForceAerialRecon()
+{
+    local Sequence GameSeq;
+    local ROGameReplicationInfo ROGRI;
+    local float ReconDuration;
+    local array<SequenceObject> AerialReconSeqEvents;
+    local int i;
+    local int Team;
+    local Actor AerialReconBaseActor;
+
+    ROGRI = ROGameReplicationInfo(WorldInfo.GRI);
+    GameSeq = WorldInfo.GetGameSequence();
+    Team = GetTeamNum();
+
+    if (GameSeq != None)
+    {
+        // find any Level Loaded events that exist
+        GameSeq.FindSeqObjectsByClass(class'ROSeqEvent_AerialRecon', True, AerialReconSeqEvents);
+
+        // activate them
+        for (i = 0; i < AerialReconSeqEvents.Length; i++)
+        {
+            AerialReconBaseActor = ROSeqEvent_AerialRecon(
+                AerialReconSeqEvents[i]).TriggerRecon(Team, ROGRI.bReverseRolesAndSpawns, ReconDuration);
+
+            if (AerialReconBaseActor != None)
+            {
+                ROGameInfo(WorldInfo.Game).SpawnAerialReconPlane(AerialReconBaseActor, ReconDuration, self);
+                break;
+            }
+        }
+    }
+}
 
 exec function ForceStukaStrike(optional bool bAircraftPOV = False,
     optional int Altitude = -1, optional int PayloadDropHeight = -1,
