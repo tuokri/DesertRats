@@ -1,13 +1,20 @@
 class DRWeap_MG34_Tripod extends ROFixedMGWeapon;
 
-`include(ROGameIndices.uci)
+// `include(ROGameIndices.uci)
 
 var name Bullets[16];
 
+/*
 // Set semi auto if desired (and possible)
 reliable client function CheckFireModePreference()
 {
     // disallow
+}
+*/
+
+simulated function CheckFireModePreference()
+{
+
 }
 
 simulated function bool OverrideAllowFocusZoom()
@@ -97,7 +104,7 @@ DefaultProperties
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponFiring
     WeaponFireTypes(0)=EWFT_Custom
-    WeaponProjectiles(0)=class'MG34_TurretBullet'
+    WeaponProjectiles(0)=class'DRBullet_MG34_Turret'
 
     FireInterval(0)=+0.075
     Spread(0)=0.000175//0.0003
@@ -105,7 +112,7 @@ DefaultProperties
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponSingleFiring
     WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Custom
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'MG34Bullet'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_MG34_Turret'
     FireInterval(ALTERNATE_FIREMODE)=+0.075
     Spread(ALTERNATE_FIREMODE)=0.000175//0.0014
 
@@ -142,8 +149,8 @@ DefaultProperties
     InstantHitDamage(0)=115
     InstantHitDamage(1)=115
 
-    InstantHitDamageTypes(0)=class'ROPDmgType_MG34_TripodBullet'
-    InstantHitDamageTypes(1)=class'ROPDmgType_MG34_TripodBullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_MG34_TripodBullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_MG34_TripodBullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_WEP_Gun_Two.MuzzleFlashes.FX_WEP_Gun_A_MuzzleFlash_1stP_MG'
@@ -157,6 +164,7 @@ DefaultProperties
     // needed to show muzzle flashes
     bShowFireFXWhenHidden=true
 
+    // TODO: Use MG34 package for audio.
     WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_LP_M', FirstPersonCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_Loop_Sur')
     WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_Single_M', FirstPersonCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_Single_Sur')
 
@@ -198,7 +206,7 @@ DefaultProperties
     ISFocusBlendRadius=16
 
     // Ammo
-    AmmoClass=class'ROPAmmo_792x57_MG34Belt'
+    AmmoClass=class'DRAmmo_792x57_MG34Belt_250'
     MaxAmmoCount=200
     bUsesMagazines=true
     InitialNumPrimaryMags=4
@@ -208,7 +216,7 @@ DefaultProperties
     MaxPenetrationTests=3
     MaxNumPenetrations=2//5
     // Tracers
-    TracerClass=class'MG34_TurretBulletTracer'
+    TracerClass=class'DRBullet_MG34_TurretTracer'
     TracerFrequency=10
 
     PlayerViewOffset=(X=0.0,Y=8.0,Z=-5)
@@ -243,8 +251,8 @@ DefaultProperties
 
     CollisionCheckLength=50.0 //TODO:Put the real value here?
 
-    FireCameraAnim[0]=CameraAnim'RPtperson_Cameras.Anim.Camera_MG34_Shoot'
-    FireCameraAnim[1]=CameraAnim'RPtperson_Cameras.Anim.Camera_MG34_Shoot'
+    FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_MG34_shoot'
+    FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_MG34_shoot'
     ShakeScaleControlled=0.65
 
     SightSlideControlName=Sight_Slide
