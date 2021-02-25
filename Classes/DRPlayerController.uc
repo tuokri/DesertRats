@@ -1339,8 +1339,8 @@ reliable private server function ServerForceAerialRecon()
 }
 
 exec function ForceStukaStrike(optional bool bAircraftPOV = False,
-    optional int Altitude = -1, optional int PayloadDropHeight = -1,
-    optional int AngleOfDive = -1)
+    optional int Altitude = 0, optional int PayloadDropHeight = 0,
+    optional int AngleOfDive = 0)
 {
     DoTestStukaStrike(bAircraftPOV, Altitude, PayloadDropHeight, AngleOfDive);
 }
@@ -1379,7 +1379,7 @@ reliable private server function DoTestStukaStrike(bool bAircraftPOV,
 
     DRMI = DRMapInfo(WorldInfo.GetMapInfo());
 
-    if (Altitude >= 0)
+    if (Altitude > 0)
     {
         SpawnAltitude = Altitude;
     }
@@ -1402,12 +1402,12 @@ reliable private server function DoTestStukaStrike(bool bAircraftPOV,
     }
     else
     {
-        if (PayloadDropHeight >= 0)
+        if (PayloadDropHeight > 0)
         {
             Aircraft.PayloadDropHeight = PayloadDropHeight;
         }
 
-        if (AngleOfDive >= 0)
+        if (AngleOfDive > 0)
         {
             Aircraft.AngleOfDive = AngleOfDive;
         }
