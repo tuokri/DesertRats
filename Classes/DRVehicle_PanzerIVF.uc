@@ -1601,6 +1601,9 @@ defaultproperties
 
     Seats(2)={(
         GunClass=class'DRVWeapon_PanzerIVF_Turret',
+        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_Crusader', // TODO: TEMPORARY
+        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_M4A1',
+        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_M55',
         SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg',
         NeedleOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg_TOP',
         RangeOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_range',
@@ -2001,6 +2004,288 @@ defaultproperties
     End Object
     Wheels(5)=LFWheel
 
+    /*
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_0
+        WheelRadius=16
+        BoneName="L_Wheel_00"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(0)=L_Wheel_0
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_1
+        WheelRadius=12
+        BoneName="L_Wheel_01"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=1.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(1)=L_Wheel_1
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_2
+        WheelRadius=12
+        BoneName="L_Wheel_02"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(2)=L_Wheel_2
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_3
+        WheelRadius=12
+        BoneName="L_Wheel_03"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(3)=L_Wheel_3
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_4
+        WheelRadius=12
+        BoneName="L_Wheel_04"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(4)=L_Wheel_4
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_5
+        WheelRadius=12
+        BoneName="L_Wheel_05"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(5)=L_Wheel_5
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_6
+        WheelRadius=12
+        BoneName="L_Wheel_06"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(6)=L_Wheel_6
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_7
+        WheelRadius=12
+        BoneName="L_Wheel_07"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(7)=L_Wheel_7
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_8
+        WheelRadius=12
+        BoneName="L_Wheel_08"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(8)=L_Wheel_8
+
+    Begin Object Class=ROVehicleWheel Name=L_Wheel_9
+        WheelRadius=32
+        BoneName="L_Wheel_09"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Left
+    End Object
+    Wheels(9)=L_Wheel_9
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_0
+        WheelRadius=16
+        BoneName="R_Wheel_00"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(10)=R_Wheel_0
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_1
+        WheelRadius=12
+        BoneName="R_Wheel_01"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=1.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(11)=R_Wheel_1
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_2
+        WheelRadius=12
+        BoneName="R_Wheel_02"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(12)=R_Wheel_2
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_3
+        WheelRadius=12
+        BoneName="R_Wheel_03"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(13)=R_Wheel_3
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_4
+        WheelRadius=12
+        BoneName="R_Wheel_04"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(14)=R_Wheel_4
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_5
+        WheelRadius=12
+        BoneName="R_Wheel_05"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(15)=R_Wheel_5
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_6
+        WheelRadius=12
+        BoneName="R_Wheel_06"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(16)=R_Wheel_6
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_7
+        WheelRadius=12
+        BoneName="R_Wheel_07"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(17)=R_Wheel_7
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_8
+        WheelRadius=12
+        BoneName="R_Wheel_08"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(18)=R_Wheel_8
+
+    Begin Object Class=ROVehicleWheel Name=R_Wheel_9
+        WheelRadius=32
+        BoneName="R_Wheel_09"
+        BoneOffset=(X=0.0,Y=0,Z=0.0)
+        SuspensionTravel=25
+        SteerFactor=0.0
+        LongSlipFactor=1000.0
+        LatSlipFactor=20000.0
+        HandbrakeLongSlipFactor=150.0
+        HandbrakeLatSlipFactor=1000.0
+        Side=SIDE_Right
+    End Object
+    Wheels(19)=R_Wheel_9
+    */
+
     /** Vehicle Sim */
 
     Begin Object Name=SimObject
@@ -2103,7 +2388,7 @@ defaultproperties
         FirstForwardGear=3
     End Object
 
-    TreadSpeedScale=2.75
+    TreadSpeedScale=-2.5 //2.75
 
     // Muzzle Flashes
     VehicleEffects(TankVFX_Firing1)=(EffectStartTag=PanzerIVGCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankMuzzle',EffectSocket=Barrel,bRestartRunning=true)
@@ -2353,7 +2638,7 @@ defaultproperties
     EngineIdleRPM=500
     EngineNormalRPM=1800
     EngineMaxRPM=2500
-    
+
     /*
     RPM3DGaugeMaxAngle=40000
     Speedo3DGaugeMaxAngle=103765

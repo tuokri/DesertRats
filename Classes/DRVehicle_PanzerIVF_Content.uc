@@ -138,7 +138,7 @@ DefaultProperties
     DestroyedSkeletalMesh=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.Ger_PZIV_Destroyed_Master'
     DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.PZIV_Body_Destroyed'
     DestroyedPhysicsAsset=PhysicsAsset'DR_VH_DAK_PanzerIV_F.Phys.Ger_PZIV_Destroyed_Physics'
-    DestroyedMaterial=MaterialInstanceConstant'DR_VH_DAK_PanzerIV_F.Materials.VH_Ger_Panzer_IVG_Destroyed_Mic'
+    DestroyedMaterial=MaterialInstanceConstant'DR_VH_DAK_PanzerIV_F.MIC.VH_DAK_PZIV_Destroyed_INST'
     //? DestroyedFXMaterial=Material'Vehicle_Mats.M_Common_Vehicles.Tank_Fireplanes'
     DestroyedTurretClass=class'DRVehicleDeathTurret_PanzerIVF'
 
