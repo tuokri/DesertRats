@@ -29,7 +29,7 @@ DefaultProperties
         bSyncActorLocationToRootRigidBody=true
     End Object
 
-    AttachmentClass=class'ROPGameContent.ROPWeapAttach_M1939_Grenade'
+    AttachmentClass=class'DRWeapAttach_M24_Grenade'
 
     ArmsAnimSet=AnimSet'WP_Ger_M1939_granate.animation.WP_GranateHands'
 }

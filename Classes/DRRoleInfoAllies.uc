@@ -4,7 +4,7 @@ class DRRoleInfoAllies extends DRRoleInfo
 DefaultProperties
 {
     Items[RORIGM_Default]={(
-        SecondaryWeapons=(class'DRWeapon_Webley')
+        SecondaryWeapons=(class'DRWeap_Webley_Revolver')
     )}
 
     RoleRootClass=class'DRRoleInfoAllies'

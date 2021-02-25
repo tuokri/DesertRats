@@ -7,6 +7,7 @@
 
 `define DRLogSpawning(msg) `log("SPAWNING:" @ `msg)
 
+
 `define RI_RIFLEMAN         0
 `define RI_ASSAULT          1
 `define RI_MACHINE_GUNNER   2
@@ -16,17 +17,23 @@
 `define RI_TANK_CREW        6
 
 `define WI_BINOCS           0
-`define WI_THOMPSON         1
+`define DRII_THOMPSON_SMG   1
 `define WI_MP40             2
 `define WI_WEBLEY           3
 `define DRII_KAR98_RIFLE    4
 `define WI_ENFIELD          5
 `define WI_LUGER            6
 `define DRII_MP41_SMG       7
+`define DRII_C96_PISTOL     8
+`define DRII_M24_GRENADE    9
+`define DRII_MG42_LMG       10
+`define DRII_P38_PISTOL     11
 
 `define DRII_DYNAMITE       34
 `define DRII_TNT            35
 `define DRII_MILLS_GRENADE  36
+
+`define DRII_MG34_TRIPOD    37
 
 
 // Pawn common macros.

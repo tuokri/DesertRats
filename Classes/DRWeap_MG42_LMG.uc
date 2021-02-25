@@ -1,4 +1,4 @@
-class DRWeap_MG42_LMG extends ROPMGWeapon
+class DRWeap_MG42_LMG extends ROMGWeapon
     abstract;
 
 // `include(ROGameIndices.uci)
@@ -59,9 +59,9 @@ simulated exec function SwitchFireMode()
 
 DefaultProperties
 {
-    WeaponContentClass(0)="ROPGameContent.ROPWeap_MG42_LMG_Content"
-    WeaponContentClass(1)="ROPGameContent.ROPWeap_MG42_LMG_Level2"
-    WeaponContentClass(2)="ROPGameContent.ROPWeap_MG42_LMG_Level3"
+    WeaponContentClass(0)="DesertRats.DRWeap_MG42_LMG_Content"
+    WeaponContentClass(1)="DesertRats.DRWeap_MG42_LMG_Level2"
+    WeaponContentClass(2)="DesertRats.DRWeap_MG42_LMG_Level3"
 
     RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42'
     RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42_UPGD3'
@@ -80,7 +80,7 @@ DefaultProperties
     Category=ROIC_Primary
     Weight=11.6 //KG
     RoleEncumbranceModifier=0.35
-    InvIndex=`RO_MG42_LMG
+    InvIndex=`DRII_MG42_LMG
 
     InventoryWeight=3
 
@@ -137,8 +137,8 @@ DefaultProperties
     InstantHitDamage(0)=115
     InstantHitDamage(1)=115
 
-    InstantHitDamageTypes(0)=class'ROPDmgType_MG42Bullet'
-    InstantHitDamageTypes(1)=class'ROPDmgType_MG42Bullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_MG42Bullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_MG42Bullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_WEP_Gun_Two.MuzzleFlashes.FX_WEP_Gun_A_MuzzleFlash_1stP_MG'
@@ -230,7 +230,7 @@ DefaultProperties
     WeaponIdleToRestAnim=MG42_shoulderTOrest
     WeaponRestToIdleAnim=MG42_restTOshoulder
 
-    ReloadMagazinEmptyCameraAnim=CameraAnim'RPtperson_Cameras.Anim.Camera_MP40_reloadempty'
+    ReloadMagazinEmptyCameraAnim=CameraAnim'1stperson_Cameras.Anim.Camera_MP40_reloadempty'
 
     EquipTime=+1.00
     PutDownTime=+0.75
@@ -241,7 +241,7 @@ DefaultProperties
     ISFocusBlendRadius=16
 
     // Ammo
-    AmmoClass=class'ROPAmmo_792x57_MG42Drum'
+    AmmoClass=class'DRAmmo_792x57_MG42Drum'
     MaxAmmoCount=50
     bUsesMagazines=true
     InitialNumPrimaryMags=4
@@ -309,8 +309,8 @@ DefaultProperties
 
     // 19.5 Z offset to ground from 0,0,0
 
-    FireCameraAnim[0]=CameraAnim'RPtperson_Cameras.Anim.Camera_MG34_Shoot'
-    FireCameraAnim[1]=CameraAnim'RPtperson_Cameras.Anim.Camera_MG34_Shoot'
+    FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_MG34_Shoot'
+    FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_MG34_Shoot'
     ShakeScaleControlled=0.65
 
     //SightSlideControlName=Sight_Slide

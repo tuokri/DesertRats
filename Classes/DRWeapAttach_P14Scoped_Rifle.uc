@@ -18,7 +18,7 @@ DefaultProperties
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_round'
     MuzzleFlashDuration=0.33
     MuzzleFlashLightClass=class'ROGame.RORifleMuzzleFlashLight'
-    WeaponClass=class'DRWeapon_P14Scoped_Rifle'
+    WeaponClass=class'DRWeap_P14Scoped_Rifle'
 
     // Shell eject FX
     ShellEjectSocket=ShellEjectSocket

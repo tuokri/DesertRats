@@ -1,4 +1,4 @@
-class DRWeapAttach_C96_Pistol extends ROPWeaponAttachmentPistol;
+class DRWeapAttach_C96_Pistol extends ROWeaponAttachmentPistol;
 
 var name WP_Crouch_ReloadAnims[2];
 
@@ -39,7 +39,7 @@ defaultproperties
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Pistol'
     MuzzleFlashDuration=0.33
     MuzzleFlashLightClass=class'ROGame.RORifleMuzzleFlashLight'
-    WeaponClass=class'ROPWeap_C96_Pistol'
+    WeaponClass=class'DRWeap_C96_Pistol'
 
     // Shell eject FX
     ShellEjectSocket=ShellEjectSocket

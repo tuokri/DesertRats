@@ -1,23 +1,23 @@
-class DRWeap_C96_Pistol extends ROPProjectileWeapon
+class DRWeap_C96_Pistol extends ROProjectileWeapon
     abstract;
 
 // `include(ROGameIndices.uci)
 
 DefaultProperties
 {
-    RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD1'
-    RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD2'
-    RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD3'
-    WeaponContentClass(0)="ROPGameContent.ROPWeap_C96_Pistol_Content"
-    WeaponContentClass(1)="ROPGameContent.ROPWeap_C96_Pistol_Level2"
-    WeaponContentClass(2)="ROPGameContent.ROPWeap_C96_Pistol_Level3"
+    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD1'
+    //? RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD2'
+    //? RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD3'
+    WeaponContentClass(0)="DesertRats.DRWeap_C96_Pistol_Content"
+    //? WeaponContentClass(1)="DesertRats.DRWeap_C96_Pistol_Level2"
+    //? WeaponContentClass(2)="DesertRats.DRWeap_C96_Pistol_Level3"
 
     WeaponClassType=ROWCT_HandGun
     TeamIndex=`AXIS_TEAM_INDEX
 
     Category=ROIC_Secondary //ROIC_Primary
     Weight=1.25           //KG
-    InvIndex=`RO_C96_Pistol
+    InvIndex=`DRII_C96_PISTOL
 
     InventoryWeight=1
     RoleEncumbranceModifier=0.0
@@ -28,9 +28,9 @@ DefaultProperties
     FiringStatesArray(0)=WeaponSingleFiring
     WeaponFireTypes(0)=EWFT_Custom
     FireInterval(0)=+0.15
-    WeaponProjectiles(0)=class'C96Bullet'
+    WeaponProjectiles(0)=class'DRBullet_C96'
     Spread(0)=0.011
-    WeaponDryFireSnd=SoundCue'AUD_Firearms.DryFire.DryFire_Pistol_Cue'
+    //? WeaponDryFireSnd=SoundCue'AUD_Firearms.DryFire.DryFire_Pistol_Cue'
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=none
@@ -69,8 +69,8 @@ DefaultProperties
     InstantHitDamage(0)=50
     InstantHitDamage(1)=50
 
-    InstantHitDamageTypes(0)=class'ROPDmgType_C96Bullet'
-    InstantHitDamageTypes(1)=class'ROPDmgType_C96Bullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_C96Bullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_C96Bullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_Pistol'
@@ -79,11 +79,10 @@ DefaultProperties
 
     // Shell eject FX
     ShellEjectSocket=ShellEjectSocket
-    ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_C96'
+    //? ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_C96'
 
-
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Fire_Single', FirstPersonCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Single_Sur_01')
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Fire_Single', FirstPersonCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Single_Sur_01')
+    //? WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Fire_Single', FirstPersonCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Single_Sur_01')
+    //? WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Fire_Single', FirstPersonCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Single_Sur_01')
 
     bHasIronSights=true;
 
@@ -207,7 +206,7 @@ DefaultProperties
 
     // Ammo
     MaxAmmoCount=10
-    AmmoClass=class'ROPAmmo_763x25_C96Stripper'
+    AmmoClass=class'DRAmmo_763x25_C96Stripper'
     bUsesMagazines=true
     InitialNumPrimaryMags=6
     bPlusOneLoading=false
@@ -252,8 +251,8 @@ DefaultProperties
 
     CollisionCheckLength=22.0
 
-    FireCameraAnim[0]=CameraAnim'RPtperson_Cameras.Anim.Camera_C96_Shoot'
-    FireCameraAnim[1]=CameraAnim'RPtperson_Cameras.Anim.Camera_C96_Shoot'
+    FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_C96_Shoot'
+    FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_C96_Shoot'
 
     SuppressionPower=2.5
 

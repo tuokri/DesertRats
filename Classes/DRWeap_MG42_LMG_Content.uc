@@ -1,4 +1,4 @@
-class DRWeap_MG42_LMG_Content extends ROPWeap_MG42_LMG;
+class DRWeap_MG42_LMG_Content extends DRWeap_MG42_LMG;
 
 DefaultProperties
 {
@@ -33,6 +33,6 @@ DefaultProperties
         bSyncActorLocationToRootRigidBody=true
     End Object
 
-    AttachmentClass=class'ROPGameContent.ROPWeapAttach_MG42_LMG'
+    AttachmentClass=class'DesertRats.ROPWeapAttach_MG42_LMG'
 
 }

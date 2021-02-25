@@ -128,20 +128,122 @@ MyName="COMMANDER"
 
 
 
-[DRWeapon_Webley]
+[DRWeap_Webley_Revolver]
 DisplayName="Webley Revolver"
 ShortDisplayName="Webley"
 CapitalizedDisplayName="WEBLEY REVOLVER"
 Description=""
 
-[DRWeapon_Lewis_LMG]
+[DRWeap_Lewis_LMG]
 DisplayName="Lewis LMG"
 ShortDisplayName="Lewis"
-CapitalizedDisplayName="LEWIS"
+CapitalizedDisplayName="LEWIS LMG"
 Description=""
 
-[DRWeapon_Bren_LMG]
-DisplayName="Bren Mk. II"
+[DRWeap_Bren_LMG]
+DisplayName="Bren Mk. II LMG"
 ShortDisplayName="Bren"
-CapitalizedDisplayName="BREN MK. II"
+CapitalizedDisplayName="BREN MK. II LMG"
+Description=""
+
+[DRWeap_C96_Pistol]
+DisplayName="Mauser C96 Pistol"
+ShortDisplayName="C96"
+CapitalizedDisplayName="MAUSER C96 PISTOL"
+Description=""
+
+[DRWeap_P38_Pistol]
+DisplayName="Walther P38 Pistol"
+ShortDisplayName="P38"
+CapitalizedDisplayName="WALTHER P38 PISTOL"
+Description=""
+
+[DRWeap_Dynamite]
+DisplayName="Dynamite Satchel"
+ShortDisplayName="Dynamite"
+CapitalizedDisplayName="DYNAMITE SATCHEL"
+Description=""
+
+[DRWeap_TNT]
+DisplayName="TNT Satchel"
+ShortDisplayName="TNT"
+CapitalizedDisplayName="TNT SATCHEL"
+Description=""
+
+[DRWeap_Kar98_Rifle]
+DisplayName="Karabiner 98 Rifle"
+ShortDisplayName="K98"
+CapitalizedDisplayName="KARABINER 98 RIFLE"
+Description=""
+
+[DRWeap_Kar98Scoped_Rifle]
+DisplayName="Karabiner 98 Sniper Rifle"
+ShortDisplayName="K98"
+CapitalizedDisplayName="KARABINER 98 SNIPER RIFLE"
+Description=""
+
+[DRWeap_M24_Grenade]
+DisplayName="M24 Stielhandgranate"
+ShortDisplayName="M24"
+CapitalizedDisplayName="M24 Stielhandgranate"
+Description=""
+
+[DRWeap_MG34_LMG]
+DisplayName="MG34 LMG"
+ShortDisplayName="MG34"
+CapitalizedDisplayName="MG34 LMG"
+Description=""
+
+[DRWeap_MG42_LMG]
+DisplayName="MG42 LMG"
+ShortDisplayName="MG42"
+CapitalizedDisplayName="MG42 LMG"
+Description=""
+
+[DRWeap_Mills_Grenade]
+DisplayName="Mills Grenade"
+ShortDisplayName="Mills"
+CapitalizedDisplayName="MILLS GRENADE"
+Description=""
+
+[DRWeap_MP40_SMG]
+DisplayName="MP40 SMG"
+ShortDisplayName="MP40"
+CapitalizedDisplayName="MP40 SMG"
+Description=""
+
+[DRWeap_MP41_SMG]
+DisplayName="MP41 SMG"
+ShortDisplayName="MP41"
+CapitalizedDisplayName="MP41 SMG"
+Description=""
+
+[DRWeap_SMLE_Rifle]
+DisplayName="Short Magazine Lee–Enfield Rifle"
+ShortDisplayName="SMLE"
+CapitalizedDisplayName="SHORT MAGAZINE LEE-ENFIELD RIFLE"
+Description=""
+
+[DRWeap_Thompson_SMG]
+DisplayName="Thompson SMG"
+ShortDisplayName="Thompson"
+CapitalizedDisplayName="THOMPSON SMG"
+Description=""
+
+[DRWeap_Luger_Pistol]
+DisplayName="Luger Pistol"
+ShortDisplayName="Luger"
+CapitalizedDisplayName="LUGER PISTOL"
+Description=""
+
+[DRWeap_P14Scoped_Rifle]
+DisplayName="Pattern 1914 Enfield Sniper Rifle"
+ShortDisplayName="P14"
+CapitalizedDisplayName="PATTERN 1914 ENFIELD SNIPER RIFLE"
+Description=""
+
+[DRWeap_Binoculars]
+DisplayName="Binoculars"
+ShortDisplayName="Binoculars"
+CapitalizedDisplayName="BINOCULARS"
 Description=""

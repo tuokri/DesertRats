@@ -39,7 +39,6 @@ simulated function FireAmmunition()
     }
 }
 
-
 /**
  * Unhide entire ammo clip
  */
@@ -57,7 +56,8 @@ simulated function UnHideBulletsNotify()
 }
 
 simulated function HideBullets()
-{   local int i;
+{
+    local int i;
 
     if( WorldInfo.NetMode != NM_DedicatedServer && AmmoBeltMesh != none )
     {
@@ -66,7 +66,6 @@ simulated function HideBullets()
             AmmoBeltMesh.HideBoneByName(Bullets[i], PBO_None);
         }
     }
-
 }
 
 DefaultProperties

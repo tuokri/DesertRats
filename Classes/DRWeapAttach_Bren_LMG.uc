@@ -6,7 +6,7 @@ var SkelControlSingleBone LeftHandYawController;
 simulated event PostInitAnimTree(SkeletalMeshComponent SkelComp)
 {
     super.PostInitAnimTree(SkelComp);
-    
+
     LeftHandYawController = SkelControlSingleBone(Mesh.FindSkelControl('HandYawControl'));
     SetLeftHandYaw(1);
 }
@@ -57,7 +57,7 @@ DefaultProperties
     MuzzleFlashPSCTemplate=ParticleSystem'FX_WEP_Gun.FX_WEP_Gun_A_Rifle_MuzzleFlash'
     MuzzleFlashDuration=0.33
     MuzzleFlashLightClass=class'RORifleMuzzleFlashLight'
-    WeaponClass=class'DRWeapon_Bren_LMG'
+    WeaponClass=class'DRWeap_Bren_LMG'
 
     // TODO: Shell eject FX
     // ShellEjectSocket=ShellEjectSocket

@@ -29,8 +29,8 @@ DefaultProperties
 
     Category=ROIC_Grenade
 
-    InstantHitDamageTypes(0)=class'DRDmgType_MillsGrenade'
-    InstantHitDamageTypes(1)=class'DRDmgType_MillsGrenade'
+    InstantHitDamageTypes(0)=class'DRDmgType_Mills_Grenade'
+    InstantHitDamageTypes(1)=class'DRDmgType_Mills_Grenade'
 
     //? PlayerViewOffset=(X=-1.557,Y=2.077,Z=-1.914)
     PlayerViewOffset=(X=5,Y=4.5,Z=-1.75)
@@ -115,7 +115,7 @@ DefaultProperties
 
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
-    WeaponProjectiles(0)=class'DRProjectile_MillsGrenade'
+    WeaponProjectiles(0)=class'DRProjectile_Mills_Grenade'
     WeaponThrowAnim(0)=M61_throw
     WeaponIdleAnims(0)=M61_idle
     ExplosiveBlindFireRightAnim(0)=M61_R_throw
@@ -124,7 +124,7 @@ DefaultProperties
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponSingleFiring
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_MillsGrenade'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_Mills_Grenade'
     WeaponThrowAnim(ALTERNATE_FIREMODE)=M61_toss
     WeaponIdleAnims(ALTERNATE_FIREMODE)=M61_idle
     ExplosiveBlindFireRightAnim(ALTERNATE_FIREMODE)=M61_R_toss

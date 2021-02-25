@@ -1,4 +1,4 @@
-class DRWeap_P38_Pistol_Content extends ROPWeap_P38_Pistol;
+class DRWeap_P38_Pistol_Content extends DRWeap_P38_Pistol;
 
 DefaultProperties
 {
@@ -34,5 +34,5 @@ DefaultProperties
         bSyncActorLocationToRootRigidBody=true
     End Object
 
-    AttachmentClass=class'ROPGameContent.ROPWeapAttach_P38_Pistol'
+    AttachmentClass=class'DesertRats.ROPWeapAttach_P38_Pistol'
 }

@@ -8,9 +8,8 @@ DefaultProperties
 
     // TODO: Should MP41 be part of standard loadout?
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'DRWeapon_MP40',class'DRWeap_MP41_SMG'),
-
-        OtherItems=(class'ROWeap_Type67_Grenade',class'ROWeap_RDG1_Smoke')
+        PrimaryWeapons=(class'DRWeap_MP40_SMG',class'DRWeap_MP41_SMG'),
+        OtherItems=(class'DRWeap_M24_Grenade',class'ROWeap_RDG1_Smoke')
     )}
 
     ClassIcon=Texture2D'DR_UI.RoleIcons.Small_Class_Icon_Assault'

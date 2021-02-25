@@ -1,4 +1,4 @@
-class DRWeapAttach_MG42_LMG extends ROPWeaponAttachmentBipod;
+class DRWeapAttach_MG42_LMG extends ROWeaponAttachmentBipod;
 
 DefaultProperties
 {
@@ -22,7 +22,7 @@ DefaultProperties
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_round'
     MuzzleFlashDuration=0.33
     MuzzleFlashLightClass=class'ROGame.RORifleMuzzleFlashLight'
-    WeaponClass=class'ROPWeap_MG42_LMG'
+    WeaponClass=class'DRWeap_MG42_LMG'
 
     // Shell eject FX
     ShellEjectSocket=ShellEjectSocket

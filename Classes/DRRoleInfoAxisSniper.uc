@@ -7,7 +7,7 @@ DefaultProperties
     ClassIndex=`RI_SNIPER
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'ROWeap_MN9130Scoped_Rifle_Content')
+        PrimaryWeapons=(class'DRWeap_Kar98Scoped_Rifle'),
     )}
 
     bAllowPistolsInRealism=true

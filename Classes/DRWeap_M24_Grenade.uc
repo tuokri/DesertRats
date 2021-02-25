@@ -5,6 +5,8 @@ class DRWeap_M24_Grenade extends ROStielGrenadeWeapon
 
 // `include(ROVoiceComs.uci)
 
+// TODO: ?
+/*
 simulated state WeaponEquipping
 {
     simulated function BeginState(Name PreviousStateName)
@@ -19,17 +21,18 @@ simulated state WeaponEquipping
         ROPC.TriggerHint(ROHTrig_AutoCookGrenade);
     }
 }
+*/
 
 DefaultProperties
 {
-    WeaponContentClass(0)="ROPGameContent.ROPWeap_M1939_Grenade_Content"
+    WeaponContentClass(0)="DesertRats.DRWeap_M24_Grenade_Content"
 
     WeaponClassType=ROWCT_Grenade
     TeamIndex=`AXIS_TEAM_INDEX
 
-    RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_Granate'
+    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_Granate'
 
-    InvIndex=`RO_M1939_Grenade
+    InvIndex=`DRII_M24_GRENADE
 
     Category=ROIC_Grenade
     InventoryWeight=0
@@ -114,11 +117,11 @@ DefaultProperties
 
     MuzzleFlashSocket=MuzzleFlashSocket
 
-    AmmoClass=class'ROPAmmo_M1939_Grenade'
+    AmmoClass=class'DRAmmo_M24_Grenade'
 
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
-    WeaponProjectiles(0)=class'M1939GrenadeProjectile'
+    WeaponProjectiles(0)=class'DRProjectile_M24Grenade'
     WeaponThrowAnim(0)=Granate_throw
     WeaponIdleAnims(0)=Granate_idle
     ExplosiveBlindFireRightAnim(0)=Granate_R_throw
@@ -127,7 +130,7 @@ DefaultProperties
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=none
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'M1939GrenadeProjectile'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_M24Grenade'
     WeaponThrowAnim(ALTERNATE_FIREMODE)=Granate_toss
     WeaponIdleAnims(ALTERNATE_FIREMODE)=Granate_idle
     ExplosiveBlindFireRightAnim(ALTERNATE_FIREMODE)=Granate_R_toss

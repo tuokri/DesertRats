@@ -7,7 +7,7 @@ DefaultProperties
     ClassIndex=`RI_RIFLEMAN
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'DRWeapon_Enfield'),
+        PrimaryWeapons=(class'DRWeap_SMLE_Rifle'),
 
         OtherItems=(class'DRWeap_Mills_Grenade')
     )}

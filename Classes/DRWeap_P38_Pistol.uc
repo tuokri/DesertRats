@@ -1,23 +1,23 @@
-class DRWeap_P38_Pistol extends ROPProjectileWeapon
+class DRWeap_P38_Pistol extends ROProjectileWeapon
     abstract;
 
 // `include(ROGameIndices.uci)
 
 DefaultProperties
 {
-    WeaponContentClass(0)="ROPGameContent.ROPWeap_P38_Pistol_Content"
-    //WeaponContentClass(1)="ROPGameContent.ROPWeap_P38_Pistol_Level2"
-    //WeaponContentClass(2)="ROPGameContent.ROPWeap_P38_Pistol_Level3"
+    WeaponContentClass(0)="DesertRats.DRWeap_P38_Pistol_Content"
+    //? WeaponContentClass(1)="DesertRats.DRWeap_P38_Pistol_Level2"
+    //? WeaponContentClass(2)="DesertRats.DRWeap_P38_Pistol_Level3"
     RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
-    //RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
-    //RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
+    //? RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
+    //? RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
 
     WeaponClassType=ROWCT_HandGun
     TeamIndex=`AXIS_TEAM_INDEX
 
     Category=ROIC_Secondary //ROIC_Primary
     Weight=0.80             //KG
-    InvIndex=`RO_P38_Pistol
+    InvIndex=`DRII_P38_PISTOL
 
     InventoryWeight=0
     RoleEncumbranceModifier=0.0
@@ -27,10 +27,10 @@ DefaultProperties
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
     WeaponFireTypes(0)=EWFT_Custom
-    WeaponProjectiles(0)=class'P38Bullet'
+    WeaponProjectiles(0)=class'DRBullet_P38'
     FireInterval(0)=+0.15
     Spread(0)=0.011
-    WeaponDryFireSnd=SoundCue'AUD_Firearms.DryFire.DryFire_Pistol_Cue'
+    //? WeaponDryFireSnd=SoundCue'AUD_Firearms.DryFire.DryFire_Pistol_Cue'
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=none
@@ -69,8 +69,8 @@ DefaultProperties
     InstantHitDamage(0)=40
     InstantHitDamage(1)=40
 
-    InstantHitDamageTypes(0)=class'ROPDmgType_P38Bullet'
-    InstantHitDamageTypes(1)=class'ROPDmgType_P38Bullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_P38Bullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_P38Bullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_Pistol'
@@ -205,7 +205,7 @@ DefaultProperties
 
     // Ammo
     MaxAmmoCount=9
-    AmmoClass=class'ROPAmmo_9x19_P38Mag'
+    AmmoClass=class'DRAmmo_9x19_P38Mag'
     bUsesMagazines=true
     InitialNumPrimaryMags=6
     bPlusOneLoading=true
@@ -250,8 +250,8 @@ DefaultProperties
 
     CollisionCheckLength=22.0
 
-    FireCameraAnim[0]=CameraAnim'RPtperson_Cameras.Anim.Camera_C96_Shoot'
-    FireCameraAnim[1]=CameraAnim'RPtperson_Cameras.Anim.Camera_C96_Shoot'
+    FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_C96_Shoot'
+    FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_C96_Shoot'
 
     SuppressionPower=2.5
 

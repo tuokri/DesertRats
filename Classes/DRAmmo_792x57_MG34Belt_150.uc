@@ -5,7 +5,7 @@ DefaultProperties
 {
     CompatibleWeaponClasses(0)=class'DRVWeapon_PanzerIVF_Turret'
     CompatibleWeaponClasses(1)=class'DRVWeapon_PanzerIVF_HullMG'
-    CompatibleWeaponClasses(2)=class'DRWeapon_MG34_LMG'
+    CompatibleWeaponClasses(2)=class'DRWeap_MG34_LMG'
     CompatibleWeaponClasses(3)=class'DRWeap_MG34_Tripod'
 
     InitialAmount=150

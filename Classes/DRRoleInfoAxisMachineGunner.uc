@@ -7,7 +7,7 @@ DefaultProperties
     ClassIndex=`RI_MACHINE_GUNNER
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'DRWeapon_MG34_LMG')
+        PrimaryWeapons=(class'DRWeap_MG34_LMG')
     )}
 
     bAllowPistolsInRealism=true
