@@ -124,7 +124,7 @@ simulated event ReplicatedEvent(name VarName)
     {
         PlaySeatProxyDeathHitEffects(0, DeathHitInfo_ProxyDriver);
     }
-    
+
     else
     {
        super.ReplicatedEvent(VarName);
@@ -320,7 +320,7 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
         DeathHitInfo_ProxyDriver.Momentum = Momentum;
         DeathHitInfo_ProxyDriver.DamageType = DamageType;
         break;
-    
+
     }
 
     // Call super!
@@ -368,14 +368,19 @@ function bool DriverLeave(bool bForceLeave)
 {
     local bool bLeaving;
     local ROPawn CachedDriver;
+    local DRPlayerController DRPC;
 
     CachedDriver = ROPawn(Driver);
     bLeaving = Super.DriverLeave(bForceLeave);
     if (bLeaving && CachedDriver != None)
     {
-        // TODO: exiting vehicle at high speed should trigger fall damage.
         CachedDriver.Velocity = Velocity;
-        `dr("VVel=" $ Velocity $ ", PVel=" $ CachedDriver.Velocity);
+        DRPC = DRPlayerController(CachedDriver.Controller);
+        if (DRPC != None)
+        {
+            DRPC.SetLeftVehicleFlag();
+        }
+        // `dr("VVel=" $ Velocity $ ", PVel=" $ CachedDriver.Velocity);
     }
 
     return bLeaving;
@@ -391,7 +396,7 @@ simulated event Tick(float DeltaTime)
 
     if (ROPawn(Driver) != None)
     {
-        `dr("RPM=" $ ROVehicleSimTreaded(SimObj).EngineRPM $ ",G=" $ OutputGear 
+        `dr("RPM=" $ ROVehicleSimTreaded(SimObj).EngineRPM $ ",G=" $ OutputGear
             $ ",A=" $ ROVehicleSimTreaded(SimObj).GearArray[OutputGear].AccelRate);
     }
 }
@@ -464,7 +469,7 @@ DefaultProperties
                                     HipsIKInfo=(PinEnabled=true),
                                     PositionFlinchAnims=(Driver_open_Flinch),
                                     PositionDeathAnims=(Driver_Death))),
-                        
+
 
             bSeatVisible=true,
             DriverDamageMult=1.0,
@@ -532,6 +537,9 @@ Seats(3)={( CameraTag=None,
     RightSteerableSimWheelIndex=1
     MaxVisibleSteeringAngle=45.0
 
+    LeftWheels.Empty
+    RightWheels.Empty
+
     LeftWheels(0)="L1_Wheel"
     LeftWheels(1)="L2_Wheel"
     //
@@ -545,12 +553,13 @@ Seats(3)={( CameraTag=None,
     // Right Rear Wheel
     Begin Object Name=RRWheel
         BoneName="RearWheelRight"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
+        BoneOffset=(X=-6.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
         SteerFactor=0 //0.1f
         bPoweredWheel=True
-        HandbrakeLongSlipFactor=0.8
-        HandbrakeLatSlipFactor=0.8
+        SuspensionTravel=25
+        //? HandbrakeLongSlipFactor=1000
+        //? HandbrakeLatSlipFactor=1000
     End Object
     Wheels(0)=RRWheel
 
@@ -560,7 +569,8 @@ Seats(3)={( CameraTag=None,
         BoneOffset=(X=0.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
         SteerFactor=1.0f
-        bPoweredWheel=True
+        bPoweredWheel=False
+        SuspensionTravel=25
     End Object
     Wheels(1)=RFWheel
 
@@ -570,9 +580,10 @@ Seats(3)={( CameraTag=None,
         BoneOffset=(X=0.0,Y=0.0,Z=0.0)
         WheelRadius=19.5
         SteerFactor=0 // 0.1f
-        bPoweredWheel=True
-        HandbrakeLongSlipFactor=0.8
-        HandbrakeLatSlipFactor=0.8
+        bPoweredWheel=False
+        SuspensionTravel=25
+        //? HandbrakeLongSlipFactor=1000
+        //? HandbrakeLatSlipFactor=1000
     End Object
     Wheels(2)=LRWheel
 
@@ -583,11 +594,13 @@ Seats(3)={( CameraTag=None,
         WheelRadius=19.5
         SteerFactor=1.0f
         bPoweredWheel=True
+        SuspensionTravel=25
     End Object
     Wheels(3)=LFWheel
 
     // TODO: let's test this for now.
     bCanFlip=True
+    bStayUpright=True
 
     // TODO: Transfer case SimObject.
     // To switch between high and low gears.
@@ -596,13 +609,12 @@ Seats(3)={( CameraTag=None,
     Begin Object class=ROVehicleSimHalftrack Name=SimObjectHalfTrack
         // bWheelSpeedOverride=false // true
         AppliedTreadBrakingRate=0.5 // 3.0
-        // MaxBrakeTorque=0.5
+        MaxBrakeTorque=50.0
 
-        WheelSuspensionStiffness=800 //350
-        WheelSuspensionDamping=25.0
+        WheelSuspensionStiffness=350 //800
+        WheelSuspensionDamping=100
         WheelSuspensionBias=0.1
-        WheelLongExtremumSlip=1.5
-        ChassisTorqueScale=0.30 //1.0 //0.0
+        ChassisTorqueScale=0.1 //0.3 //1.0 //0.0
         StopThreshold=50
         EngineBrakeFactor=0.005 //0.00001
         EngineDamping=0.5 //4.1
@@ -611,14 +623,25 @@ Seats(3)={( CameraTag=None,
         CollisionGripFactor=0.18
         TurnMaxGripReduction=0.9//995//0.97
         TurnGripScaleRate=1.0
-        MaxEngineTorque=25000 //7800.0
-        EqualiseTrackSpeed=30.0//10.0
+        MaxEngineTorque=3500 //7800.0
+        EqualiseTrackSpeed=0//30.0//10.0
         MaxTreadSteerAngleCurve=(Points=((InVal=0,OutVal=0),(InVal=200.0,OutVal=0.0),(InVal=300.0,OutVal=1.0),(InVal=500.0,OutVal=1.2),(InVal=1500.0,OutVal=1.5)))
         MaxSteerAngleCurve=(Points=((InVal=0,OutVal=30.0f),(InVal=200.0,OutVal=25.0),(InVal=300.0,OutVal=20.0),(InVal=500.0,OutVal=15),(InVal=1500.0,OutVal=10)))
         //MaxSteerAngleCurve=(Points=((InVal=0,OutVal=45),(InVal=600.0,OutVal=15.0),(InVal=1100.0,OutVal=10.0),(InVal=1300.0,OutVal=6.0),(InVal=1600.0,OutVal=1.0)))
         bTurnInPlaceOnSteer=False
         SteerSpeed=30 // 40
         TurningLongSlipFactor=500
+
+        WheelLongExtremumSlip=10.0 //0.1
+        WheelLongExtremumValue=1.0
+        WheelLongAsymptoteSlip=2.0
+        WheelLongAsymptoteValue=0.6
+
+        WheelLatExtremumSlip=10.0 //0.35
+        WheelLatExtremumValue=0.85
+        WheelLatAsymptoteSlip=1.4
+        WheelLatAsymptoteValue=0.7
+
         // Transmission - GearData
         ShiftingThrottle=0.71
         ChangeUpPoint=3950.000000
@@ -629,7 +652,7 @@ Seats(3)={( CameraTag=None,
         MinTimeAtChangePoint=0.9
         GearArray(0)={(
             GearRatio=-5.64,
-            AccelRate=7, //10.25,
+            AccelRate=12, //10.25,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=-2500),
                 (InVal=300,OutVal=-1750),
@@ -645,13 +668,13 @@ Seats(3)={( CameraTag=None,
         GearArray(2)={(
             // Real world - [4.37] ~10.0 kph
             GearRatio=2.18, // 4.37,
-            AccelRate=9, //12.50,
+            AccelRate=9.5, //12.50,
             TorqueCurve=(Points={(
-                (InVal=0,OutVal=1500),
-                (InVal=300,OutVal=1750),
-                (InVal=2800,OutVal=2250),
-                (InVal=3300,OutVal=3100),
-                (InVal=3500,OutVal=3725),
+                (InVal=0,OutVal=750),
+                (InVal=300,OutVal=875),
+                (InVal=2800,OutVal=1125),
+                (InVal=3300,OutVal=1550),
+                (InVal=3500,OutVal=1862.5),
                 (InVal=4500,OutVal=0.0) // all divided by 2
             )}),
             // TorqueCurve=(Points={(
@@ -666,12 +689,12 @@ Seats(3)={( CameraTag=None,
         GearArray(3)={(
             // Real world - [2.18] ~20.0 kph
             GearRatio=0.8, // 2.18,
-            AccelRate=15, //10.00,
+            AccelRate=13, //10.00,
             TorqueCurve=(Points={(
-                (InVal=0,OutVal=3100),
-                (InVal=2800,OutVal=4000),
-                (InVal=3300,OutVal=5000),
-                (InVal=3500,OutVal=6500),
+                (InVal=0,OutVal=1550),
+                (InVal=2800,OutVal=2000),
+                (InVal=3300,OutVal=2500),
+                (InVal=3500,OutVal=2900),
                 (InVal=4500,OutVal=0.0)
             )}),
             // TorqueCurve=(Points={(
@@ -684,13 +707,13 @@ Seats(3)={( CameraTag=None,
         )}
         GearArray(4)={(
             // Real world - [1.46] ~30.0 kph
-            GearRatio=0.5, // 1.46,
+            GearRatio=0.6, // 1.46,
             AccelRate=12, //10.00,
             TorqueCurve=(Points={(
-                (InVal=0,OutVal=3100),
-                (InVal=2800,OutVal=4000),
-                (InVal=3300,OutVal=5000),
-                (InVal=3500,OutVal=6500),
+                (InVal=0,OutVal=1550),
+                (InVal=2800,OutVal=2000),
+                (InVal=3300,OutVal=2500),
+                (InVal=3500,OutVal=3250),
                 (InVal=4500,OutVal=0.0)
                 /*
                 (InVal=0,OutVal=5000),
@@ -762,15 +785,15 @@ Seats(3)={( CameraTag=None,
     VehicleEffects(TankVFX_Exhaust)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_A_TankExhaust',EffectSocket=Exhaust)
     VehicleEffects(TankVFX_TreadWing)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,bStayActive=true,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_A_Wing_Dirt_PZ4',EffectSocket=FX_Master)
     // Damage
-    VehicleEffects(TankVFX_DmgSmoke)=(EffectStartTag=DamageSmoke,EffectEndTag=NoDamageSmoke,bRestartRunning=false,EffectTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_damaged_burning_new',EffectSocket=attachments_engine)
-    VehicleEffects(TankVFX_DmgInterior)=(EffectStartTag=DamageInterior,EffectEndTag=NoInternalSmoke,bRestartRunning=false,bInteriorEffect=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_Interior_Penetrate',EffectSocket=attachments_body)
+    //? VehicleEffects(TankVFX_DmgSmoke)=(EffectStartTag=DamageSmoke,EffectEndTag=NoDamageSmoke,bRestartRunning=false,EffectTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_damaged_burning_new',EffectSocket=attachments_engine)
+    //? VehicleEffects(TankVFX_DmgInterior)=(EffectStartTag=DamageInterior,EffectEndTag=NoInternalSmoke,bRestartRunning=false,bInteriorEffect=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_Interior_Penetrate',EffectSocket=attachments_body)
     // Death
-    VehicleEffects(TankVFX_DeathSmoke1)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke1)
-    VehicleEffects(TankVFX_DeathSmoke2)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke2)
-    VehicleEffects(TankVFX_DeathSmoke3)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke3)
+    //? VehicleEffects(TankVFX_DeathSmoke1)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke1)
+    //? VehicleEffects(TankVFX_DeathSmoke2)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke2)
+    //? VehicleEffects(TankVFX_DeathSmoke3)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke3)
 
     BigExplosionSocket=FX_Fire
-    ExplosionTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_destroyed'
+    //? ExplosionTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_destroyed'
 
     ExplosionDamageType=class'RODmgType_VehicleExplosion'
     ExplosionDamage=100.0
@@ -979,6 +1002,6 @@ Seats(3)={( CameraTag=None,
 
     bDestroyedTracksCauseTurn=false
 
-    RanOverDamageType=RODmgType_RunOver_HT
+    //? RanOverDamageType=RODmgType_RunOver_HT
     TransportType=ROTT_Halftrack
 }

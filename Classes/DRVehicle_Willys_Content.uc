@@ -1,4 +1,4 @@
-class DRVehicle_Willys_Content extends DRVehicle_Willys 
+class DRVehicle_Willys_Content extends DRVehicle_Willys
     placeable;
 
 DefaultProperties
@@ -136,7 +136,7 @@ DefaultProperties
     HUDLeftSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
     */
 
-    RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
+    //? RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
 
     // Driver
     SeatProxies(0)={(
