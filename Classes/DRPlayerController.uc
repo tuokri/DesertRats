@@ -1345,6 +1345,18 @@ exec function ForceStukaStrike(optional bool bAircraftPOV = False,
     DoTestStukaStrike(bAircraftPOV, Altitude, PayloadDropHeight, AngleOfDive);
 }
 
+exec function ForceStrafingRun()
+{
+    ServerForceStrafingRun();
+}
+
+reliable private server function ServerForceStrafingRun()
+{
+    local DRStrafingRunAircraft Aircraft;
+    Aircraft = Spawn(class'DRStrafingRunAircraft', self, , Pawn.Location + MakeVector(0, 0, 5), Pawn.Rotation);
+    // Aircraft.Velocity = MakeVector(0, 0, 0);
+}
+
 reliable private server function DoTestStukaStrike(bool bAircraftPOV,
     int Altitude, int PayloadDropHeight, int AngleOfDive)
 {
