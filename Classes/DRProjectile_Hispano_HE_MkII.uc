@@ -2,9 +2,9 @@
 class DRProjectile_Hispano_HE_MkII extends ROAntiVehicleProjectile;
 
 // TODO: Tracers.
-simulated function SpawnFlightEffects()
-{
-}
+// simulated function SpawnFlightEffects()
+// {
+// }
 
 DefaultProperties
 {
@@ -18,7 +18,7 @@ DefaultProperties
     Damage=150
     DamageRadius=250
     MomentumTransfer=50000
-    //? ImpactDamageType=class'DRDmgType_Hispano_HE_MkIIZ'
+    //? ImpactDamageType=class'DRDmgType_Hispano_HE_MkII'
     //? GeneralDamageType=class'DRDmgType_Hispano_HE_MkII_General'
     //? MyDamageType=class'DRDmgType_Hispano_HE_MkII'
 
@@ -41,4 +41,11 @@ DefaultProperties
         AlwaysLoadOnClient=True
         AlwaysLoadOnServer=True
     End Object
+
+    // TODO:
+    ProjExplosionTemplate=ParticleSystem'FX_WEP_Explosive_Three.FX_VEH_Explosive_C_TankCannon_AP_Shell_Impact_Dirt'
+    ProjFlightTemplate=ParticleSystem'FX_WEP_Gun_Three.Tracers.FX_WEP_Gun_A_TankShell_Tracer'
+    ProjDefelectTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_Tank_B_NoRound_Deflect'
+    ProjPenetrateTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_Tank_B_TankShell_Penetrate'
+    ProjPostDeflectTemplate=ParticleSystem'FX_WEP_Gun_Three.Tracers.FX_WEP_Gun_A_TankShell_Tracer_PostDeflect'
 }
