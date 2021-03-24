@@ -1,4 +1,4 @@
-// TODO: Experimental. Should use actual weapon actors in the future.
+// TODO: Hide bombs on the plane mesh.
 class DRStrafingRunAircraft extends RONapalmStrikeAircraftARVN;
 
 var AudioComponent AC1;
@@ -8,6 +8,10 @@ var ROParticleSystemComponent PC1;
 var ROParticleSystemComponent PC2;
 var ROParticleSystemComponent PC3;
 var ROParticleSystemComponent PC4;
+
+var int SpreadDegree;
+var int PitchRate;
+
 
 simulated function PostBeginPlay()
 {
@@ -39,37 +43,100 @@ simulated function PostBeginPlay()
     Mesh.AttachComponentToSocket(PC2, 'Muzzle_Left_Inner');
     Mesh.AttachComponentToSocket(PC3, 'Muzzle_Right_Inner');
     Mesh.AttachComponentToSocket(PC4, 'Muzzle_Right_Outer');
+
+    SetTimer(25, False, 'Explode');
 }
 
 simulated event StartStrike()
 {
     super.StartStrike();
 
-    SetTimer(0.086, True, 'FireCannon1');
-    SetTimer(0.086, True, 'FireCannon2');
-    SetTimer(0.086, True, 'FireCannon3');
-    SetTimer(0.086, True, 'FireCannon4');
+    SetTimer(0.080, True, 'FireCannon1');
+    SetTimer(0.090, True, 'FireCannon2');
+    SetTimer(0.085, True, 'FireCannon3');
+    SetTimer(0.078, True, 'FireCannon4');
 
-    AC1.VolumeMultiplier = 0.2;
-    AC2.VolumeMultiplier = 0.2;
+    AC1.VolumeMultiplier = 0.15;
+    AC2.VolumeMultiplier = 0.15;
 
     if (Role < ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
     {
         AC1.Play();
-        AC2.Play();
+        SetTimer(0.1, False, 'PlayAC2');
     }
+
+    RotationRate.Pitch = PitchRate;
+
+    SetTimer(5, False, 'StopStrike');
+    SetTimer(5, False, 'Ascend');
+    SetTimer(10, False, 'GetOuttaHere');
+}
+
+simulated function Ascend()
+{
+    RotationRate.Pitch = 5000;
+}
+
+simulated function GetOuttaHere()
+{
+    RotationRate.Pitch = 0;
+}
+
+simulated function PlayAC2()
+{
+    AC2.Play();
+}
+
+simulated event StopStrike()
+{
+    ClearTimer('FireCannon1');
+    ClearTimer('FireCannon2');
+    ClearTimer('FireCannon3');
+    ClearTimer('FireCannon4');
+
+    if (Role < ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
+    {
+        AC1.Stop();
+        AC2.Stop();
+    }
+}
+
+simulated function Explode()
+{
+    AC1.Stop();
+    AC2.Stop();
+
+    super.Explode();
+}
+
+simulated function Tick(float DeltaTime)
+{
+    super.Tick(DeltaTime);
+    Velocity = Speed * vector(Rotation);
 }
 
 simulated function FireCannon1()
 {
     local vector SpawnLoc;
-    local Projectile Proj;
+    local rotator SpawnRot;
+    local DRProjectile_Hispano_HE_MkII Proj;
+
+    if (bExploded)
+    {
+        return;
+    }
 
     if (Role == ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
     {
-        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Left_Outer', SpawnLoc);
-        Proj = Spawn(class'DRProjectile_Hispano_HE_MkII', Self,, SpawnLoc, Rotation);
-        Proj.Init(SpawnLoc);
+        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Left_Outer', SpawnLoc, SpawnRot);
+
+        SpawnRot.Yaw += SpreadDegree * (Rand(2) - 1);
+        SpawnRot.Pitch += SpreadDegree * (Rand(2) - 1);
+
+        Proj = Spawn(class'DRProjectile_Hispano_HE_MkII', InstigatorController,, SpawnLoc, SpawnRot);
+        Proj.OwningAircraft = Self;
+        Proj.Init(Vector(SpawnRot));
+        Proj.InstigatorController = Controller(Owner);
     }
 
     if (WorldInfo.NetMode != NM_DedicatedServer)
@@ -81,13 +148,25 @@ simulated function FireCannon1()
 simulated function FireCannon2()
 {
     local vector SpawnLoc;
-    local Projectile Proj;
+    local rotator SpawnRot;
+    local DRProjectile_Hispano_AP_MkIIZ Proj;
+
+    if (bExploded)
+    {
+        return;
+    }
 
     if (Role == ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
     {
-        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Left_Inner', SpawnLoc);
-        Proj = Spawn(class'DRProjectile_Hispano_HE_MkII', Self,, SpawnLoc, Rotation);
-        Proj.Init(SpawnLoc);
+        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Left_Inner', SpawnLoc, SpawnRot);
+
+        SpawnRot.Yaw += SpreadDegree * (Rand(2) - 1);
+        SpawnRot.Pitch += SpreadDegree * (Rand(2) - 1);
+
+        Proj = Spawn(class'DRProjectile_Hispano_AP_MkIIZ', InstigatorController,, SpawnLoc, SpawnRot);
+        Proj.OwningAircraft = Self;
+        Proj.Init(Vector(SpawnRot));
+        Proj.InstigatorController = Controller(Owner);
     }
 
     if (WorldInfo.NetMode != NM_DedicatedServer)
@@ -99,13 +178,25 @@ simulated function FireCannon2()
 simulated function FireCannon3()
 {
     local vector SpawnLoc;
-    local Projectile Proj;
+    local rotator SpawnRot;
+    local DRProjectile_Hispano_AP_MkIIZ Proj;
+
+    if (bExploded)
+    {
+        return;
+    }
 
     if (Role == ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
     {
-        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Right_Inner', SpawnLoc);
-        Proj = Spawn(class'DRProjectile_Hispano_AP_MkIIZ', Self,, SpawnLoc, Rotation);
-        Proj.Init(SpawnLoc);
+        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Right_Inner', SpawnLoc, SpawnRot);
+
+        SpawnRot.Yaw += SpreadDegree * (Rand(2) - 1);
+        SpawnRot.Pitch += SpreadDegree * (Rand(2) - 1);
+
+        Proj = Spawn(class'DRProjectile_Hispano_AP_MkIIZ', InstigatorController,, SpawnLoc, SpawnRot);
+        Proj.OwningAircraft = Self;
+        Proj.Init(Vector(SpawnRot));
+        Proj.InstigatorController = Controller(Owner);
     }
 
     if (WorldInfo.NetMode != NM_DedicatedServer)
@@ -117,13 +208,25 @@ simulated function FireCannon3()
 simulated function FireCannon4()
 {
     local vector SpawnLoc;
-    local Projectile Proj;
+    local rotator SpawnRot;
+    local DRProjectile_Hispano_HE_MkII Proj;
+
+    if (bExploded)
+    {
+        return;
+    }
 
     if (Role == ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
     {
-        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Right_Outer', SpawnLoc);
-        Proj = Spawn(class'DRProjectile_Hispano_AP_MkIIZ', Self,, SpawnLoc, Rotation);
-        Proj.Init(SpawnLoc);
+        Mesh.GetSocketWorldLocationAndRotation('Muzzle_Right_Outer', SpawnLoc, SpawnRot);
+
+        SpawnRot.Yaw += SpreadDegree * (Rand(2) - 1);
+        SpawnRot.Pitch += SpreadDegree * (Rand(2) - 1);
+
+        Proj = Spawn(class'DRProjectile_Hispano_HE_MkII', InstigatorController,, SpawnLoc, SpawnRot);
+        Proj.OwningAircraft = Self;
+        Proj.Init(Vector(SpawnRot));
+        Proj.InstigatorController = Controller(Owner);
     }
 
     if (WorldInfo.NetMode != NM_DedicatedServer)
@@ -135,8 +238,9 @@ simulated function FireCannon4()
 DefaultProperties
 {
     TeamIndex=`ALLIES_TEAM_INDEX
-    Speed=0
-    InboundDelay=0.05
+    Speed=6250 // 450 km/h = 125 m/s.
+    InboundDelay=5
+    SpreadDegree=10
 
     // AmbientSound=None
     // AmbientComponent=None
