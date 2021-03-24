@@ -121,7 +121,7 @@ DefaultProperties
 
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
-    WeaponProjectiles(0)=class'DRProjectile_M24Grenade'
+    WeaponProjectiles(0)=class'DRProjectile_M24_Grenade'
     WeaponThrowAnim(0)=Granate_throw
     WeaponIdleAnims(0)=Granate_idle
     ExplosiveBlindFireRightAnim(0)=Granate_R_throw
@@ -130,7 +130,7 @@ DefaultProperties
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=none
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_M24Grenade'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRProjectile_M24_Grenade'
     WeaponThrowAnim(ALTERNATE_FIREMODE)=Granate_toss
     WeaponIdleAnims(ALTERNATE_FIREMODE)=Granate_idle
     ExplosiveBlindFireRightAnim(ALTERNATE_FIREMODE)=Granate_R_toss

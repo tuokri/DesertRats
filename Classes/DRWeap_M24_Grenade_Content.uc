@@ -4,17 +4,17 @@ DefaultProperties
 {
     Begin Object Name=FirstPersonMesh
         DepthPriorityGroup=SDPG_Foreground
-        SkeletalMesh=SkeletalMesh'WP_Ger_M1939_granate.Mesh.Ger_Granate'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_M24_Grenade.Mesh.Ger_Granate'
         PhysicsAsset=None
-        AnimSets(0)=AnimSet'WP_Ger_M1939_granate.animation.WP_GranateHands'
-        Animations=AnimTree'WP_Ger_M1939_granate.animation.Ger_M1939_Tree'
+        AnimSets(0)=AnimSet'DR_WP_DAK_M24_Grenade.Animation.WP_GranateHands'
+        Animations=AnimTree'DR_WP_DAK_M24_Grenade.Animation.Ger_M1939_Tree'
         Scale=1.0
         FOV=70
     End Object
 
     Begin Object Name=PickupMesh
-        SkeletalMesh=SkeletalMesh'WP_3rd_Master.Mesh.M1939_Grenade_3rd_Master'
-        PhysicsAsset=PhysicsAsset'WP_3rd_Master.Phy.M1939_Grenade_3rd_Master_Physics'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_M24_Grenade.Mesh.M1939_Grenade_3rd_Master'
+        PhysicsAsset=PhysicsAsset'DR_WP_DAK_M24_Grenade.Phy.M1939_Grenade_Projectile_Physics'
         CollideActors=true
         BlockActors=true
         BlockZeroExtent=true
@@ -31,5 +31,5 @@ DefaultProperties
 
     AttachmentClass=class'DRWeapAttach_M24_Grenade'
 
-    ArmsAnimSet=AnimSet'WP_Ger_M1939_granate.animation.WP_GranateHands'
+    ArmsAnimSet=AnimSet'DR_WP_DAK_M24_Grenade.Animation.WP_GranateHands'
 }
