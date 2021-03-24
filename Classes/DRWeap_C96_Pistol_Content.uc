@@ -3,23 +3,23 @@ class DRWeap_C96_Pistol_Content extends DRWeap_C96_Pistol;
 DefaultProperties
 {
     //Arms
-    ArmsAnimSet=AnimSet'WP_Ger_C96_Mauser.animation.WP_C96Hands'
+    ArmsAnimSet=AnimSet'DR_WP_DAK_C96_Mauser.Animation.WP_C96Hands'
 
     // Weapon SkeletalMesh
     Begin Object Name=FirstPersonMesh
         DepthPriorityGroup=SDPG_Foreground
-        SkeletalMesh=SkeletalMesh'WP_Ger_C96_Mauser.Mesh.Ger_C96'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_C96_Mauser.Mesh.Ger_C96'
         PhysicsAsset=None
-        AnimSets(0)=AnimSet'WP_Ger_C96_Mauser.animation.WP_C96Hands'
-        Animations=AnimTree'WP_Ger_C96_Mauser.animation.Ger_C96_Tree'
+        AnimSets(0)=AnimSet'DR_WP_DAK_C96_Mauser.Animation.WP_C96Hands'
+        Animations=AnimTree'DR_WP_DAK_C96_Mauser.Animation.Ger_C96_Tree'
         Scale=1.0
         FOV=70
     End Object
 
     // Pickup staticmesh
     Begin Object Name=PickupMesh
-        SkeletalMesh=SkeletalMesh'WP_3rd_Master.Mesh.C96_3rd_Master'
-        PhysicsAsset=PhysicsAsset'WP_3rd_Master.Phy.P38_3rd_Master_Physics'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_C96_Mauser.Meshes.C96_UPGD1_New'
+        PhysicsAsset=PhysicsAsset'DR_WP_DAK_C96_Mauser.Phys.C96_3rd_RS2_Physics'
         CollideActors=true
         BlockActors=true
         BlockZeroExtent=true
@@ -34,5 +34,5 @@ DefaultProperties
         bSyncActorLocationToRootRigidBody=true
     End Object
 
-    AttachmentClass=class'DesertRats.ROPWeapAttach_C96_Pistol'
+    AttachmentClass=class'DRWeapAttach_C96_Pistol'
 }
