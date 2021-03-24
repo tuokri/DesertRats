@@ -1,4 +1,5 @@
-class DRDmgType_Mills_Grenade extends RODamageType_Grenades;
+class DRDmgType_Mills_Grenade extends RODamageType_Grenades
+    abstract;
 
 DefaultProperties
 {

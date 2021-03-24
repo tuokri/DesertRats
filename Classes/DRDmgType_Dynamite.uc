@@ -1,4 +1,5 @@
-class DRDmgType_Dynamite extends DRDmgType_TNT;
+class DRDmgType_Dynamite extends DRDmgType_TNT
+    abstract;
 
 DefaultProperties
 {

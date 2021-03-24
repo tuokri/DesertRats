@@ -1,5 +1,5 @@
 class DRDmgType_BrenBullet extends RODmgType_SmallArmsBullet
-      abstract;
+    abstract;
 
 DefaultProperties
 {
