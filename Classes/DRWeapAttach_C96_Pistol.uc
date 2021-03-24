@@ -30,8 +30,8 @@ defaultproperties
 
     // Weapon SkeletalMesh
     Begin Object Name=SkeletalMeshComponent0
-        SkeletalMesh=SkeletalMesh'WP_WW2_3rd_Master.Meshes.C96_UPGD1_New'
-        AnimSets(0)=AnimSet'WP_WW2_3rd_Master.Anim.WP_C96_UPGD1'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_C96_Mauser.Meshes.C96_UPGD1_New'
+        AnimSets(0)=AnimSet'DR_WP_DAK_C96_Mauser.Anim_3rd.WP_C96_UPGD1'
         CullDistance=5000
     End Object
 
@@ -46,7 +46,7 @@ defaultproperties
     ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_C96'
 
     // ROPawn weapon specific animations
-    CHR_AnimSet=AnimSet'WP_WW2_3rd_Master.Anim.CHR_C96_UPGD1'
+    CHR_AnimSet=AnimSet'DR_WP_DAK_C96_Mauser.Anim_3rd.CHR_C96_UPGD1'
 
     WP_Crouch_ReloadAnims(0)=CH_Reload_Empty
     WP_Crouch_ReloadAnims(1)=CH_Reload_Empty
