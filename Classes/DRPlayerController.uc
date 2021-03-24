@@ -1345,16 +1345,38 @@ exec function ForceStukaStrike(optional bool bAircraftPOV = False,
     DoTestStukaStrike(bAircraftPOV, Altitude, PayloadDropHeight, AngleOfDive);
 }
 
-exec function ForceStrafingRun()
+exec function ForceStrafingRun(int PitchRate, int Altitude, int Distance)
 {
-    ServerForceStrafingRun();
+    ServerForceStrafingRun(PitchRate, Altitude, Distance);
 }
 
-reliable private server function ServerForceStrafingRun()
+reliable private server function ServerForceStrafingRun(int PitchRate, int Altitude, int Distance)
 {
     local DRStrafingRunAircraft Aircraft;
-    Aircraft = Spawn(class'DRStrafingRunAircraft', self, , Pawn.Location + MakeVector(0, 0, 5), Pawn.Rotation);
-    // Aircraft.Velocity = MakeVector(0, 0, 0);
+    local ROTeamInfo ROTI;
+    local rotator FlightRot;
+    local vector TargetLocation;
+
+    Aircraft = Spawn(class'DRStrafingRunAircraft', self,,
+        Pawn.Location + MakeVector(Distance, 0, Altitude), Pawn.Rotation);
+
+    ROTI = ROTeamInfo(PlayerReplicationInfo.Team);
+
+    if ( ROTI != none )
+    {
+        ROTI.ArtyStrikeLocation = ROTI.SavedArtilleryCoords;
+    }
+
+    if( ROTI.ArtyStrikeLocation != vect(-999999.0,-999999.0,-999999.0) )
+        TargetLocation = ROTI.ArtyStrikeLocation;
+    else
+        TargetLocation = Pawn.Location;
+
+    FlightRot = rotator(Normal(TargetLocation - Aircraft.Location));
+    FlightRot.Roll = 0;
+    Aircraft.SetRotation(FlightRot);
+
+    Aircraft.PitchRate = PitchRate;
 }
 
 reliable private server function DoTestStukaStrike(bool bAircraftPOV,
