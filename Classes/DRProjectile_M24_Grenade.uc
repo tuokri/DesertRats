@@ -32,8 +32,8 @@ DefaultProperties
     //Components.Add(CollisionCylinder)
 
     Begin Object Name=ThowableMeshComponent
-        SkeletalMesh=SkeletalMesh'WP_ROP_3rd_Projectile.Mesh.M1939_Grenade'
-        PhysicsAsset=PhysicsAsset'WP_ROP_3rd_Projectile.Phy.M1939_Grenade_Physics'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_M24_Grenade.Mesh.M1939_Grenade_Projectile'
+        PhysicsAsset=PhysicsAsset'DR_WP_DAK_M24_Grenade.Phy.M1939_Grenade_Projectile_Physics'
     End Object
 
     SpottedBattleChatterIndex=`BATTLECHATTER_Grenade
