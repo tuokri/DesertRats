@@ -1,10 +1,16 @@
 // 20mm Hispano A.P. Mark IIZ.
 class DRProjectile_Hispano_AP_MkIIZ extends ROAntiVehicleProjectile;
 
-// TODO: Tracers.
-// simulated function SpawnFlightEffects()
-// {
-// }
+var ROSupportAircraft OwningAircraft;
+
+
+simulated event Touch(Actor Other, PrimitiveComponent OtherComp, vector HitLocation, vector HitNormal)
+{
+    if (Other != OwningAircraft)
+    {
+        super.Touch(Other, OtherComp, HitLocation, HitNormal);
+    }
+}
 
 DefaultProperties
 {
@@ -14,14 +20,15 @@ DefaultProperties
 
     BallisticCoefficient=2.0
     Speed=40500 // 810 m/s.
-    MaxSpeed=40500
+    MaxSpeed=65500 // Allow for aircraft momentum.
     ImpactDamage=200
     Damage=50
     DamageRadius=50
     MomentumTransfer=50000
-    //? ImpactDamageType=class'DRDmgType_Hispano_AP_MkIIZ'
-    //? GeneralDamageType=class'DRDmgType_Hispano_AP_MkIIZ_General'
-    //? MyDamageType=class'DRDmgType_Hispano_AP_MkIIZ'
+
+    ImpactDamageType=class'DRDmgType_Hispano_AP_MkIIZ'
+    GeneralDamageType=class'DRDmgType_Hispano_AP_MkIIZ_General'
+    MyDamageType=class'DRDmgType_Hispano_AP_MkIIZ'
 
     // TODO: Double-check these.
     Caliber=20
@@ -43,10 +50,24 @@ DefaultProperties
         AlwaysLoadOnServer=True
     End Object
 
+    ShakeScale=1.5
+    // MaxSuppressBlurDuration=4.5
+    SuppressBlurScalar=1.25
+    SuppressAnimationScalar=0.6
+    ExplodeExposureScale=0.45
+
+    ProjExplosionTemplate=ParticleSystem'FX_VN_Weapons.Impacts.FX_WEP_20mm'
+    WaterExplosionTemplate=ParticleSystem'FX_VN_Impacts.Water.FX_VN_20mm_Water'
+    ExplosionSound=AkEvent'WW_WEP_Bullets.Play_WEP_Bullet_Impact_Dirt'
+    ProjDefelectTemplate=ParticleSystem'FX_VN_Weapons.Impacts.FX_WEP_20mm'
+    ProjPenetrateTemplate=ParticleSystem'FX_VN_Weapons.Impacts.FX_WEP_20mm'
+    ProjPostDeflectTemplate=ParticleSystem'FX_VN_Weapons.Impacts.FX_WEP_20mm'
     // TODO:
-    ProjExplosionTemplate=ParticleSystem'FX_WEP_Explosive_Three.FX_VEH_Explosive_C_TankCannon_AP_Shell_Impact_Dirt'
     ProjFlightTemplate=ParticleSystem'FX_WEP_Gun_Three.Tracers.FX_WEP_Gun_A_TankShell_Tracer'
-    ProjDefelectTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_Tank_B_NoRound_Deflect'
-    ProjPenetrateTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_Tank_B_TankShell_Penetrate'
-    ProjPostDeflectTemplate=ParticleSystem'FX_WEP_Gun_Three.Tracers.FX_WEP_Gun_A_TankShell_Tracer_PostDeflect'
+
+    LensFlareEffect=none
+    ExplosionLightClass=none
+    ShockwaveDecal=none
+
+    ExplosionDecal=None
 }
