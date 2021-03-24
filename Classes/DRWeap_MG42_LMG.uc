@@ -60,12 +60,12 @@ simulated exec function SwitchFireMode()
 DefaultProperties
 {
     WeaponContentClass(0)="DesertRats.DRWeap_MG42_LMG_Content"
-    WeaponContentClass(1)="DesertRats.DRWeap_MG42_LMG_Level2"
-    WeaponContentClass(2)="DesertRats.DRWeap_MG42_LMG_Level3"
+    WeaponContentClass(1)="DesertRats.DRWeap_MG42_LMG_Level2_Content"
+    WeaponContentClass(2)="DesertRats.DRWeap_MG42_LMG_Level3_Content"
 
-    RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42'
-    RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42_UPGD3'
-    RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42_UPGD3'
+    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42'
+    //? RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42_UPGD3'
+    //? RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_MG42_UPGD3'
 
     // RO Classic Mode
 
@@ -89,7 +89,7 @@ DefaultProperties
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponFiring
     WeaponFireTypes(0)=EWFT_Custom
-    WeaponProjectiles(0)=class'MG42Bullet'
+    WeaponProjectiles(0)=class'DRBullet_MG42'
 
     FireInterval(0)=+0.05 // 1200 RPM
     DelayedRecoilTime(0)=0.0
@@ -251,7 +251,7 @@ DefaultProperties
     MaxPenetrationTests=3
     MaxNumPenetrations=2
     // Tracers
-    TracerClass=class'MG42BulletTracer'
+    TracerClass=class'DRBullet_MG42_Tracer'
     TracerFrequency=10
 
     PlayerViewOffset=(X=0.0,Y=8.0,Z=-5)
@@ -338,7 +338,7 @@ DefaultProperties
 
 
 
-    ROBarrelClass=class'ROMGBarrelMG42'
+    ROBarrelClass=class'DRMGBarrel_MG42'
     bTrackBarrelHeat=true
     BarrelHeatBone=barrel
     BarrelChangeAnim=MG42_BarrelChange
