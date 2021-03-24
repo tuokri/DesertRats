@@ -116,8 +116,6 @@ DefaultProperties
 
     //? RetractedStockFrontCollisionBufferDist=7.5
 
-    bUsingRetractedStock=false
-
     // TODO: Shake camera on fire mode switch?
     //? WeaponSwitchToAltFireModeAnim=M16_AutoTOsemi
     //? WeaponSwitchToDefaultFireModeAnim=M16_SemiTOauto
