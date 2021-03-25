@@ -1,5 +1,6 @@
 class DRWeap_Kar98_Rifle_Content extends DRWeap_Kar98_Rifle;
 
+/*
 simulated function SetupArmsAnim()
 {
     super.SetupArmsAnim();
@@ -8,6 +9,7 @@ simulated function SetupArmsAnim()
     ROPawn(Instigator).ArmsMesh.AnimSets[1] = SkeletalMeshComponent(Mesh).AnimSets[0];
     ROPawn(Instigator).ArmsMesh.AnimSets[4] = SkeletalMeshComponent(Mesh).AnimSets[1];
 }
+*/
 
 DefaultProperties
 {

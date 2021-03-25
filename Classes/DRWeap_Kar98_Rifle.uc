@@ -48,6 +48,7 @@ simulated function PlayManualBolt()
 }
 */
 
+/*
 // TODO: Experimental shit.
 simulated function PlayFiringSound(byte FireModeNum)
 {
@@ -65,6 +66,7 @@ simulated function PlayFiringSound(byte FireModeNum)
         }
     }
 }
+*/
 
 DefaultProperties
 {
