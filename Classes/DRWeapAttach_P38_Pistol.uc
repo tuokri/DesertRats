@@ -22,17 +22,24 @@ simulated function name GetReloadAnimName(ROPawn ROPOwner, bool bWeaponIsEmpty)
 
 DefaultProperties
 {
-    ImpactInfoClass=class'ROPImpactEffectInfo'
+    //? ImpactInfoClass=class'ROPImpactEffectInfo'
 
-    ThirdPersonHandsAnim=P38_HandPose
+    ThirdPersonHandsAnim=Makarov_Handpose
+    ThirdPersonHandsIronAnim=Makarov_Ironsight_Handpose
+
     IKProfileName=C96
 
-    LeftHandStandingBoneName=Left_Hand_Standing;
+    LeftHandJogBoneName=Left_Hand
+    RightHandJogBoneName=Right_Hand
+    LeftHandRussianSprintBoneName=Left_Hand
+    RightHandRussianSprintBoneName=Right_Hand
+    RightHandGermanSprintBoneName=Right_Hand
 
     // Weapon SkeletalMesh
     Begin Object Name=SkeletalMeshComponent0
-        SkeletalMesh=SkeletalMesh'WP_WW2_3rd_Master.Meshes.P38_New'
-        AnimSets(0)=AnimSet'WP_WW2_3rd_Master.Anim.WP_P38_New'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_P38_Walther.Meshes_3rd.P38_3rd_RS2'
+        // AnimSets(0)=AnimSet'DR_WP_DAK_P38_Walther.Anim.WP_P38_New'
+        AnimSets(0)=AnimSet'WP_VN_3rd_Master_02.Anim.Makarov_Pistol_3rd_Anim'
         CullDistance=5000
     End Object
 
@@ -47,7 +54,8 @@ DefaultProperties
     ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_P38'
 
     // ROPawn weapon specific animations
-    CHR_AnimSet=AnimSet'WP_WW2_3rd_Master.Anim.CHR_P38_New'
+    // CHR_AnimSet=AnimSet'DR_WP_DAK_P38_Walther.Anim.CHR_P38_New'
+    CHR_AnimSet=AnimSet'CHR_VN_Playeranim_Master_02.Weapons.CHR_Makarov_Pistol'
 
     ReloadAnims(0)=Reload_Empty
     ReloadAnims(1)=Reload_Half
