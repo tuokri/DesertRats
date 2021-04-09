@@ -2,6 +2,11 @@
 class DRWeap_MP41_SMG extends ROWeap_MP40_SMG
     abstract;
 
+function bool HasFoldableStock()
+{
+    return False;
+}
+
 DefaultProperties
 {
     WeaponContentClass(0)="DesertRats.DRWeap_MP41_SMG_Content"
@@ -15,17 +20,17 @@ DefaultProperties
     FiringStatesArray(0)=WeaponFiring
     WeaponFireTypes(0)=EWFT_Custom
     FireInterval(0)=+0.12 // 9mm @ 500RPM
-    WeaponProjectiles(0)=class'MP40Bullet'
+    WeaponProjectiles(0)=class'DRBullet_MP41'
     Spread(0)=0.0022 // 8 MOA
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponSingleFiring
     WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Custom
     FireInterval(ALTERNATE_FIREMODE)=+0.12
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'MP40Bullet'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_MP41'
     Spread(ALTERNATE_FIREMODE)=0.0022 // 8 MOA
 
-    //? AltFireModeType=ROAFT_ExtendStock
+    AltFireModeType=ROAFT_None
 
     WeaponDryFireSnd=AkEvent'WW_WEP_Shared.Play_WEP_Generic_Dry_Fire'
 
@@ -35,8 +40,8 @@ DefaultProperties
     //HippedSpreadMod=5.0//10.0
 
     //Recoil
-    maxRecoilPitch=150//245//260
-    minRecoilPitch=150//245//230
+    maxRecoilPitch=140 // 150 //245//260
+    minRecoilPitch=140 // 150 //245//230
     maxRecoilYaw=60//100
     minRecoilYaw=-60//-100
     RecoilRate=0.09
@@ -52,8 +57,8 @@ DefaultProperties
 
     minRecoilYawAbsolute=25
 
-    InstantHitDamageTypes(0)=class'RODmgType_MP40Bullet'
-    InstantHitDamageTypes(1)=class'RODmgType_MP40Bullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_MP41Bullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_MP41Bullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_SMG'
@@ -63,7 +68,7 @@ DefaultProperties
     WeaponExtendStockAnim=None
     WeaponRetractStockAnim=None
 
-    EquipTime=+0.71 // 0.66 // 0.75
+    EquipTime=0.75 //+0.71 // 0.66 // 0.75
 
     StockSkelControlNames[0]=None
     StockSkelControlNames[1]=None
@@ -94,8 +99,8 @@ DefaultProperties
 
     bUsesFreeAim=true
 
-    ZoomInTime=0.25//0.3
-    ZoomOutTime=0.25//0.22
+    ZoomInTime=0.30 // 0.25 // 0.3
+    ZoomOutTime=0.30 // 0.25 // 0.22
     IronSightPosition=(X=1,Y=0,Z=0)
     // RetractedStockIronSightPosition=(X=3,Y=1,Z=-1)
     RetractedStockIronSightPosition=(X=5,Y=0.5,Z=-0.1)
@@ -111,8 +116,10 @@ DefaultProperties
 
     SwayScale=0.8//1.1
 
-    // TODO: Single shot audio.
-    //? WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Loop_3P', FirstPersonCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Fire_Stereo_Loop')
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(
+        DefaultCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Single_3P',
+        FirstPersonCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Fire_Single'
+    )
 
     //? RetractedStockFrontCollisionBufferDist=7.5
 
