@@ -1,4 +1,4 @@
-`define BUILDVER "0.1"
+`define BUILDVER "0.5"
 
 // `define RELEASE
 
@@ -18,7 +18,7 @@
 
 `define WI_BINOCS           0
 `define DRII_THOMPSON_SMG   1
-`define WI_MP40             2
+`define DRII_MP40_SMG       2
 `define WI_WEBLEY           3
 `define DRII_KAR98_RIFLE    4
 `define WI_ENFIELD          5
@@ -28,6 +28,7 @@
 `define DRII_M24_GRENADE    9
 `define DRII_MG42_LMG       10
 `define DRII_P38_PISTOL     11
+`define DRII_MG34_LMG       12
 
 `define DRII_DYNAMITE       34
 `define DRII_TNT            35
@@ -41,6 +42,7 @@
     PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full' \n\
     bCanCamouflage=False                               \n\
 
+
 // GameInfo common macros.
 `define DRGICommonDP \
     PlayerControllerClass=          class'DRPlayerController'           \n\
@@ -51,3 +53,17 @@
     // DefaultPawnClass=            class'DRPawn'                       \n\
     // PawnHandlerClass=            class'DRPawnHandler'                \n\
     // PlayerReplicationInfoClass=  class'DRPlayerReplicationInfo'      \n\
+
+
+/*
+// Dive bomber macros.
+// Correction to adjust trajectory due to errors in the trajectory calculations.
+// `dr("C=" $ VSize(AccelToApply) $ " A=" $ VSize(AccelToApply));
+`define ExitVelocityCorrection(TargetSpeed) \
+    if (AircraftSpeed < `TargetSpeed)                                       \n\
+    {                                                                       \n\
+        AccelToApply = ((`TargetSpeed - AircraftSpeed) * 3) * Normal(       \n\
+            CurveCenterExitDive - Location) * DeltaTime;                    \n\
+        Velocity += AccelToApply;                                           \n\
+    }                                                                       \n\
+*/
