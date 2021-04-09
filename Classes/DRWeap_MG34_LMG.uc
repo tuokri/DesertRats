@@ -9,6 +9,8 @@ DefaultProperties
 
     bDebugWeapon=True
 
+    InvIndex=`DRII_MG34_LMG
+
     AmmoClass=class'DRAmmo_792x57_MG34Belt_250'
     MaxAmmoCount=250
     bUsesMagazines=true
