@@ -7,5 +7,5 @@ DefaultProperties
 {
 	WeaponContentClass(0)="DesertRats.DRWeap_MP40_SMG_Content"
 
-	InvIndex=`WI_MP40
+	InvIndex=`DRII_MP40_SMG
 }
