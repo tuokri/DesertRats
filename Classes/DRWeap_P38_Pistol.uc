@@ -139,6 +139,10 @@ DefaultProperties
     WeaponSprintLoopAnim=P38_Sprint
     WeaponSprintEndAnim=P38_sprint_out
 
+    // Spotting
+    WeaponSpotEnemyAnim=enemyspot
+    WeaponSpotEnemySightedAnim=enemyspot_ironsight
+
     // Mantling
     WeaponMantleOverAnim=P38_Mantle
 

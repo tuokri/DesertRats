@@ -3,22 +3,22 @@ class DRWeap_P38_Pistol_Content extends DRWeap_P38_Pistol;
 DefaultProperties
 {
     //Arms
-    ArmsAnimSet=AnimSet'WP_Ger_P38.Animation.WP_P38Hands'
+    ArmsAnimSet=AnimSet'DR_WP_DAK_P38_Walther.Animation.WP_P38Hands'
 
     // Weapon SkeletalMesh
     Begin Object Name=FirstPersonMesh
         DepthPriorityGroup=SDPG_Foreground
-        SkeletalMesh=SkeletalMesh'WP_Ger_P38.Mesh.Ger_P38'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_P38_Walther.Mesh.Ger_P38'
         PhysicsAsset=None
-        AnimSets(0)=AnimSet'WP_Ger_P38.Animation.WP_P38Hands'
-        Animations=AnimTree'WP_Ger_P38.Animation.Ger_P38_Tree'
+        AnimSets(0)=AnimSet'DR_WP_DAK_P38_Walther.Animation.WP_P38Hands'
+        Animations=AnimTree'DR_WP_DAK_P38_Walther.Animation.Ger_P38_Tree'
         Scale=1.0
         FOV=70
     End Object
 
     // Pickup staticmesh
     Begin Object Name=PickupMesh
-        SkeletalMesh=SkeletalMesh'WP_3rd_Master.Mesh.P38_3rd_Master'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_P38_Walther.Meshes_3rd.P38_3rd_RS2'
         PhysicsAsset=PhysicsAsset'WP_3rd_Master.Phy.P38_3rd_Master_Physics'
         CollideActors=true
         BlockActors=true
@@ -34,5 +34,5 @@ DefaultProperties
         bSyncActorLocationToRootRigidBody=true
     End Object
 
-    AttachmentClass=class'DesertRats.ROPWeapAttach_P38_Pistol'
+    AttachmentClass=class'DRWeapAttach_P38_Pistol'
 }
