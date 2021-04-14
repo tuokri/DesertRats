@@ -1,0 +1,1 @@
+class DRVehicle_StuartM3_Content extends DRVehicle_StuartM3;
