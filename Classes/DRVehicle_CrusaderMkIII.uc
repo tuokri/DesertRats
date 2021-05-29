@@ -1968,6 +1968,7 @@ DefaultProperties
     //_________________________
     // ROSkelControlTankWheels
     //
+    LeftWheels.Empty
     LeftWheels(0)="L_Wheel_01"
     LeftWheels(1)="L_Wheel_02"
     LeftWheels(2)="L_Wheel_03"
@@ -1976,6 +1977,7 @@ DefaultProperties
     LeftWheels(5)="L_Wheel_06"
     LeftWheels(6)="L_Wheel_07"
     //
+    RightWheels.Empty
     RightWheels(0)="R_Wheel_01"
     RightWheels(1)="R_Wheel_02"
     RightWheels(2)="R_Wheel_03"
@@ -1985,50 +1987,59 @@ DefaultProperties
     RightWheels(6)="R_Wheel_07"
 
     /** Physics Wheels */
+    Wheels.Empty
 
     // Right Rear Wheel
     Begin Object Name=RRWheel
         BoneName="R_Wheel_06"
-        // BoneOffset=(X=-10.0,Y=0,Z=0.0)
-        WheelRadius=30//15
+        BoneOffset=(X=0.0,Y=0,Z=12.5)
+        WheelRadius=44
+        SuspensionTravel=17.5
     End Object
     Wheels(0)=RRWheel
 
     // Right middle wheel
     Begin Object Name=RMWheel
         BoneName="R_Wheel_04"
-        // BoneOffset=(X=5.0,Y=0,Z=0.0)
-        WheelRadius=30//15
+        BoneOffset=(X=0.0,Y=0,Z=12.5)
+        WheelRadius=44
+        SuspensionTravel=17.5
     End Object
     Wheels(1)=RMWheel
 
     // Right Front Wheel
     Begin Object Name=RFWheel
         BoneName="R_Wheel_02"
-        WheelRadius=30//15
+        BoneOffset=(X=0.0,Y=0,Z=12.5)
+        WheelRadius=44
+        SuspensionTravel=17.5
     End Object
     Wheels(2)=RFWheel
 
     // Left Rear Wheel
     Begin Object Name=LRWheel
         BoneName="L_Wheel_06"
-        // BoneOffset=(X=-10.0,Y=0,Z=0.0)
-        WheelRadius=30//15
+        BoneOffset=(X=0.0,Y=0,Z=12.5)
+        WheelRadius=44
+        SuspensionTravel=17.5
     End Object
     Wheels(3)=LRWheel
 
     // Left Middle Wheel
     Begin Object Name=LMWheel
         BoneName="L_Wheel_04"
-        // BoneOffset=(X=5.0,Y=0,Z=0.0)
-        WheelRadius=30//15
+        BoneOffset=(X=0.0,Y=0,Z=12.5)
+        WheelRadius=44
+        SuspensionTravel=17.5
     End Object
     Wheels(4)=LMWheel
 
     // Left Front Wheel
     Begin Object Name=LFWheel
         BoneName="L_Wheel_02"
-        WheelRadius=30//15
+        BoneOffset=(X=0.0,Y=0,Z=12.5)
+        WheelRadius=44
+        SuspensionTravel=17.5
     End Object
     Wheels(5)=LFWheel
 
@@ -2321,7 +2332,7 @@ DefaultProperties
         GearArray(0)={(
             // Real world - [5.64] 5.5 kph reverse
             GearRatio=-5.64,
-            AccelRate=7.5,
+            AccelRate=21.75,//7.5,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=-3000),
                 (InVal=300,OutVal=-1000),
@@ -2337,7 +2348,7 @@ DefaultProperties
         GearArray(2)={(
             // Real world - [6.89] 4.5 kph at 2800rpm
             GearRatio=6.89,
-            AccelRate=9.50,
+            AccelRate=27.55,//9.50,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=12480),
                 (InVal=300,OutVal=4000),
@@ -2350,7 +2361,7 @@ DefaultProperties
         GearArray(3)={(
             // Real world - [3.60] 8.6 kph
             GearRatio=3.60,
-            AccelRate=10.00,
+            AccelRate=29.00,//10.00,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=3400),
                 (InVal=300,OutVal=2700),
@@ -2363,7 +2374,7 @@ DefaultProperties
         GearArray(4)={(
             // Real world - [2.14] 14.5 kph
             GearRatio=2.14,
-            AccelRate=9.35,
+            AccelRate=27.115,//9.35,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=5000),
                 (InVal=300,OutVal=3000),
@@ -2376,7 +2387,7 @@ DefaultProperties
         GearArray(5)={(
             // Real world - [1.42] 21.9 kph
             GearRatio=1.42,
-            AccelRate=11.00,
+            AccelRate=31.00,//11.00,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=5000),
                 (InVal=300,OutVal=3300),
@@ -2389,7 +2400,7 @@ DefaultProperties
         GearArray(6)={(
             // Real world - [1.00] 31.0 kph
             GearRatio=1.00,
-            AccelRate=11.20,
+            AccelRate=32.48,//11.20,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=5000),
                 (InVal=300,OutVal=3400),
@@ -2402,7 +2413,7 @@ DefaultProperties
         GearArray(7)={(
             // Real world - [0.78] 40.0 kph
             GearRatio=0.78,
-            AccelRate=11.20,
+            AccelRate=32.48,//11.20,
             TorqueCurve=(Points={(
                 (InVal=0,OutVal=5000),
                 (InVal=300,OutVal=3500),
@@ -2416,7 +2427,7 @@ DefaultProperties
         FirstForwardGear=3
     End Object
 
-    TreadSpeedScale=-2.5 //2.75
+    TreadSpeedScale=2.5 //2.75
 
     // Muzzle Flashes
     VehicleEffects(TankVFX_Firing1)=(EffectStartTag=PanzerIVGCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankMuzzle',EffectSocket=Barrel,bRestartRunning=true)
@@ -2495,7 +2506,7 @@ DefaultProperties
 
 //  AIPurpose=AIP_Any
 
-    bDebugPenetration=false
+    bDebugPenetration=true
 
     VehHitZones(0)=(ZoneName=ENGINEBLOCK,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Engine,ZoneHealth=100,VisibleFrom=14)
     VehHitZones(1)=(ZoneName=ENGINECORE,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Engine,ZoneHealth=300,VisibleFrom=14)
@@ -2546,7 +2557,7 @@ DefaultProperties
     VehHitZones(46)=(ZoneName=RIGHTTRACKTEN,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Track,ZoneHealth=800)
     VehHitZones(47)=(ZoneName=RIGHTDRIVEWHEEL,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Track,ZoneHealth=400)
     VehHitZones(48)=(ZoneName=LEFTDRIVEWHEEL,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Track,ZoneHealth=400)
-    
+
   //  VehHitZones(28)=(ZoneName=LOADERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=4,SeatProxyIndex=3,CrewBoneName=Loader_Bone)
   //  VehHitZones(29)=(ZoneName=LOADERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=4,SeatProxyIndex=3,CrewBoneName=Loader_Bone)
 
@@ -2662,7 +2673,7 @@ DefaultProperties
     ArmorPlates(28)=(PlateName=TURRETROOF,ArmorZoneType=AZT_TurretRoof,PlateThickness=12,OverallHardness=370,bHighHardness=false)
     ArmorPlates(29)=(PlateName=UPPERTURRETREAR,ArmorZoneType=AZT_TurretBack,PlateThickness=25,OverallHardness=350,bHighHardness=false)
     ArmorPlates(30)=(PlateName=TURRETRINGARMOUR,ArmorZoneType=AZT_Weakspots,PlateThickness=20,OverallHardness=350,bHighHardness=false)
-   
+
 
     EngineIdleRPM=500
     EngineNormalRPM=1800

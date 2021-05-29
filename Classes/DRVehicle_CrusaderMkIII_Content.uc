@@ -8,10 +8,10 @@ DefaultProperties
     Begin Object Name=ROSVehicleMesh
         SkeletalMesh=SkeletalMesh'DR_VH_UK_CrusaderIII.Mesh.CrusaderIII_Rig'
         //MorphSets[0]=MorphTargetSet'VH_Goliath.Mesh.SK_VH_Goliath_Morph'
-        AnimTreeTemplate=AnimTree'DR_VH_DAK_PanzerIV_F.Anim.AT_VH_PanzerIVG_New'
+        AnimTreeTemplate=AnimTree'DR_VH_UK_CrusaderIII.Anim.CrusaderIII_AnimTree'
         PhysicsAsset=PhysicsAsset'DR_VH_UK_CrusaderIII.Phy.CrusaderIII_Rig_Physics'
-        AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_anim_Master')
-        AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_Destroyed_anim_Master')
+        // AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_anim_Master')
+        // AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_Destroyed_anim_Master')
     End Object
 
     // -------------------------------- Sounds -----------------------------------------------------------
@@ -135,12 +135,13 @@ DefaultProperties
     */
     // -------------------------------- Dead -----------------------------------------------------------
 
-    DestroyedSkeletalMesh=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.Ger_PZIV_Destroyed_Master'
-    DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.PZIV_Body_Destroyed'
-    DestroyedPhysicsAsset=PhysicsAsset'DR_VH_DAK_PanzerIV_F.Phys.Ger_PZIV_Destroyed_Physics'
-    DestroyedMaterial=MaterialInstanceConstant'DR_VH_DAK_PanzerIV_F.MIC.VH_DAK_PZIV_Destroyed_INST'
+    DestroyedSkeletalMesh=SkeletalMesh'DR_VH_UK_CrusaderIII.Mesh.CrusaderIII_Destr_Rig'
+    DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'DR_VH_UK_CrusaderIII.Mesh.CrusaderIII_Destr_Body'
+    DestroyedPhysicsAsset=PhysicsAsset'DR_VH_UK_CrusaderIII.Phy.CrusaderIII_Destr_Rig_Physics'
+    //? DestroyedMaterial=MaterialInstanceConstant'DR_VH_DAK_PanzerIV_F.MIC.VH_DAK_PZIV_Destroyed_INST'
+    DestroyedMaterial=MaterialInstanceConstant'DR_VH_UK_CrusaderIII.Materials.M_MKIII_Hull_Destroyed'
     //? DestroyedFXMaterial=Material'Vehicle_Mats.M_Common_Vehicles.Tank_Fireplanes'
-    DestroyedTurretClass=class'DRVehicleDeathTurret_PanzerIVF'
+    DestroyedTurretClass=class'DRVehicleDeathTurret_CrusaderMkIII'
 
     // HUD
     HUDBodyTexture=Texture2D'ui_textures.HUD.Vehicles.ui_hud_tank_pz4_body'
