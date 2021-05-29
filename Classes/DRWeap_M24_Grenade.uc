@@ -30,7 +30,7 @@ DefaultProperties
     WeaponClassType=ROWCT_Grenade
     TeamIndex=`AXIS_TEAM_INDEX
 
-    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_Granate'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_M24'
 
     InvIndex=`DRII_M24_GRENADE
 
