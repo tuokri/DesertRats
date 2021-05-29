@@ -1,6 +1,36 @@
 class DRWeap_Kar98Scoped_Rifle extends ROSniperWeaponAdvanced
     abstract;
 
+simulated function InitialiseScopeMaterial()
+{
+    local vector2D ViewportSize;
+
+    // Only want to spawn sniper lenses on human players, but when PostBeginPlay
+    // gets called Instigator isn't valid yet. So using NetMode == NM_Client,
+    // since weapons should only exist on owning human clients with that netmode.
+    if (Instigator != none && Instigator.IsLocallyControlled()
+        && ROPlayerController(Instigator.Controller) != none)
+    {
+        ViewportSize = ROPlayerController(Instigator.Controller).GetViewportSize();
+        UpdateScopeTextureTarget(ViewportSize.X);
+
+        ScopeLenseMIC = new class'MaterialInstanceConstant';
+        ScopeLenseMIC.SetParent(ScopeLenseMICTemplate);
+        ScopeLenseMIC.SetTextureParameterValue('ScopeTextureTarget', SniperScopeTextureTarget);
+        ScopeLenseMIC.SetScalarParameterValue(InterpParamName, 0.0);
+
+        // Kar 98 sniper has different material slot number and order.
+        Mesh.SetMaterial(3, ScopeLenseMIC);
+
+        // Initialize the scope sight range setting.
+        if( ScopeSightRanges.Length > 0 )
+        {
+            ScopeLenseMIC.SetScalarParameterValue(
+                'v_position', ScopeSightRanges[ScopeSightRangeIndex].SightPositionOffset);
+        }
+    }
+}
+
 DefaultProperties
 {
     WeaponContentClass(0)="DesertRats.DRWeap_Kar98Scoped_Rifle_Content"
@@ -17,12 +47,13 @@ DefaultProperties
        FieldOfView=8.12// "4X" = 32.5(our real world FOV determinant)/4
     End Object
 
-    // TODO: Change to scoped texture when it's available.
-    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Kar'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Kar_Scope'
+
+    AltFireModeType=ROAFT_Bayonet
 
     Category=ROIC_Primary   //ROIC_Primary
     Weight=3.7              //KG
-    InvIndex=15 // TODO: `DRII_Kar98Scoped_Rifle
+    InvIndex=DRII_KAR98_SCOPED_RIFLE
     InventoryWeight=5
 
     PlayerIronSightFOV=40.0
@@ -213,16 +244,27 @@ DefaultProperties
     WeaponBF_Idle2LeftReady=K98_idleTO_L_ready
     WeaponBF_Idle2RightReady=K98_idleTO_R_ready
 
+    // Spotting anims.
+    WeaponSpotEnemyAnim=enemyspot
+    WeaponSpotEnemySightedAnim=enemyspot_ironsight
+
+    // Bayonet anims.
+    WeaponAttachBayonetAnim=Bayonet_attach
+    WeaponDetachBayonetAnim=Bayonet_detach
+
     // Melee anims
     WeaponMeleeAnims(0)=K98_Bash
     WeaponMeleeHardAnim=K98_BashHard
     MeleePullbackAnim=K98_Pullback
     MeleeHoldAnim=K98_Pullback_Hold
 
+    WeaponBayonetMeleeAnims(0)=K98_Stab
+    WeaponBayonetMeleeHardAnim=K98_StabHard
+
     EquipTime=+0.75
     PutDownTime=+0.50
 
-    bDebugWeapon=True
+    bDebugWeapon=False
 
     BoltControllerNames[0]=BoltSlide_Kar98
 
@@ -321,17 +363,17 @@ DefaultProperties
 
     SuppressionPower=20
 
-    bHasBayonet=True
-
+    BayonetSkelControlName=Bayonet_K98
+    bHasBayonet=true
+    WeaponBayonetLength=9.8
+    WeaponBayonetSpreadScale=0.95
     BayonetAttackRange=103.0
     MeleeAttackCoolDownInSeconds=0.4
-    WeaponBayonetLength=21.6
-    RecoilModBayonetAttached=0.95f
 
-    //? BayonetSkelControlName=Bayonet_M9130
-
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',
+        FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',
+        FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
 
     ScopedSensitivityMod=1.5
 }

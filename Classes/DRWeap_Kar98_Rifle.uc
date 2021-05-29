@@ -8,16 +8,20 @@ simulated function float GetSpreadMod()
     return 3 * super.GetSpreadMod();
 }
 
+/*
 exec function TweenTest()
 {
     PlayAnimation(WeaponReloadStripperAnim, 1.25);
     SetTimer(0.6,false,'TweenTestPartTwo');
 }
+*/
 
+/*
 event TweenTestPartTwo()
 {
     PlayAnimation(WeaponAmmoCheckAnim, 1.0);
 }
+*/
 
 /*
 DEMO SHIT
@@ -279,10 +283,15 @@ DefaultProperties
     WeaponAttachBayonetAnim=Bayonet_attach
     WeaponDetachBayonetAnim=Bayonet_detach
 
+    WeaponSpotEnemyAnim=enemyspot
+    WeaponSpotEnemySightedAnim=enemyspot_ironsight
+
     BayonetSkelControlName=Bayonet_K98
     bHasBayonet=true
     BayonetAttackRange=73.0
     WeaponBayonetLength=9.8
+
+    WeaponBayonetSpreadScale=0.98
 
     EquipTime=+0.75
     PutDownTime=+0.50
