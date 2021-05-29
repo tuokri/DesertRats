@@ -1,8 +1,8 @@
-class DRWeap_Vickers_HMG_Turret extends ROFixedMGWeapon;
+class DRWeap_Vickers_HMG extends ROFixedMGWeapon;
 
 // `include(ROGameIndices.uci)
 
-var             name                Bullets[18];
+var name Bullets[18];
 
 simulated function bool OverrideAllowFocusZoom()
 {
@@ -44,9 +44,7 @@ simulated function UnHideBulletsNotify()
 
 DefaultProperties
 {
-    // TODO:
-    //? InvIndex=`RO_Maxim_HMG_Turret
-
+    InvIndex=`DRII_VICKERS_HMG
 
     ArmsSocketName=Player_HandHub
     MountWeaponAnimName=Maxim_GetOn
@@ -128,7 +126,7 @@ DefaultProperties
     InstantHitDamageTypes(1)=class'DRDmgType_VickersBullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
-    MuzzleFlashPSCTemplate=ParticleSystem'FX_WEP_Gun_Two.MuzzleFlashes.FX_WEP_Gun_A_MuzzleFlash_1stP_MG'
+    MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_DShK'
     MuzzleFlashDuration=0.33
     MuzzleFlashLightClass=class'ROGame.RORifleMuzzleFlashLight'
 
@@ -139,8 +137,15 @@ DefaultProperties
     // needed to show muzzle flashes
     bShowFireFXWhenHidden=true
 
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_M_Cue', FirstPersonCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_Sur')
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_M_Cue', FirstPersonCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_Sur')
+    // WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_M_Cue', FirstPersonCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_Sur')
+    // WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_M_Cue', FirstPersonCue=AkEvent'WW_RO2_WEP_MAXIM_RO2.Play_MG_1910_Fire_Single_Sur')
+
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1919_A6.Play_WEP_M1919A6_Loop_3P', FirstPersonCue=AkEvent'WW_WEP_M1919_A6.Play_WEP_M1919A6_Auto_LP')
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1918.Play_WEP_M1918_Single_3P', FirstPersonCue=AkEvent'WW_WEP_M1918.Play_WEP_M1918_Fire_Single')
+
+    bLoopingFireSnd(DEFAULT_FIREMODE)=true
+    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1919_A6.Play_WEP_M1919A6_Tail_3P', FirstPersonCue=AkEvent'WW_WEP_M1919_A6.Play_WEP_M1919A6_Auto_Tail')
+    bLoopHighROFSounds(DEFAULT_FIREMODE)=true
 
     bHasIronSights=true
 
@@ -222,8 +227,8 @@ DefaultProperties
 
     CollisionCheckLength=50.0 //TODO:Put the real value here?
 
-    FireCameraAnim[0]=CameraAnim'RPtperson_Cameras.Anim.Camera_MG34_Shoot'
-    FireCameraAnim[1]=CameraAnim'RPtperson_Cameras.Anim.Camera_MG34_Shoot'
+    FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_MG34_Shoot'
+    FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_MG34_Shoot'
     ShakeScaleControlled=0.65
 
     SightSlideControlName=Sight_Slide
@@ -250,4 +255,3 @@ DefaultProperties
 
     SuppressionPower=15
 }
-
