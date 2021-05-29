@@ -2,15 +2,19 @@ class DRWeap_Lewis_LMG_Content extends DRWeap_Lewis_LMG;
 
 DefaultProperties
 {
-    ArmsAnimSet=AnimSet'WP_VN_VC_DP_28_LMG.animation.WP_DP28bipodhands'
+    // ArmsAnimSet=AnimSet'WP_VN_VC_DP_28_LMG.animation.WP_DP28bipodhands'
+    ArmsAnimSet=AnimSet'DR_WP_DAK_MG34_LMG.Animation.WP_MG34_UPGD2hands'
 
     // Weapon SkeletalMesh
     Begin Object Name=FirstPersonMesh
         DepthPriorityGroup=SDPG_Foreground
         SkeletalMesh=SkeletalMesh'DR_WP_UK_LEWIS.Mesh.Lewis'
+        // SkeletalMesh=SkeletalMesh'DR_WP_UK_BREN.Mesh.GB_BrenMk2_UPGD1_2'
         PhysicsAsset=PhysicsAsset'WP_VN_VC_DP_28_LMG.Phys.Sov_DP28_Physics'
-        AnimSets(0)=AnimSet'WP_VN_VC_DP_28_LMG.animation.WP_DP28bipodhands'
-        AnimTreeTemplate=AnimTree'WP_VN_VC_DP_28_LMG.animation.Sov_DP28Bipod_Tree'
+        // AnimSets(0)=AnimSet'WP_VN_VC_DP_28_LMG.animation.WP_DP28bipodhands'
+        AnimSets(0)=AnimSet'DR_WP_DAK_MG34_LMG.Animation.WP_MG34_UPGD2hands'
+        // AnimTreeTemplate=AnimTree'WP_VN_VC_DP_28_LMG.animation.Sov_DP28Bipod_Tree'
+        AnimTreeTemplate=AnimTree'DR_WP_DAK_MG34_LMG.Animation.Ger_MG34Bipod_Tree'
         Scale=1.0
         FOV=70
     End Object
