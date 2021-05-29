@@ -1,5 +1,4 @@
-class DRAerialReconPlaneAllies extends DRAerialReconPlane
-    abstract;
+class DRAerialReconPlaneAllies extends DRAerialReconPlane;
 
 DefaultProperties
 {

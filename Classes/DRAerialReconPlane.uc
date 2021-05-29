@@ -16,7 +16,7 @@ DefaultProperties
     Begin Object Class=SkeletalMeshComponent Name=PlaneMesh
         SkeletalMesh=SkeletalMesh'VH_VN_US_Recon.Mesh.us_aircraft_recon_birdDog'
         PhysicsAsset=PhysicsAsset'VH_VN_US_Recon.Phy.O1BirdDog_Physics'
-        AnimSets[0]=AnimSet'VH_VN_US_Recon.Animation.O1BirdDog_anim'
+        AnimSets[0]=AnimSet'VH_VN_ARVN_Skyraider.Animation.AUS_Skyraider_anim'
         // Materials[0]=MaterialInstanceConstant'VH_VN_US_Recon.Materials.M_VN_BirdDogUSAF'
         // Materials[1]=Material'VH_VN_US_Recon.Materials.M_BirdDog_Glass'
         Animations=AnimNodeSeq0

@@ -1,5 +1,4 @@
-class DRAerialReconPlaneAxis extends DRAerialReconPlane
-    abstract;
+class DRAerialReconPlaneAxis extends DRAerialReconPlane;
 
 DefaultProperties
 {
