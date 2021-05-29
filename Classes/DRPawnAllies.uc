@@ -8,7 +8,7 @@ DefaultProperties
 
     TunicMesh=SkeletalMesh'DR_CHR_UK.Mesh.UK_Tunic_RolledSocks'
 
-    FieldgearMesh=SkeletalMesh'DR__PLACEHOLDER_CHR.Mesh.UK_Gear_Generic'
+    FieldgearMesh=SkeletalMesh'DR_CHR_UK.Gear.UK_Gear_Rifleman'
 
     ArmsOnlyMeshFP=SkeletalMesh'DR_CHR.Mesh.UK_Hands_Rolled'
 
