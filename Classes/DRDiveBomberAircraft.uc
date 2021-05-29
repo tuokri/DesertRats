@@ -45,6 +45,7 @@ var float AngleOfDiveFromZAxis;
 var float AccelPerSecondDive;
 
 var bool bAccelerating;
+var bool bExitTimerSet;
 
 var vector CurveCenterEnterDive;
 var vector CurveCenterExitDive;
@@ -62,7 +63,7 @@ replication
         DivingState, AscensionAngleInURT, RollUnitsPerSecond, PitchUnitsPerSecondExit,
         PitchUnitsPerSecondEnter, bAccelerating, AccelPerSecondEnter,
         AccelPerSecondExit, CurveRadiusEnterDive, CurveRadiusExitDive, AngleOfDiveFromZAxis,
-        AccelPerSecondDive, AscensionRollAngleInURT, YawUnitsPerSecondExit;
+        AccelPerSecondDive, AscensionRollAngleInURT, YawUnitsPerSecondExit, bExitTimerSet;
 }
 
 // TODO: Make this a macro or somethinge reusable.
@@ -134,26 +135,25 @@ simulated function Destroyed()
 
 simulated function Tick(float DeltaTime)
 {
-    // local DRPlayerController PC;
+    local DRPlayerController PC;
 
     super.Tick(DeltaTime);
 
-    /*
-    foreach WorldInfo.AllControllers(class'DRPlayerController', PC)
+    foreach LocalPlayerControllers(class'DRPlayerController', PC)
     {
         PC.ClientMessage("[" $ DivingState $ "]" $ " S="
             $ VSize(Velocity) $ " P=" $ Rotation.Pitch * UnrRotToDeg $ " R="
             $ Rotation.Roll * UnrRotToDeg);
     }
-    */
 
     /*
     if (DebugLastPointLocation != Location)
     {
-        DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
         DebugLastPointLocation = Location;
+        DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
     }
     */
+    DrawDebugPoint(Location, 2, MakeLinearColor(255.0, 0.0, 0.0, 0.5), True);
 
     // DrawDebugCoordinateSystem(Location, Rotation, 5000);
 
@@ -191,7 +191,8 @@ simulated function PlayAmbientAudio()
 {
     if (Role < ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
     {
-        FlightSoundComponent.FadeIn(6.5, 1.0);
+        //* FlightSoundComponent.FadeIn(6.5, 1.0);
+        FlightSoundComponent.Play();
     }
 }
 
@@ -204,6 +205,8 @@ function StartEnterDive()
 
 function StartExitDive()
 {
+    ClearTimer('StartExitDive');
+
     // `log("StartExitDive() TimeActual = " $ WorldInfo.TimeSeconds);
     DivingState = EDBDS_ExitingDive;
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
@@ -235,12 +238,14 @@ function Ascend()
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
 
+/*
 function StopAccelerating()
 {
     // `log("StopAccelerating() TimeActual = " $ WorldInfo.TimeSeconds);
     bAccelerating = False;
     // DrawDebugSphere(Location, 100, 255, 255, 255, 0, True);
 }
+*/
 
 function Roll()
 {
@@ -282,6 +287,7 @@ function CalculateTrajectory()
     local float PitchArcTravelTimeExit;
     local float Height;
     local float Temp;
+    local float Correction;
 
     // Helper constants.
     local float SinAODFZA;
@@ -471,24 +477,25 @@ function CalculateTrajectory()
     AngleOfAscension = PitchArcAngleInRadExit - Xi;
 
     // TODO: Dirty hack to take absolute value...
+    // 10 deg = 0.174532925 rad.
+    // 19 deg = 0.331612558 rad.
     if ((AngleOfAscension * RadToDeg) < 0)
     {
-        AngleOfAscension = Abs(AngleOfAscension);
+        // Clamp it for good measure...
+        AngleOfAscension = FClamp(AngleOfAscension, 0.174532925, 0.331612558);
         // Also correct PitchArcAngleInRadExit...
         PitchArcAngleInRadExit = AngleOfAscension + Xi;
     }
     AscensionAngleInURT = AngleOfAscension * RadToUnrRot;
 
-    // `log("AngleOfAscension (deg) = " $ AngleOfAscension * RadToDeg);
+    `log("AngleOfAscension (deg) = " $ AngleOfAscension * RadToDeg);
 
     PitchArcLengthExit = PitchArcAngleInRadExit * CurveRadiusExitDive;
     PitchArcTravelTimeExit = PitchArcLengthExit / DiveSpeed;
 
     // Upside-down during actual dive.
     AscensionAngleInURT = (-180 * DegToUnrRot) - (AngleOfAscension * RadToUnrRot);
-    // `log("AscensionAngleInURT (deg) (actual) = " $ AscensionAngleInURT * UnrRotToDeg);
-    PitchUnitsPerSecondExit = AscensionAngleInURT / PitchArcTravelTimeExit;
-    // `log("PitchUnitsPerSecondExit = " $ PitchUnitsPerSecondExit);
+    `log("AscensionAngleInURT (deg) (actual) = " $ AscensionAngleInURT * UnrRotToDeg);
 
     // 3000 UU / 2 s^2 (arbitrary value chosen for now).
     AccelPerSecondDive = (Abs(PhysicsVolume.GetGravityZ()) * SinAODFZA) + (3000 / 2);
@@ -527,12 +534,22 @@ function CalculateTrajectory()
     CurveCenterExitDive -= StrikeDir3D * Line_CF_1;
     CurveCenterExitDive.Z += Line_AF_1;
 
+    Temp = AscensionAngleInURT / PitchArcTravelTimeExit;
+
     // Manual correction due to some error in trajectory calculation.
-    if (CurveRadiusExitDive >= CurveCenterExitDive.Z)
+    if (CurveRadiusExitDive >= (CurveCenterExitDive.Z - TargetLocation.Z))
     {
         // `log("ERROR: DIVE BOMBER WILL CRASH, CORRECTING CurveCenterExitDive!");
-        CurveCenterExitDive.Z += (CurveRadiusExitDive - CurveCenterExitDive.Z) * 1.5;
+        Correction = (CurveRadiusExitDive - CurveCenterExitDive.Z) * 1.2;
+        CurveCenterExitDive.Z += Correction;
+
+        // Pitch faster to make it look more natural.
+        // Use the ratio of the previous correction.
+        Correction /= CurveRadiusExitDive;
+        Temp += Temp * Correction;
     }
+    PitchUnitsPerSecondExit = Temp;
+    // `log("PitchUnitsPerSecondExit = " $ PitchUnitsPerSecondExit);
 
     // DrawDebugSphere(CurveCenterEnterDive, CurveRadiusEnterDive, 64, 0, 255, 0, True);
     // DrawDebugSphere(CurveCenterExitDive, CurveRadiusExitDive, 64, 255, 35, 0, True);
@@ -768,7 +785,6 @@ function HandleExitingDiveUpdate(float DeltaTime)
 
     // If we are getting close to the final angle,
     // interpolate velocity towards the "final velocity" & pitch.
-    // Add some roll for cinematic effect.
     // 1820 ~= 10 * DegToUnrRot.
     if (((Abs(AscensionAngleInURT) - Abs(Rotation.Pitch)) < 1820)
         && (Rotation.Pitch > AscensionAngleInURT))
@@ -782,9 +798,8 @@ function HandleExitingDiveUpdate(float DeltaTime)
         //? NewRot.Pitch = AscensionAngleInURT;
         //? SetRotation(NewRot);
         //? Velocity = FinalVelocity;
-        DivingState = EDBDS_None;
         Ascend();
-        `log("Finished exiting dive");
+        // `log("Finished exiting dive");
         return;
     }
 
@@ -793,13 +808,12 @@ function HandleExitingDiveUpdate(float DeltaTime)
     AccelToApply = AccelPerSecondExit * Normal(CurveCenterExitDive - Location) * DeltaTime;
     Velocity += AccelToApply;
 
-    // Correction to adjust trajectory due to errors in the trajectory calculations.
+    // `ExitVelocityCorrection(DiveSpeed);
     if (AircraftSpeed < DiveSpeed)
     {
         AccelToApply = ((DiveSpeed - AircraftSpeed) * 3) * Normal(
             CurveCenterExitDive - Location) * DeltaTime;
         Velocity += AccelToApply;
-        // `dr("C=" $ VSize(AccelToApply) $ " A=" $ VSize(AccelToApply));
     }
 }
 
@@ -851,6 +865,8 @@ function HandleRollingOutUpdate(float DeltaTime)
 {
     local rotator NewRot;
     local matrix M;
+    //? local vector AccelToApply;
+    //? local float AircraftSpeed;
 
     NewRot = Rotation;
 
@@ -864,6 +880,12 @@ function HandleRollingOutUpdate(float DeltaTime)
     }
     else
     {
+        if (!bExitTimerSet)
+        {
+            SetTimer(8.0, False, 'StartExitFlight');
+            bExitTimerSet = True;
+        }
+
         // We're actually "yawing" now because the aircraft is rolled.
         // TODO: Find a way to pitch in actual "aircraft space",
         // instead of world space. (Check UE4 implementation of FVector::RotateAngleAxis).
@@ -871,6 +893,9 @@ function HandleRollingOutUpdate(float DeltaTime)
 
         M = MakeRotationMatrix(Rotation);
         Velocity += AccelPerSecondExit * Normal(MatrixGetAxis(M, AXIS_Z)) * DeltaTime * 0.5;
+
+        //? AircraftSpeed = VSize(Velocity);
+        //? `ExitVelocityCorrection(Speed);
     }
 
     SetRotation(NewRot);
@@ -890,10 +915,10 @@ function HandleAscendingUpdate(float DeltaTime)
 
 DefaultProperties
 {
-    TeamIndex = `AXIS_TEAM_INDEX;
+    TeamIndex=`AXIS_TEAM_INDEX
 
-    Speed=3756 // 3756 = 146 knots or 75 m/s.
-    DiveSpeed=7156 // 7156 = 150 m/s (constant dive speed after initial acceleration).
+    Speed=3800 // 3756 = 146 knots or 75 m/s.
+    DiveSpeed=7300 // 7156 = 150 m/s (constant dive speed after initial acceleration).
     Altitude=65000 // 1300m. // 50kUU = 1000m.
     PayloadDropHeight=22500 // 450m. // 15kUU = 300m.
 
