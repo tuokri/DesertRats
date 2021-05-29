@@ -30,7 +30,7 @@ DefaultProperties
     WeaponProjectiles(0)=class'DRBullet_P38'
     FireInterval(0)=+0.15
     Spread(0)=0.011
-    //? WeaponDryFireSnd=SoundCue'AUD_Firearms.DryFire.DryFire_Pistol_Cue'
+    WeaponDryFireSnd=AkEvent'WW_WEP_Shared.Play_WEP_Generic_Dry_Fire'
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=none
@@ -81,8 +81,8 @@ DefaultProperties
     ShellEjectSocket=ShellEjectSocket
     ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_P38'
 
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_P38_RO2.Play_SMG_P38_Fire_Single_M_Cue',FirstPersonCue=AkEvent'WW_RO2_WEP_P38_RO2.Play_Pistol_P38_Fire_Single_Sur')
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_P38_RO2.Play_SMG_P38_Fire_Single_M_Cue',FirstPersonCue=AkEvent'WW_RO2_WEP_P38_RO2.Play_Pistol_P38_Fire_Single_Sur')
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Makarov.Play_WEP_Makarov_Fire_Single_3P', FirstPersonCue=AkEvent'WW_WEP_Makarov.Play_WEP_Makarov_Fire_Single')
+    // WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_P38_RO2.Play_SMG_P38_Fire_Single_M_Cue',FirstPersonCue=AkEvent'WW_RO2_WEP_P38_RO2.Play_Pistol_P38_Fire_Single_Sur')
 
     bHasIronSights=true;
 
