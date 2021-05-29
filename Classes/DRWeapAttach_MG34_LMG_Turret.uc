@@ -19,9 +19,9 @@ simulated function CheckToForceRefPose()
     ClearTimer('CheckToForceRefPose');
 }
 
-defaultproperties
+DefaultProperties
 {
-    ImpactInfoClass=class'ROPImpactEffectInfo'
+    //? ImpactInfoClass=class'ROPImpactEffectInfo'
 
     TriggerHoldDuration=0.2
 
@@ -50,11 +50,11 @@ defaultproperties
     ReloadAnims(1)=Tripod_ReloadHalf
 
     // ROPawn weapon specific animations
-    //CHR_AnimSet=AnimSet'RCHRPlayeranim_Master.Weapons.CHR_K98'
+    CHR_AnimSet=AnimSet'CHR_VN_Playeranim_Master.Anim.CHR_VN_Tripod_anim'
 
     // Firing animations
     FireAnim=Shoot
-    FireLastAnim=Shoot_Last
+    FireLastAnim=Shoot//Shoot_Last
     IdleAnim=Idle
-    IdleEmptyAnim=Idle_Empty
+    IdleEmptyAnim=Idle//Idle_Empty
 }
