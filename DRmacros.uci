@@ -8,33 +8,35 @@
 `define DRLogSpawning(msg) `log("SPAWNING:" @ `msg)
 
 
-`define RI_RIFLEMAN         0
-`define RI_ASSAULT          1
-`define RI_MACHINE_GUNNER   2
-`define RI_SNIPER           3
-`define RI_SAPPER           4
-`define RI_COMMANDER        5
-`define RI_TANK_CREW        6
+`define RI_RIFLEMAN                 0
+`define RI_ASSAULT                  1
+`define RI_MACHINE_GUNNER           2
+`define RI_SNIPER                   3
+`define RI_SAPPER                   4
+`define RI_COMMANDER                5
+`define RI_TANK_CREW                6
 
-`define WI_BINOCS           0
-`define DRII_THOMPSON_SMG   1
-`define DRII_MP40_SMG       2
-`define WI_WEBLEY           3
-`define DRII_KAR98_RIFLE    4
-`define WI_ENFIELD          5
-`define WI_LUGER            6
-`define DRII_MP41_SMG       7
-`define DRII_C96_PISTOL     8
-`define DRII_M24_GRENADE    9
-`define DRII_MG42_LMG       10
-`define DRII_P38_PISTOL     11
-`define DRII_MG34_LMG       12
+`define WI_BINOCS                   0
+`define DRII_THOMPSON_SMG           1
+`define DRII_MP40_SMG               2
+`define WI_WEBLEY                   3
+`define DRII_KAR98_RIFLE            4
+`define DRII_SMLE_RIFLE             5
+`define WI_LUGER                    6
+`define DRII_MP41_SMG               7
+`define DRII_C96_PISTOL             8
+`define DRII_M24_GRENADE            9
+`define DRII_MG42_LMG               10
+`define DRII_P38_PISTOL             11
+`define DRII_MG34_LMG               12
+`define DRII_KAR98_SCOPED_RIFLE     13
 
-`define DRII_DYNAMITE       34
-`define DRII_TNT            35
-`define DRII_MILLS_GRENADE  36
+`define DRII_DYNAMITE               34
+`define DRII_TNT                    35
+`define DRII_MILLS_GRENADE          36
 
-`define DRII_MG34_TRIPOD    37
+`define DRII_MG34_TRIPOD            37
+`define DRII_VICKERS_HMG            38
 
 
 // Pawn common macros.
