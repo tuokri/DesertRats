@@ -11,7 +11,7 @@ DefaultProperties
         SkeletalMesh=SkeletalMesh'DR_WP_DAK_MP41.Mesh.MP41'
         PhysicsAsset=PhysicsAsset'WP_VN_VC_MP40.Phys.VC_MP40_Physics'
         AnimSets(0)=AnimSet'WP_VN_VC_MP40.Animation.WP_MP40hands'
-        AnimTreeTemplate=AnimTree'WP_VN_VC_MP40.Animation.VC_MP40_Tree'
+        AnimTreeTemplate=AnimTree'DR_WP_DAK_MP41.Animation.DAK_MP41_Tree'
         Scale=1.0
         FOV=70
     End Object

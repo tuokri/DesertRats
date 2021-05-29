@@ -2,19 +2,57 @@
 class DRWeap_MP41_SMG extends ROWeap_MP40_SMG
     abstract;
 
+var Name FireModeSwitchSkelControlName;
+var(FireModeSwitch) GameSkelCtrl_Recoil FireModeSwitchSkelControl;
+
+
 function bool HasFoldableStock()
 {
     return False;
+}
+
+simulated event PostInitAnimTree(SkeletalMeshComponent SkelComp)
+{
+    super.PostInitAnimTree(SkelComp);
+
+    if (FireModeSwitchSkelControlName != '')
+    {
+        FireModeSwitchSkelControl = GameSkelCtrl_Recoil(
+            SkeletalMeshComponent(Mesh).FindSkelControl(FireModeSwitchSkelControlName));
+    }
+}
+
+simulated function PlayFireModeSwitchAnim()
+{
+    FireModeSwitchSkelControl.bPlayRecoil = True;
+}
+
+simulated function PlayFireModeSwitch(const bool bGoToAlt)
+{
+    if(bGoToAlt)
+    {
+        PlayFireModeSwitchAnim();
+        bUseAltFireMode = true;
+    }
+    else
+    {
+        PlayFireModeSwitchAnim();
+        bUseAltFireMode = false;
+    }
+
+    bUsingAltFireMode = bUseAltFireMode;
 }
 
 DefaultProperties
 {
     WeaponContentClass(0)="DesertRats.DRWeap_MP41_SMG_Content"
 
-    RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.VC_Weap_MP40'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_MP41'
 
     Weight=4.1 // Kg, empty.
     InvIndex=`DRII_MP41_SMG
+
+    FireModeSwitchSkelControlName=FireModeSwitchControl
 
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponFiring
@@ -104,10 +142,10 @@ DefaultProperties
     IronSightPosition=(X=1,Y=0,Z=0)
     // RetractedStockIronSightPosition=(X=3,Y=1,Z=-1)
     RetractedStockIronSightPosition=(X=5,Y=0.5,Z=-0.1)
-    RetractedStockAlignmentScale = 0.5f
-    RecoilOffsetModY = 1100.f
-    RecoilOffsetModZ = 1100.f
-    //SwayOffsetMod = 1000.f
+    RetractedStockAlignmentScale=0.5f
+    RecoilOffsetModY=1100.f
+    RecoilOffsetModZ=1100.f
+    //SwayOffsetMod=1000.f
 
     // Free Aim variables
     FreeAimHipfireOffsetX=25
@@ -116,16 +154,14 @@ DefaultProperties
 
     SwayScale=0.8//1.1
 
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(
-        DefaultCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Single_3P',
-        FirstPersonCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Fire_Single'
-    )
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Single_3P',
+        FirstPersonCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Fire_Single')
 
     //? RetractedStockFrontCollisionBufferDist=7.5
 
-    // TODO: Shake camera on fire mode switch?
-    //? WeaponSwitchToAltFireModeAnim=M16_AutoTOsemi
-    //? WeaponSwitchToDefaultFireModeAnim=M16_SemiTOauto
+    // Faked with recoil skeletal controller.
+    WeaponSwitchToAltFireModeAnim=None
+    WeaponSwitchToDefaultFireModeAnim=None
 
     WeaponFireAnim(ALTERNATE_FIREMODE)=MP40_shoot
     WeaponFireShoulderedAnim(ALTERNATE_FIREMODE)=MP40_shoot
@@ -133,4 +169,5 @@ DefaultProperties
     WeaponIdleAnims(ALTERNATE_FIREMODE)=MP40_Shoulder_Idle
     WeaponIdleShoulderedAnims(ALTERNATE_FIREMODE)=MP40_Shoulder_Idle
     WeaponIdleSightedAnims(ALTERNATE_FIREMODE)=MP40_Iron_Idle
+    WeaponCrawlingAnims(ALTERNATE_FIREMODE)=MP40_CrawlF
 }
