@@ -10,6 +10,5 @@ simulated function vector GetAdjustedTurretViewLocation()
 
 DefaultProperties
 {
-    TurretLookAtOffset= (X=0,Y=0,Z=5000)
-    // MyDamageType=class'ROPDmgType_AVT40Bullet'
+    TurretLookAtOffset=(X=0,Y=0,Z=5000)
 }

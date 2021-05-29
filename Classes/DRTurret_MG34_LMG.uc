@@ -1,17 +1,22 @@
-class DRTurret_MG34_LMG extends ROTurret
+class DRTurret_MG34_LMG extends ROTurret//DRTurret
     placeable;
 
+/*
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
-    EntryActor.SetRelativeLocation( vect(-25, 0, 9) );
-}
+    // EntryActor.SetRelativeLocation( vect(-25, 0, 9) );
 
-defaultproperties
+    `log("***### YawController   = " $ YawController);
+    `log("***### PitchController = " $ PitchController);
+}
+*/
+
+DefaultProperties
 {
     OwningTeam=`AXIS_TEAM_INDEX
-    bHasYawLimit = True
+    bHasYawLimit=True
     // limits
     YawLimit=(X=-4096,Y=4096)
     PitchLimit=(X=-1024,Y=1966)
@@ -20,7 +25,7 @@ defaultproperties
     WeaponFireCorrection=(Pitch=-155)
 
     Begin Object Name=WeaponSkeletalMeshComponent
-        SkeletalMesh=SkeletalMesh'DR_WP_DAK_MG34_Tripod.Mesh.Ger_MG34_Tripod'
+        SkeletalMesh=SkeletalMesh'DR_WP_DAK_MG34_Tripod.Mesh_3rd.MG34_Tripod_3rd_Master'
         AnimTreeTemplate=AnimTree'DR_WP_DAK_MG34_Tripod.Animation.MG34TurretAnimtree'
         AnimSets(0)=AnimSet'DR_WP_DAK_MG34_Tripod.Anim.Tripod_3rd_anim'
     End Object
