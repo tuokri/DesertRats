@@ -32,6 +32,7 @@ simulated function PlayReloadAnimation(ROPawn ROPOwner, float ProficiencyMod, bo
     PlayedAnimName = GetReloadAnimName(ROPOwner, bWeaponIsEmpty);
     Duration = ProficiencyMod * Mesh.GetAnimLength(PlayedAnimName);
 
+    ClearTimer('RestoreHeftLandYaw');
     SetLeftHandYaw(0, 0.1);
     Mesh.PlayAnim(PlayedAnimName, Duration,, false);
     SetTimer(Duration, False, 'RestoreHeftLandYaw');
