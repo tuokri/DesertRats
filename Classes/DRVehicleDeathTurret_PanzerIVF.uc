@@ -9,4 +9,6 @@ DefaultProperties
         DrawScale=1.0f,
         bUseSecondaryGibMeshMITV=FALSE
     )}
+
+    MaxDrawDistanceOverride=15000
 }
