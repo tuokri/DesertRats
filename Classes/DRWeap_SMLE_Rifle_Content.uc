@@ -6,9 +6,10 @@ DefaultProperties
 
 	Begin Object Name=FirstPersonMesh
 		DepthPriorityGroup=SDPG_Foreground
-		SkeletalMesh=SkeletalMesh'DR_WP_UK_ENFIELD.Mesh.Enfield'
+		SkeletalMesh=SkeletalMesh'DR_WP_UK_ENFIELD.Mesh.Enfield_new'
 		PhysicsAsset=None
 		AnimSets(0)=AnimSet'DR_WP_UK_ENFIELD.Anim.WP_LeeEnfieldhands'
+		AnimSets(1)=AnimSet'DR_WP_UK_ENFIELD.Anim.WP_LeeEnfieldBayonetHands'
 		Animations=AnimTree'DR_WP_UK_ENFIELD.Anim.WP_LeeEnfieldHands_Tree'
 		Scale=1.0
 		FOV=70
@@ -16,7 +17,7 @@ DefaultProperties
 
 	Begin Object Name=PickupMesh
 		SkeletalMesh=SkeletalMesh'DR_WP_UK_ENFIELD.Mesh.Enfield_3rd'
-		PhysicsAsset=PhysicsAsset'DR_WP_UK_ENFIELD.Phy.Enfield_Phy'
+		PhysicsAsset=PhysicsAsset'DR_WP_UK_ENFIELD.Phy.Enfield_new_Physics'
 		CollideActors=true
 		BlockActors=true
 		BlockZeroExtent=true

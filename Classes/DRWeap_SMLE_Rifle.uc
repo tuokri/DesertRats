@@ -4,6 +4,21 @@ class DRWeap_SMLE_Rifle extends ROProjectileWeapon
 var(Animations) name ReloadStripperDoubleAnim;
 var(Animations) name RestReloadStripperDoubleAnim;
 
+// @TEMP - triple spread for most handheld weapons?
+simulated function float GetSpreadMod()
+{
+    return 3 * super.GetSpreadMod();
+}
+
+simulated function SetupArmsAnim()
+{
+    super.SetupArmsAnim();
+
+    // ArmsMesh.AnimSets has slots 0-2-3 filled, so we need to back fill slot 1 and then move to slot 4.
+    ROPawn(Instigator).ArmsMesh.AnimSets[1] = SkeletalMeshComponent(Mesh).AnimSets[0];
+    ROPawn(Instigator).ArmsMesh.AnimSets[4] = SkeletalMeshComponent(Mesh).AnimSets[1];
+}
+
 simulated function bool ShouldLoadStripperClip()
 {
 	if((AmmoCount == 0) && NumFullStripperClips == 1)
@@ -87,21 +102,21 @@ DefaultProperties
 {
 	WeaponContentClass(0)="DesertRats.DRWeap_SMLE_Rifle_Content"
 
-	RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.VN_Weap_MN1891-30_Rifle'
+	RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_SMLE'
 
 	WeaponClassType=ROWCT_Rifle
-
 	TeamIndex=`ALLIES_TEAM_INDEX
-
-	InvIndex=`WI_ENFIELD
-
-	bDebugWeapon=false
 
 	Category=ROIC_Primary
 	Weight=4.0 // kg
+	InvIndex=`DRII_SMLE_RIFLE
 	InventoryWeight=0
+
+	bDebugWeapon=false
+
 	PlayerIronSightFOV=40.0
 	PreFireTraceLength=2500
+
 	FiringStatesArray(0)=WeaponSingleFiring
 	WeaponFireTypes(0)=EWFT_Custom
 	WeaponProjectiles(0)=class'MN9130Bullet'
@@ -109,6 +124,7 @@ DefaultProperties
 	DelayedRecoilTime(0)=0.01
 	Spread(0)=0.00012
 
+	AltFireModeType=ROAFT_Bayonet
 	FiringStatesArray(ALTERNATE_FIREMODE)=WeaponManualSingleFiring
 	WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Custom
 	WeaponProjectiles(ALTERNATE_FIREMODE)=class'MN9130Bullet'
@@ -199,21 +215,21 @@ DefaultProperties
 	WeaponCrawlEndAnim=SMLE_Crawl_out
 
 	//Reloading
-	WeaponReloadStripperAnim=				SMLE_Reload_Half
-	ReloadStripperDoubleAnim=				SMLE_Reload_Empty
-	WeaponReloadSingleBulletAnim=			SMLE_Rsingle_Insert
-	WeaponReloadEmptySingleBulletAnim=		SMLE_Rsingle_Insert_empty
-	WeaponOpenBoltAnim=						SMLE_Rsingle_Boltopen
-	WeaponOpenBoltEmptyAnim=				SMLE_Rsingle_Boltopen_empty
-	WeaponCloseBoltAnim=					SMLE_Rsingle_Boltclose
+	WeaponReloadStripperAnim=SMLE_Reload_Half
+	ReloadStripperDoubleAnim=SMLE_Reload_Empty
+	WeaponReloadSingleBulletAnim=SMLE_Rsingle_Insert
+	WeaponReloadEmptySingleBulletAnim=SMLE_Rsingle_Insert_empty
+	WeaponOpenBoltAnim=SMLE_Rsingle_Boltopen
+	WeaponOpenBoltEmptyAnim=SMLE_Rsingle_Boltopen_empty
+	WeaponCloseBoltAnim=SMLE_Rsingle_Boltclose
 
-	WeaponRestReloadStripperAnim=			SMLE_Reload_Half_rest
-	RestReloadStripperDoubleAnim=			SMLE_Reload_Empty_rest
-	WeaponRestReloadSingleBulletAnim=		SMLE_Rsingle_Insert_rest
-	WeaponRestReloadEmptySingleBulletAnim=	SMLE_Rsingle_Insert_empty_rest
-	WeaponRestOpenBoltAnim=					SMLE_Rsingle_Boltopen_rest
-	WeaponRestOpenBoltEmptyAnim=			SMLE_Rsingle_Boltopen_empty_rest
-	WeaponRestCloseBoltAnim=				SMLE_Rsingle_Boltclose_rest
+	WeaponRestReloadStripperAnim=SMLE_Reload_Half_rest
+	RestReloadStripperDoubleAnim=SMLE_Reload_Empty_rest
+	WeaponRestReloadSingleBulletAnim=SMLE_Rsingle_Insert_rest
+	WeaponRestReloadEmptySingleBulletAnimSMLE_Rsingle_Insert_empty_rest
+	WeaponRestOpenBoltAnim=SMLE_Rsingle_Boltopen_rest
+	WeaponRestOpenBoltEmptyAnim=SMLE_Rsingle_Boltopen_empty_rest
+	WeaponRestCloseBoltAnim=SMLE_Rsingle_Boltclose_rest
 
 	// Ammo check
 	WeaponAmmoCheckAnim=SMLE_ammocheck
@@ -281,6 +297,25 @@ DefaultProperties
 	WeaponMeleeHardAnim=SMLE_BashHard
 	MeleePullbackAnim=SMLE_Pullback
 	MeleeHoldAnim=SMLE_Pullback_Hold
+
+	WeaponBayonetMeleeAnims(0)=SMLE_Stab
+    WeaponBayonetMeleeHardAnim=SMLE_StabHard
+
+    WeaponAttachBayonetAnim=Bayonet_Attach
+    WeaponDetachBayonetAnim=Bayonet_Detach
+
+    // Enemy spotting
+    WeaponSpotEnemyAnim=Spot
+    WeaponSpotEnemySightedAnim=Spot
+    WeaponSpotEnemyDeployedAnim=Spot
+
+    // TODO: Tweak attack range?
+    BayonetSkelControlName=Bayonet_SMLE
+    bHasBayonet=true
+    BayonetAttackRange=73.0
+    WeaponBayonetLength=9.8
+
+    WeaponBayonetSpreadScale=0.98
 
 	EquipTime=+0.75
 	PutDownTime=+0.50
