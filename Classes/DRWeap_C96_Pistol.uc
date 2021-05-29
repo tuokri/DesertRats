@@ -30,7 +30,7 @@ DefaultProperties
     FireInterval(0)=+0.15
     WeaponProjectiles(0)=class'DRBullet_C96'
     Spread(0)=0.011
-    //? WeaponDryFireSnd=SoundCue'AUD_Firearms.DryFire.DryFire_Pistol_Cue'
+    WeaponDryFireSnd=AkEvent'WW_WEP_Shared.Play_WEP_Generic_Dry_Fire'
 
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=none
@@ -81,6 +81,7 @@ DefaultProperties
     ShellEjectSocket=ShellEjectSocket
     //? ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_C96'
 
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_TT33.Play_WEP_TT33_Fire_Single_3P', FirstPersonCue=AkEvent'WW_WEP_TT33.Play_WEP_TT33_Fire_Single')
     //? WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Fire_Single', FirstPersonCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Single_Sur_01')
     //? WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Fire_Single', FirstPersonCue=AkEvent'WW_RO2_WEP_C96_RO2.Play_Pistol_C96_Single_Sur_01')
 
