@@ -20,13 +20,22 @@ simulated function name GetReloadAnimName(ROPawn ROPOwner, bool bWeaponIsEmpty)
     return (bWeaponIsEmpty) ? WP_ReloadAnims[0] : WP_ReloadAnims[1];
 }
 
-defaultproperties
+DefaultProperties
 {
-    ImpactInfoClass=class'ROPImpactEffectInfo'
+    //? ImpactInfoClass=class'ROPImpactEffectInfo'
+
     ThirdPersonHandsAnim=C96_Handpose
+
+    //? ThirdPersonHandsAnim=Makarov_Handpose
+    //? ThirdPersonHandsIronAnim=Makarov_Ironsight_Handpose
+
     IKProfileName=C96
 
-    LeftHandStandingBoneName=Left_Hand_Standing;
+    LeftHandJogBoneName=Left_Hand
+    RightHandJogBoneName=Right_Hand
+    LeftHandRussianSprintBoneName=Left_Hand
+    RightHandRussianSprintBoneName=Right_Hand
+    RightHandGermanSprintBoneName=Right_Hand
 
     // Weapon SkeletalMesh
     Begin Object Name=SkeletalMeshComponent0

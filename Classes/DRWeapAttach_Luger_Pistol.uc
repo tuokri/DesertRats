@@ -9,7 +9,7 @@ DefaultProperties
 		CullDistance=5000
 	End Object
 
-	WeaponClass=class'DRWeap_Luger'
+	WeaponClass=class'DRWeap_Luger_Pistol'
 
 	ReloadAnims(0)=Reload_Half
 	CH_ReloadAnims(0)=CH_Reload_Half

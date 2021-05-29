@@ -2,7 +2,7 @@ class DRWeapAttach_MG42_LMG extends ROWeaponAttachmentBipod;
 
 DefaultProperties
 {
-    ImpactInfoClass=class'ROPImpactEffectInfo'
+    //? ImpactInfoClass=class'ROPImpactEffectInfo'
 
     TriggerHoldDuration=0.2
 
