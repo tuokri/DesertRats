@@ -1282,6 +1282,136 @@ function SetLeftVehicleFlag()
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+exec function BlowupVehicles(optional bool bHitAmmo = false, optional int DeadVehicleType = 999)
+{
+    ServerBlowUpVehicles(bHitAmmo, DeadVehicleType);
+}
+
+private reliable server function ServerBlowUpVehicles(optional bool bHitAmmo = false,
+    optional int DeadVehicleType = 999)
+{
+    local ROVehicle ROV;
+
+    ForEach AllActors(class'ROVehicle', ROV)
+    {
+        ROV.bHitAmmo = bHitAmmo;
+
+        ROV.BlowupVehicle();
+
+        // Useless? Is set in ROV.BlowupVehicle()?
+        if (DeadVehicleType != 999)
+        {
+            ROV.DeadVehicleType = DeadVehicleType;
+        }
+    }
+}
+
+private reliable server function DoAddBotsDR(int Num, optional int NewTeam = -1, optional bool bNoForceAdd)
+{
+    local ROAIController ROBot;
+    local byte ChosenTeam;
+    local byte SuggestedTeam;
+    local ROPlayerReplicationInfo ROPRI;
+    local ROGameInfo ROGI;
+
+    ROGI = ROGameInfo(WorldInfo.Game);
+
+    // do not add bots during server travel
+    if( ROGI.bLevelChange )
+    {
+        return;
+    }
+
+    while (Num > 0 && ROGI.NumBots + ROGI.NumPlayers < ROGI.MaxPlayers)
+    {
+        // Create a new Controller for this Bot
+        ROBot = ROGI.Spawn(ROGI.AIControllerClass);
+
+        // Assign the bot a Player ID
+        ROBot.PlayerReplicationInfo.PlayerID = ROGI.CurrentID++;
+
+        // Suggest a team to put the AI on
+        if ( ROGI.bBalanceTeams || NewTeam == -1 )
+        {
+            if ( ROGI.GameReplicationInfo.Teams[`AXIS_TEAM_INDEX].Size - ROGI.GameReplicationInfo.Teams[`ALLIES_TEAM_INDEX].Size <= 0
+                && ROGI.BotCapableNorthernRolesAvailable() )
+            {
+                SuggestedTeam = `AXIS_TEAM_INDEX;
+            }
+            else if( ROGI.BotCapableSouthernRolesAvailable() )
+            {
+                SuggestedTeam = `ALLIES_TEAM_INDEX;
+            }
+            // If there are no roles available on either team, don't allow this to go any further
+            else
+            {
+                ROBot.Destroy();
+                return;
+            }
+        }
+        else if (ROGI.BotCapableNorthernRolesAvailable() || ROGI.BotCapableSouthernRolesAvailable())
+        {
+            SuggestedTeam = NewTeam;
+        }
+        else
+        {
+            ROBot.Destroy();
+            return;
+        }
+
+        // Put the new Bot on the Team that needs it
+        ChosenTeam = ROGI.PickTeam(SuggestedTeam, ROBot);
+        // Set the bot name based on team
+        ROGI.ChangeName(ROBot, ROGI.GetDefaultBotName(ROBot, ChosenTeam, ROTeamInfo(ROGI.GameReplicationInfo.Teams[ChosenTeam]).NumBots + 1), false);
+
+        ROGI.JoinTeam(ROBot, ChosenTeam);
+
+        ROBot.SetTeam(ROBot.PlayerReplicationInfo.Team.TeamIndex);
+
+        // Have the bot choose its role
+        if( !ROBot.ChooseRole() )
+        {
+            ROBot.Destroy();
+            continue;
+        }
+
+        ROBot.ChooseSquad();
+
+        // GRIP BEGIN
+        // Remove. Debugging purpose only.
+        ROPRI = ROPlayerReplicationInfo(ROBot.PlayerReplicationInfo);
+        if( ROPRI.RoleInfo.bIsTankCommander )
+        {
+            ROGI.ChangeName(ROBot, ROPRI.GetHumanReadableName()$" (TankAI)", false);
+        }
+        // GRIP END
+
+        if ( ROTeamInfo(ROBot.PlayerReplicationInfo.Team) != none && ROTeamInfo(ROBot.PlayerReplicationInfo.Team).ReinforcementsRemaining > 0 )
+        {
+            // Spawn a Pawn for the new Bot Controller
+            ROGI.RestartPlayer(ROBot);
+        }
+
+        if ( ROGI.bInRoundStartScreen )
+        {
+            ROBot.AISuspended();
+        }
+
+        // Note that we've added another Bot
+        if( !bNoForceAdd )
+            ROGI.DesiredPlayerCount++;
+
+        ROGI.NumBots++;
+        Num--;
+        ROGI.UpdateGameSettingsCounts();
+    }
+}
+
+exec function AddBotsDR(int Num, optional int NewTeam = -1, optional bool bNoForceAdd)
+{
+    DoAddBotsDR(Num, NewTeam, bNoForceAdd);
+}
+
 exec function SetSFXVolume(float NewVolume)
 {
     AudioManager.UpdateVolume(NewVolume, EAC_SFX);
