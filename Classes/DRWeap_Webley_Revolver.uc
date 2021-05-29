@@ -7,7 +7,7 @@ DefaultProperties
 {
 	WeaponContentClass(0)="DesertRats.DRWeap_Webley_Revolver_Content"
 
-	// RoleSelectionImage(0)=
+	RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Webley'
 
 	TeamIndex=`ALLIES_TEAM_INDEX
 
