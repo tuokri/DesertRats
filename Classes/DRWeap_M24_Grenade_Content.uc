@@ -14,7 +14,7 @@ DefaultProperties
 
     Begin Object Name=PickupMesh
         SkeletalMesh=SkeletalMesh'DR_WP_DAK_M24_Grenade.Mesh.M1939_Grenade_3rd_Master'
-        PhysicsAsset=PhysicsAsset'DR_WP_DAK_M24_Grenade.Phy.M1939_Grenade_Projectile_Physics'
+        PhysicsAsset=PhysicsAsset'DR_WP_DAK_M24_Grenade.Phy.M24_Grenade_Physics'
         CollideActors=true
         BlockActors=true
         BlockZeroExtent=true
