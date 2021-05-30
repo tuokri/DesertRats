@@ -33,11 +33,4 @@ DefaultProperties
 	End Object
 
 	AttachmentClass=class'DRWeapAttach_Thompson_SMG'
-
-	WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1A1.Play_WEP_M1A1_Loop_3P', FirstPersonCue=AkEvent'WW_WEP_M1A1.Play_WEP_M1A1_Auto_LP')
-	WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue= AkEvent'WW_WEP_M1A1.Play_WEP_M1A1_Single_3P', FirstPersonCue=AkEvent'WW_WEP_M1A1.Play_WEP_M1A1_Fire_Single')
-
-	bLoopingFireSnd(DEFAULT_FIREMODE)=true
-	WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1A1.Play_WEP_M1A1_Tail_3P', FirstPersonCue=AkEvent'WW_WEP_M1A1.Play_WEP_M1A1_Auto_Tail')
-	bLoopHighROFSounds(DEFAULT_FIREMODE)=true
 }
