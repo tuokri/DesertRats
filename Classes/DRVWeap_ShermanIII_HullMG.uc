@@ -39,11 +39,10 @@ DefaultProperties
 	FireTriggerTags=(PanzerIVGHullMG)
 	AltFireTriggerTags=(PanzerIVGHullMG)
 
-//	ZoomedTargetFOV=40.0
-//	ZoomedRate=60.0
-//
-	VehicleClass=class'DRVehicle_M4A3'
+	// ZoomedTargetFOV=40.0
+	// ZoomedRate=60.0
 
+	VehicleClass=class'DRVehicle_ShermanIII'
 
 	// Ammo
 	AmmoClass=class'WFAmmo_30calBelt_250Rd'

@@ -40,7 +40,7 @@ var repnotify TakeHitInfo DeathHitInfo_ProxyLoader;
 var repnotify TakeHitInfo DeathHitInfo_ProxyGunner;
 
 /** Scope material. Caching it here so that it does not get cooked out */
-var Material ScopeLensMaterial;
+// var MaterialInstanceConstant ScopeLensMaterial;
 
 simulated function SetVehicleDepthToForeground()
 {
@@ -1386,9 +1386,9 @@ simulated function LinkPeriscope(bool bNewIsLinked, optional bool bIsPendingPosi
 
 DefaultProperties
 {
-	Team=1
+	Team=`ALLIES_TEAM_INDEX
 	Health=600
-	MaxSpeed=680// ~42 km/h
+	MaxSpeed=680 // ~42 km/h
 
 	Begin Object Name=CollisionCylinder
 		CollisionHeight=60.0
@@ -1424,7 +1424,7 @@ DefaultProperties
 	VehicleLights(0)={(AttachmentName=InteriorLightComponent0,Component=InteriorLight_0,bAttachToSocket=true,AttachmentTargetName=interior_light_0)}
 	VehicleLights(1)={(AttachmentName=InteriorLightComponent1,Component=InteriorLight_1,bAttachToSocket=true,AttachmentTargetName=interior_light_1)}
 
-	CrewAnimSet=AnimSet'WF_Vehicles_M4A3Sherman.Anim.CHR_Sherman_Anim_Master'
+	CrewAnimSet=AnimSet'DR_VH_UK_M4A1Sherman.Anim.CHR_Sherman_Anim_Master'
 	bNoAnimTransition=true
 
 	Seats(0)={(	CameraTag=None,
@@ -1487,7 +1487,7 @@ DefaultProperties
 				)}
 
 	Seats(2)={(	GunClass=class'DRVWeap_ShermanIII_Turret',
-				SightOverlayTexture=Texture2D'WF_Vehicles_M4A3Sherman.Textures.M4Sherman_Aim_Reticle',
+				SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_M4A1',
 				NeedleOverlayTexture=none,
 				RangeOverlayTexture=none,
 				VignetteOverlayTexture=Texture2D'ui_textures.VehicleOptics.ui_hud_vehicle_optics_vignette',
@@ -1521,7 +1521,7 @@ DefaultProperties
 
 	Seats(3)={(	GunClass=class'DRVWeap_M4A3_HullMG',
 				SightOverlayTexture=none,
-				VignetteOverlayTexture=Texture2D'WF_Vehicles_M4A3Sherman.Textures.Sherman_HullMG_Scope',
+				VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
 				GunSocket=(MG_Barrel),
 				GunPivotPoints=(MG_Pitch),
 				TurretVarPrefix="HullMG",
@@ -1607,14 +1607,14 @@ DefaultProperties
 	RightWheels(7)="R7_Wheel"
 	RightWheels(11)="R8_9_10_Wheel"
 
-/** Physics Wheels */
+	/** Physics Wheels */
 
 	// Right Rear Wheel
 	Begin Object Name=RRWheel
 		BoneName="R_Wheel_06"
 		BoneOffset=(X=-10.0,Y=0,Z=0.0)
 		WheelRadius=12
-		SuspensionTravel=5
+		SuspensionTravel=16
 	End Object
 	Wheels(0)=RRWheel
 
@@ -1629,7 +1629,7 @@ DefaultProperties
 
 	// Right Front Wheel
 	Begin Object Name=RFWheel
-		BoneName="R_Wheel_02"
+		BoneName="R_Wheel_01"
 		WheelRadius=12
 		SuspensionTravel=5
 	End Object
@@ -1640,7 +1640,7 @@ DefaultProperties
 		BoneName="L_Wheel_06"
 		BoneOffset=(X=-10.0,Y=0,Z=0.0)
 		WheelRadius=12
-		SuspensionTravel=5
+		SuspensionTravel=16
 	End Object
 	Wheels(3)=LRWheel
 
@@ -1655,15 +1655,14 @@ DefaultProperties
 
 	// Left Front Wheel
 	Begin Object Name=LFWheel
-		BoneName="L_Wheel_02"
+		BoneName="L_Wheel_01"
 		WheelRadius=12
 		SuspensionTravel=5
 	End Object
 	Wheels(5)=LFWheel
 
 
-/** Vehicle Sim */
-
+	/** Vehicle Sim */
 	Begin Object Name=SimObject
 		// Transmission - GearData
 		// for gear ratios, bear in mind that the drive wheel's diameter is 42uu as opposed to the wheels touching the ground, which are 30uu
@@ -1771,13 +1770,13 @@ DefaultProperties
 
 	End Object
 
-	TreadSpeedScale=2.75
+	TreadSpeedScale=-2.75
 
 	// Muzzle Flashes
-	VehicleEffects(TankVFX_Firing1)=(EffectStartTag=PanzerIIIMCannon,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_B_TankMuzzle',EffectSocket=Barrel,bRestartRunning=true)
-	VehicleEffects(TankVFX_Firing2)=(EffectStartTag=PanzerIIIMCannon,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_B_TankCannon_Dust',EffectSocket=attachments_body_ground,bRestartRunning=true)
-	VehicleEffects(TankVFX_Firing3)=(EffectStartTag=PanzerIIIMHullMG,EffectTemplate=ParticleSystem'FX_MuzzleFlashes.Emitters.muzzleflash_3rdP',EffectSocket=MG_Barrel)
-	VehicleEffects(TankVFX_Firing4)=(EffectStartTag=PanzerIIIMCoaxMG,EffectTemplate=ParticleSystem'FX_MuzzleFlashes.Emitters.muzzleflash_3rdP',EffectSocket=CoaxMG)
+	VehicleEffects(TankVFX_Firing1)=(EffectStartTag=PanzerIIIMCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankMuzzle',EffectSocket=Barrel,bRestartRunning=true)
+	VehicleEffects(TankVFX_Firing2)=(EffectStartTag=PanzerIIIMCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankCannon_Dust',EffectSocket=attachments_body_ground,bRestartRunning=true)
+	VehicleEffects(TankVFX_Firing3)=(EffectStartTag=PanzerIIIMHullMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=MG_Barrel)
+	VehicleEffects(TankVFX_Firing4)=(EffectStartTag=PanzerIIIMCoaxMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=CoaxMG)
 	// Driving effects
 	VehicleEffects(TankVFX_Exhaust)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,EffectTemplate=ParticleSystem'FX_VEH_Tank.FX_VEH_Tank_A_TankExhaust',EffectSocket=Exhaust)
 	VehicleEffects(TankVFX_TreadWing)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,bStayActive=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_LightTank_A_Wing_Dirt',EffectSocket=attachments_body_ground)
@@ -1797,7 +1796,7 @@ DefaultProperties
 	EngineStopOffsetSecs=0.0
 
 	BigExplosionSocket=FX_Fire
-	ExplosionTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_C_Explosion'
+	ExplosionTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_C_Explosion'
 
 	ExplosionDamageType=class'RODmgType_VehicleExplosion'
 	ExplosionDamage=100.0
@@ -1809,14 +1808,14 @@ DefaultProperties
 	ExplosionLightClass=class'ROGame.ROGrenadeExplosionLight'
 	MaxExplosionLightDistance=4000.0
 	TimeTilSecondaryVehicleExplosion=2.0f
-	SecondaryExplosion=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_C_Explosion_Ammo'
+	SecondaryExplosion=ParticleSystem'DR_VH_FX.FX_VEH_Tank_C_Explosion_Ammo'
 	bHasTurretExplosion=true
 	TurretExplosiveForce=15000
 
 	TreadSpeedParameterName=Tank_Tread_Speed
 
-	DrivingPhysicalMaterial=PhysicalMaterial'VH_Ger_Panzer_IIIM.Phys.PhysMat_PanzerIIIM_Moving'
-	DefaultPhysicalMaterial=PhysicalMaterial'VH_Ger_Panzer_IIIM.Phys.PhysMat_PanzerIIIM'
+	DrivingPhysicalMaterial=PhysicalMaterial'DR_VH_DAK_PanzerIV_F.Phys.PhysMat_PanzerIVG'
+    DefaultPhysicalMaterial=PhysicalMaterial'DR_VH_DAK_PanzerIV_F.Phys.PhysMat_PanzerIVG_Moving'
 
 	CannonFireImpulseMag=20000
 	CannonFireTorqueMag=9375
@@ -2048,12 +2047,16 @@ DefaultProperties
 	SpeedoMaxDegree=60075
 	SpeedoMaxSpeed=1365 //100 km/h
 
-	ScopeLensMaterial=Material'Vehicle_Mats.M_Common_Vehicles.scope_lens'
+	// ScopeLensMaterial=MaterialInstanceConstant'WP_VN_VC_SVD.Materials.VC_SVD_LenseMat'
 
-	RanOverDamageType=RODmgType_RunOver_Panzer3
+	// TODO:
+	RanOverDamageType=DRDmgType_RunOver_PanzerIV
 
 	TankControllerClass=class'CCSTankControllerPIII'
 
-	materials(0) = Material'WF_Vehicles_M4A3Sherman.Materials.M4A1_Sherman_LTread'
-	materials(1) = Material'WF_Vehicles_M4A3Sherman.Materials.M4A1_Sherman_RTread'
+	materials(0)=Material'VH_VN_ARVN_M113_APC.Materials.M113_APC_LTread'
+	materials(1)=Material'VH_VN_ARVN_M113_APC.Materials.M113_APC_RTread'
+
+	// TODO: Remove.
+	bInfantryCanUse=True
 }

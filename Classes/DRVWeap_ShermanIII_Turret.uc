@@ -11,7 +11,7 @@ DefaultProperties
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
     WeaponFireTypes(0)=EWFT_Projectile
-    WeaponProjectiles(0)=class'VehProj_M4A3_AP'
+    WeaponProjectiles(0)=class'DRVProjectile_ShermanIII_AP'
     FireInterval(0)=+3.5
     Spread(0)=0.0001
 
@@ -36,8 +36,8 @@ DefaultProperties
     VehicleClass=class'DRVehicle_ShermanIII'
 
     // Main Gun Ammo
-    MainGunProjectiles(MAINGUN_AP_INDEX)=class'VehProj_M4A3_AP'
-    MainGunProjectiles(MAINGUN_HE_INDEX)=class'VehProj_M4A3_HE'
+    MainGunProjectiles(MAINGUN_AP_INDEX)=class'DRVProjectile_ShermanIII_AP'
+    MainGunProjectiles(MAINGUN_HE_INDEX)=class'DRVProjectile_ShermanIII_HE'
     HEAmmoCount=42
     APAmmoCount=42
     SmokeAmmoCount=3
@@ -56,7 +56,6 @@ DefaultProperties
     APSightSettings(0)=( Range=100,  HUDPosOffset=0,   HUDRotOffset=0)
     // Range (HE), optical sights via HUDPosOffset
     HESightSettings(0)=( Range=100,  HUDPosOffset=0,   HUDRotOffset=0)
-
 
     PenetrationDepth=21.5
     MaxPenetrationTests=3

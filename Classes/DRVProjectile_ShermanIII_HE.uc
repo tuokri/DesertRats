@@ -2,8 +2,7 @@ class DRVProjectile_ShermanIII_HE extends DRTankCannonProjectile;
 
 DefaultProperties
 {
-
-		//M48 HE-T
+    // M48 HE-T
     BallisticCoefficient=1.686
     Speed=23150 //463 M/S
     MaxSpeed=23150
