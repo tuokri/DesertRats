@@ -1,11 +1,15 @@
-class DRVWeap_ShermanIII_Turret extends ROVWeap_TankTurret // ROVWeap_PanzerIIIM_Turret
+class DRVWeap_ShermanIII_Turret extends ROVWeap_TankTurret
     abstract
     HideDropDown;
 
+simulated function DrawRangeOverlay( Hud HUD )
+{
+    // No range overlay for Sherman III.
+}
 
 DefaultProperties
 {
-    WeaponContentClass(0)="DesertRats.DRVWeap_ShermanIII_Content"
+    WeaponContentClass(0)="DesertRats.DRVWeap_ShermanIII_Turret_Content"
     SeatIndex=2
 
     // MAIN FIREMODE
@@ -18,7 +22,7 @@ DefaultProperties
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponFiring
     WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Projectile
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'MG34_VehicleBullet'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_MG34_Turret' // TODO: Correct bullet.
     FireInterval(ALTERNATE_FIREMODE)=+0.15
     Spread(ALTERNATE_FIREMODE)=0.0007
 
@@ -43,7 +47,7 @@ DefaultProperties
     SmokeAmmoCount=3
 
     // MG Ammo
-    AmmoClass=class'WFAmmo_30calBelt_250Rd'
+    AmmoClass=class'DRAmmo_792x57_MG34Belt_150' // TODO: Correct ammo.
     MaxAmmoCount=250
     bUsesMagazines=true
     InitialNumPrimaryMags=9
@@ -53,9 +57,9 @@ DefaultProperties
     APSightSettings.Empty
     HESightSettings.Empty
     // Range (AP), optical sights via HUDPosOffset
-    APSightSettings(0)=( Range=100,  HUDPosOffset=0,   HUDRotOffset=0)
+    APSightSettings(0)=(Range=100,HUDPosOffset=0,HUDRotOffset=0)
     // Range (HE), optical sights via HUDPosOffset
-    HESightSettings(0)=( Range=100,  HUDPosOffset=0,   HUDRotOffset=0)
+    HESightSettings(0)=(Range=100,HUDPosOffset=0,HUDRotOffset=0)
 
     PenetrationDepth=21.5
     MaxPenetrationTests=3

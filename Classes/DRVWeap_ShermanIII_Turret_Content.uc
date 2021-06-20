@@ -2,7 +2,7 @@ class DRVWeap_ShermanIII_Turret_Content extends DRVWeap_ShermanIII_Turret;
 
 DefaultProperties
 {
-	WeaponFireSnd(0)=SoundCue'AUD_Vehicle_Tank_T34.Weapon.Cannon_Fire_Cue'
+	// WeaponFireSnd(0)=SoundCue'AUD_Vehicle_Tank_T34.Weapon.Cannon_Fire_Cue'
 
 	// HUD
 	BarTexture=Texture2D'ui_textures.Textures.button_128grey'
