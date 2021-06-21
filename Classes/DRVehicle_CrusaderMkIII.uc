@@ -2,9 +2,9 @@ class DRVehicle_CrusaderMkIII extends DRVehicleTank
     abstract;
 
 /** ambient sound component for machine gun */
-var AudioComponent HullMGAmbient;
+// var AudioComponent HullMGAmbient;
 /** Sound to play when maching gun stops firing. */
-var SoundCue HullMGStopSound;
+// var SoundCue HullMGStopSound;
 
 /** ambient sound component for machine gun */
 var AudioComponent CoaxMGAmbient;
@@ -22,7 +22,7 @@ var bool                            bGeneratedInteriorMICs;
 var int TempInt;
 
 /** Controller used to reset the pitch and yaw so that it fits in the gun properly when reloaded */
-var ROSkelControlCustomAttach MGController;
+// var ROSkelControlCustomAttach MGController;
 
 /** Currently selected cuppola position */
 var repnotify byte CuppolaCurrentPositionIndex;
@@ -31,20 +31,22 @@ var repnotify bool bDrivingCuppola;
 /** Seat proxy death hit info */
 var repnotify TakeHitInfo DeathHitInfo_ProxyDriver;
 var repnotify TakeHitInfo DeathHitInfo_ProxyCommander;
-var repnotify TakeHitInfo DeathHitInfo_ProxyHullMG;
-var repnotify TakeHitInfo DeathHitInfo_ProxyLoader;
+// var repnotify TakeHitInfo DeathHitInfo_ProxyHullMG;
+// var repnotify TakeHitInfo DeathHitInfo_ProxyLoader;
 var repnotify TakeHitInfo DeathHitInfo_ProxyGunner;
 
 /** Scope material. Caching it here so that it does not get cooked out */
 var MaterialInstanceConstant ScopeLensMIC;
 
+// TODO:
 var DRDestroyedTankTrack DestroyedLeftTrack;
 var DRDestroyedTankTrack DestroyedRightTrack;
 
 replication
 {
     if (bNetDirty)
-        DeathHitInfo_ProxyDriver, DeathHitInfo_ProxyCommander, DeathHitInfo_ProxyHullMG, DeathHitInfo_ProxyLoader, DeathHitInfo_ProxyGunner, CuppolaCurrentPositionIndex, bDrivingCuppola;
+        DeathHitInfo_ProxyDriver, DeathHitInfo_ProxyCommander, /*DeathHitInfo_ProxyHullMG DeathHitInfo_ProxyLoader,*/
+        DeathHitInfo_ProxyGunner, CuppolaCurrentPositionIndex, bDrivingCuppola;
 }
 
 /**
@@ -58,35 +60,21 @@ simulated event ReplicatedEvent(name VarName)
     {
         if( IsLocalPlayerInThisVehicle() )
         {
-            PlaySeatProxyDeathHitEffects(0, DeathHitInfo_ProxyDriver);
+            PlaySeatProxyDeathHitEffects(`CRUSADER_DRIVER_SPI, DeathHitInfo_ProxyDriver);
         }
     }
     else if (VarName == 'DeathHitInfo_ProxyCommander')
     {
         if( IsLocalPlayerInThisVehicle() )
         {
-            PlaySeatProxyDeathHitEffects(1, DeathHitInfo_ProxyCommander);
-        }
-    }
-    else if (VarName == 'DeathHitInfo_ProxyHullMG')
-    {
-        if( IsLocalPlayerInThisVehicle() )
-        {
-            PlaySeatProxyDeathHitEffects(2, DeathHitInfo_ProxyHullMG);
-        }
-    }
-    else if (VarName == 'DeathHitInfo_ProxyLoader')
-    {
-        if( IsLocalPlayerInThisVehicle() )
-        {
-            PlaySeatProxyDeathHitEffects(3, DeathHitInfo_ProxyLoader);
+            PlaySeatProxyDeathHitEffects(`CRUSADER_COMMANDER_SPI, DeathHitInfo_ProxyCommander);
         }
     }
     else if (VarName == 'DeathHitInfo_ProxyGunner')
     {
         if( IsLocalPlayerInThisVehicle() )
         {
-            PlaySeatProxyDeathHitEffects(4, DeathHitInfo_ProxyGunner);
+            PlaySeatProxyDeathHitEffects(`CRUSADER_GUNNER_SPI, DeathHitInfo_ProxyGunner);
         }
     }
     else
@@ -135,13 +123,13 @@ simulated event PostBeginPlay()
     // @todo: Get real locations, for now just attach to wherever our ROVWeap
     if( WorldInfo.NetMode != NM_DedicatedServer )
     {
-        Mesh.AttachComponentToSocket(HullMGAmbient, 'MG_Barrel');
+        // Mesh.AttachComponentToSocket(HullMGAmbient, 'MG_Barrel');
         Mesh.AttachComponentToSocket(CoaxMGAmbient, 'CoaxMG');
     }
 
     // Shell controller
-    ShellController = ROSkelControlCustomAttach(mesh.FindSkelControl('ShellCustomAttach'));
-    MGController = ROSkelControlCustomAttach(mesh.FindSkelControl('InteriorMGAttach'));
+    // ShellController = ROSkelControlCustomAttach(mesh.FindSkelControl('ShellCustomAttach'));
+    // MGController = ROSkelControlCustomAttach(mesh.FindSkelControl('InteriorMGAttach'));
 
     if ( !bGeneratedExteriorMICs )
     {
@@ -175,7 +163,7 @@ simulated event PostBeginPlay()
 simulated event TornOff()
 {
     // Clear the ambient firing sounds
-    HullMGAmbient.Stop();
+    // HullMGAmbient.Stop();
     CoaxMGAmbient.Stop();
 
     Super.TornOff();
@@ -187,8 +175,18 @@ simulated function StopVehicleSounds()
     Super.StopVehicleSounds();
 
     // Clear the ambient firing sounds
-    HullMGAmbient.Stop();
+    // HullMGAmbient.Stop();
     CoaxMGAmbient.Stop();
+}
+
+simulated function int GetLoaderSeatIndex()
+{
+    return GetSeatIndexFromPrefix("Cuppola");
+}
+
+simulated function int GetCommanderSeatIndex()
+{
+    return GetSeatIndexFromPrefix("Cuppola");
 }
 
 /**
@@ -199,31 +197,37 @@ simulated function StopVehicleSounds()
  */
 simulated function RequestPosition(byte SeatIndex, byte DesiredIndex, optional bool bViaInteraction)
 {
+    // TODO:
+
+    /*
     local ROWeaponPawn ROWP;
 
     // Allow position switching to take us to/from the gunner/cuppola position for easy of use
-    if( SeatIndex == 1 && DesiredIndex == 3 )
+    if( SeatIndex == 1 && DesiredIndex == 2)
     {
         ROWP = ROWeaponPawn(Seats[SeatIndex].SeatPawn);
         if( ROWP != none )
         {
             // Go to gunner
-            ROWP.SwitchWeapon(3);
+            ROWP.SwitchWeapon(2);
         }
     }
-    else if( SeatIndex == 2 && DesiredIndex == 255 )
+    else if(SeatIndex == 2 && DesiredIndex == 255)
     {
         ROWP = ROWeaponPawn(Seats[SeatIndex].SeatPawn);
         if( ROWP != none )
         {
             // Go to cuppola
-            ROWP.SwitchWeapon(2);
+            ROWP.SwitchWeapon(1);
         }
     }
     else
     {
         super.RequestPosition(SeatIndex, DesiredIndex, bViaInteraction);
     }
+    */
+
+    super.RequestPosition(SeatIndex, DesiredIndex, bViaInteraction);
 }
 
 /** Check vehicle state for realistic driving restricti
@@ -245,11 +249,13 @@ simulated function VehicleWeaponFireEffects(vector HitLocation, int SeatIndex)
 {
     Super.VehicleWeaponFireEffects(HitLocation, SeatIndex);
 
+    /*
     if (SeatIndex == GetHullMGSeatIndex() && SeatFiringMode(SeatIndex,,true) == 0 && !HullMGAmbient.bWasPlaying)
     {
         HullMGAmbient.Play();
     }
-    else if (SeatIndex == GetGunnerSeatIndex() && SeatFiringMode(SeatIndex,,true) == 1 && !CoaxMGAmbient.bWasPlaying)
+    */
+    if (SeatIndex == GetGunnerSeatIndex() && SeatFiringMode(SeatIndex,,true) == 1 && !CoaxMGAmbient.bWasPlaying)
     {
         CoaxMGAmbient.Play();
     }
@@ -259,6 +265,7 @@ simulated function VehicleWeaponStoppedFiring(bool bViaReplication, int SeatInde
 {
     Super.VehicleWeaponStoppedFiring(bViaReplication, SeatIndex);
 
+    /*
     if ( SeatIndex == GetHullMGSeatIndex() )
     {
         if ( HullMGAmbient.bWasPlaying || !HullMGAmbient.bFinished )
@@ -267,7 +274,8 @@ simulated function VehicleWeaponStoppedFiring(bool bViaReplication, int SeatInde
             PlaySound(HullMGStopSound, TRUE, FALSE, FALSE, HullMGAmbient.CurrentLocation, FALSE);
         }
     }
-    else if ( SeatIndex == GetGunnerSeatIndex() )
+    */
+    if ( SeatIndex == GetGunnerSeatIndex() )
     {
         if ( CoaxMGAmbient.bWasPlaying || !CoaxMGAmbient.bFinished )
         {
@@ -292,35 +300,21 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
     // Update the hit info for each seat proxy pertaining to this vehicle
     switch( SeatProxyIndex )
     {
-    case 0:
+    case `CRUSADER_DRIVER_SPI:
         // Driver
         DeathHitInfo_ProxyDriver.Damage = Damage;
         DeathHitInfo_ProxyDriver.HitLocation = HitLocation;
         DeathHitInfo_ProxyDriver.Momentum = Momentum;
         DeathHitInfo_ProxyDriver.DamageType = DamageType;
         break;
-    case 1:
+    case `CRUSADER_COMMANDER_SPI:
         // Commander
         DeathHitInfo_ProxyCommander.Damage = Damage;
         DeathHitInfo_ProxyCommander.HitLocation = HitLocation;
         DeathHitInfo_ProxyCommander.Momentum = Momentum;
         DeathHitInfo_ProxyCommander.DamageType = DamageType;
         break;
-    case 2:
-        // HullMG
-        DeathHitInfo_ProxyHullMG.Damage = Damage;
-        DeathHitInfo_ProxyHullMG.HitLocation = HitLocation;
-        DeathHitInfo_ProxyHullMG.Momentum = Momentum;
-        DeathHitInfo_ProxyHullMG.DamageType = DamageType;
-        break;
-    case 3:
-        // Loader
-        DeathHitInfo_ProxyLoader.Damage = Damage;
-        DeathHitInfo_ProxyLoader.HitLocation = HitLocation;
-        DeathHitInfo_ProxyLoader.Momentum = Momentum;
-        DeathHitInfo_ProxyLoader.DamageType = DamageType;
-        break;
-    case 4:
+    case `CRUSADER_GUNNER_SPI:
         // Gunner
         DeathHitInfo_ProxyGunner.Damage = Damage;
         DeathHitInfo_ProxyGunner.HitLocation = HitLocation;
@@ -329,7 +323,6 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
         break;
     }
 
-    // Call super!
     Super.DamageSeatProxy(SeatProxyIndex, Damage, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
 }
 
@@ -374,6 +367,11 @@ simulated function SetInteriorVisibility(bool bVisible)
     */
 }
 
+function int GetLoaderHitZoneIndex()
+{
+    return VehHitZones.Find('ZoneName', 'COMMANDERHEAD');
+}
+
 simulated function ReplaceInteriorMICs(MeshComponent MeshComp)
 {
     local MaterialInterface MeshMaterial;
@@ -401,17 +399,20 @@ simulated function ReplaceExteriorMICs(MeshComponent MeshComp)
     local MaterialInterface MeshMaterial;
     local int i, j;
 
-    for ( i = 0; i < MeshComp.GetNumElements(); i++ )
+    if (MeshComp != None)
     {
-        MeshMaterial = MeshComp.GetMaterial(i);
-
-        if ( MeshMaterial != none )
+        for ( i = 0; i < MeshComp.GetNumElements(); i++ )
         {
-            for ( j = 0; j < ReplacedExteriorMICs.Length; j++ )
+            MeshMaterial = MeshComp.GetMaterial(i);
+
+            if ( MeshMaterial != none )
             {
-                if ( MeshMaterial == ReplacedExteriorMICs[j] )
+                for ( j = 0; j < ReplacedExteriorMICs.Length; j++ )
                 {
-                    MeshComp.SetMaterial(i, ExteriorMICs[j]);
+                    if ( MeshMaterial == ReplacedExteriorMICs[j] )
+                    {
+                        MeshComp.SetMaterial(i, ExteriorMICs[j]);
+                    }
                 }
             }
         }
@@ -423,24 +424,12 @@ simulated function ReplaceExteriorMICs(MeshComponent MeshComp)
  */
 simulated function LeaveBloodSplats(int InSeatIndex)
 {
-    local int MICIndex;
+}
 
-    if( InSeatIndex < Seats.Length )
-    {
-        // The following mapping is done based on the way the InteriorMICs array is set up
-        // 0 = Walls, 1 = Driver/HullMG, 2 = Turret, 3 = Cuppola
-        switch( InSeatIndex )
-        {
-        case 0 : MICIndex = 1; break;
-        case 1 : MICIndex = 3; break;
-        case 2 : MICIndex = 2; break;
-        case 3 : MICIndex = 1; break;
-        case 4 : MICIndex = 2; break;
-        }
-
-        InteriorMICs[0].SetScalarParameterValue(Seats[InSeatIndex].VehicleBloodMICParameterName, 1.0);
-        InteriorMICs[MICIndex].SetScalarParameterValue(Seats[InSeatIndex].VehicleBloodMICParameterName, 1.0);
-    }
+simulated function int GetHullMGSeatIndex()
+{
+    // Mk III has no hull MG.
+    return INDEX_NONE;
 }
 
 simulated function ZoneHealthDamaged(int ZoneIndexUpdated, optional Controller DamageInstigator)
@@ -607,6 +596,9 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
 
     super.HandleSeatTransition(DriverPawn, NewSeatIndex, OldSeatIndex, bInstantTransition);
 
+    `log("HandleSeatTransition(): DriverPawn=" $ DriverPawn $ " NewSeatIndex=" $ NewSeatIndex
+        $ " OldSeatIndex=" $ OldSeatIndex $ " bInstantTransition=" $ bInstantTransition);
+
     if( bInstantTransition )
     {
         return;
@@ -633,6 +625,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             bAttachDriverPawn = true;
         }
+        /*
         // Transition from driver to hull MG
         else if( NewSeatIndex == 3 )
         {
@@ -640,6 +633,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             TimerName = 'SeatTransitioningThree';
         }
+        */
     }
     // moving into the driver seat
     else if( NewSeatIndex == 0 )
@@ -662,6 +656,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Turret';
             bAttachDriverPawn = true;
         }
+        /*
         // Transition from hull MG to driver
         else if( OldSeatIndex == 3 )
         {
@@ -669,6 +664,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             TimerName = 'SeatTransitioningZero';
         }
+        */
     }
     // Transition to Commander
     else if( NewSeatIndex == 1 )
@@ -682,6 +678,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Turret';
             //bAttachDriverPawn = true;
         }
+        /*
         // Transition from hull MG to commander
         else if( OldSeatIndex == 3 )
         {
@@ -691,6 +688,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             bAttachDriverPawn = true;
         }
+        */
     }
     // Transition to gunner
     else if( NewSeatIndex == 2 )
@@ -704,6 +702,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Turret';
             //bAttachDriverPawn = true;
         }
+        /*
         // Transition from hull MG to gunner
         else if( OldSeatIndex == 3 )
         {
@@ -713,7 +712,9 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             bAttachDriverPawn = true;
         }
+        */
     }
+    /*
     // Transition to Hull MG
     else if( NewSeatIndex == 3 )
     {
@@ -733,6 +734,7 @@ simulated function HandleSeatTransition(ROPawn DriverPawn, int NewSeatIndex, int
         Seats[NewSeatIndex].SeatTransitionBoneName = 'Turret';
         bAttachDriverPawn = true;
     }
+    */
 
     // Store a reference to the driver pawn making the transition so we can use
     // it for the second part of timer driven transitions
@@ -776,13 +778,13 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
     local bool bAttachProxy;
     local float AnimTimer;
     local name TransitionAnim, TimerName;
-    local VehicleCrewProxy VCP;
+    local DRVehicleCrewProxy VCP;
     local bool bTransitionWithoutProxy;
     local bool bUseExteriorAnim;
 
     super.HandleProxySeatTransition(NewSeatIndex, OldSeatIndex);
 
-    VCP = SeatProxies[GetSeatProxyIndexForSeatIndex(NewSeatIndex)].ProxyMeshActor;
+    VCP = DRVehicleCrewProxy(SeatProxies[GetSeatProxyIndexForSeatIndex(NewSeatIndex)].ProxyMeshActor);
 
     bUseExteriorAnim = IsSeatPositionOutsideTank(OldSeatIndex);
 
@@ -812,6 +814,7 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             bAttachProxy = true;
         }
+        /*
         // Transition from driver to hull MG
         else if( NewSeatIndex == 3 )
         {
@@ -827,6 +830,7 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             bAttachProxy = true;
         }
+        */
     }
     // moving into the driver seat
     else if( NewSeatIndex == 0 )
@@ -849,6 +853,7 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Turret';
             bAttachProxy = true;
         }
+        /*
         // Transition from hull MG to driver
         else if( OldSeatIndex == 3 )
         {
@@ -856,6 +861,7 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
             Seats[NewSeatIndex].SeatTransitionBoneName = 'Chassis';
             TimerName = 'SeatTransitioningZero';
         }
+        */
     }
     // Transition to Commander
     else if( NewSeatIndex == 1 )
@@ -899,6 +905,7 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
             bAttachProxy = true;
         }
     }
+    /*
     // Transition to Hull MG
     else if( NewSeatIndex == 3 )
     {
@@ -918,6 +925,8 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
         Seats[NewSeatIndex].SeatTransitionBoneName = 'Turret';
         bAttachProxy = true;
     }
+    */
+    /*
     // Transition to Loader
     else if( NewSeatIndex == 4 )
     {
@@ -945,6 +954,7 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
             bAttachProxy = true;
         }
     }
+    */
 
     // Store a reference to the driver pawn making the transition so we can use
     // it for the second part of timer driven transitions
@@ -1187,6 +1197,7 @@ simulated function SeatProxyTransitioningDriverToTurretGoalLoader()
 
 simulated function PositionIndexUpdated(int SeatIndex, byte NewPositionIndex)
 {
+    /*
     if( SeatIndex == GetHullMGSeatIndex() )
     {
         if ( NewPositionIndex == 2 )
@@ -1199,7 +1210,8 @@ simulated function PositionIndexUpdated(int SeatIndex, byte NewPositionIndex)
             Seats[SeatIndex].Gun.ForceEndFire();
         }
     }
-    else if( SeatIndex == GetGunnerSeatIndex() )
+    */
+    if( SeatIndex == GetGunnerSeatIndex() )
     {
         if( NewPositionIndex != Seats[SeatIndex].FiringPositionIndex )
         {
@@ -1386,14 +1398,14 @@ DefaultProperties
 //  DrawScale=1.35
 
     Seats(0)={(
-        CameraTag=None,
+        CameraTag=Driver_Camera,
         CameraOffset=-420,
         SeatAnimBlendName=DriverPositionNode,
-        bSeatVisible=true,
+        bSeatVisible=false,
         SeatBone=Chassis,
         DriverDamageMult=1.0,
         InitialPositionIndex=0,
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        SeatRotation=(Pitch=0,Yaw=0,Roll=0),
         VehicleBloodMICParameterName=Gore02,
         // SeatIconPos=(X=0.33,Y=0.35),
         // MuzzleFlashLightClass=class'UTTankMuzzleFlash',
@@ -1491,11 +1503,11 @@ DefaultProperties
                 ViewFOV=70.0,
                 bViewFromCameraTag=true,
                 bDrawOverlays=true,
-                // PositionDownAnim=Driver_closeTOport,
-                // PositionIdleAnim=Driver_port_idle,
-                // DriverIdleAnim=Driver_port_idle,
-                // AlternateIdleAnim=Driver_port_idle_AI,
-                SeatProxyIndex=0,
+                PositionDownAnim=Driver_close_idle,
+                PositionIdleAnim=Driver_close_idle,
+                DriverIdleAnim=Driver_close_idle,
+                AlternateIdleAnim=Driver_close_idle,
+                SeatProxyIndex=`CRUSADER_DRIVER_SPI,
                 LeftHandIKInfo=
                 (
                     IKEnabled=false,
@@ -1538,8 +1550,8 @@ DefaultProperties
                     DefaultEffectorRotationTargetName=DriverGasPedal
                     */
                 ),
-                PositionFlinchAnims=(Driver_close_Flinch),
-                PositionDeathAnims=(Driver_close_Death)
+                PositionFlinchAnims=(Driver_close_idle),
+                PositionDeathAnims=(Driver_close_idle)
             )
         )
     )}
@@ -1550,12 +1562,12 @@ DefaultProperties
         BarTexture=Texture2D'ui_textures.Textures.button_128grey',
         CameraTag=None,
         CameraOffset=-420,
-        bSeatVisible=true,
+        bSeatVisible=false,
         SeatBone=Turret,
         SeatAnimBlendName=CommanderPositionNode,
         DriverDamageMult=1.0,
         InitialPositionIndex=2,
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        SeatRotation=(Pitch=0,Yaw=0,Roll=0),
         VehicleBloodMICParameterName=Gore04,
         // SeatIconPos=(X=0.33,Y=0.35),
         // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
@@ -1563,26 +1575,26 @@ DefaultProperties
         (
             // 0
             (
-                bDriverVisible=true,
+                bDriverVisible=false,
                 bAllowFocus=false,
                 // bDrawOverlays=true,
                 bBinocsPosition=true,
                 PositionCameraTag=None,
                 ViewFOV=5.4,
-                bRotateGunOnCommand=false,
-                PositionUpAnim=Com_open_idle,
-                PositionIdleAnim=Com_open_idle,
-                DriverIdleAnim=Com_open_idle,
-                AlternateIdleAnim=Com_open_idle_AI,
-                SeatProxyIndex=1,
-                bIsExterior=true,
+                bRotateGunOnCommand=true,
+                PositionUpAnim=Com_close_idle,
+                PositionIdleAnim=Com_close_idle,
+                DriverIdleAnim=Com_close_idle,
+                AlternateIdleAnim=Com_close_idle,
+                SeatProxyIndex=`CRUSADER_COMMANDER_SPI,
+                bIsExterior=false,
                 LeftHandIKInfo=(PinEnabled=true),
                 RightHandIKInfo=(PinEnabled=true),
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Com_open_Flinch),
-                PositionDeathAnims=(Com_open_Death)
+                PositionFlinchAnims=(Com_close_idle),
+                PositionDeathAnims=(Com_close_idle)
             ),
 
             // 1
@@ -1592,20 +1604,20 @@ DefaultProperties
                 PositionCameraTag=None,
                 ViewFOV=70.0,
                 bRotateGunOnCommand=true,
-                PositionDownAnim=Com_open_idle,
-                PositionUpAnim=Com_open,
-                PositionIdleAnim=Com_open_idle,
-                DriverIdleAnim=Com_open_idle,
-                AlternateIdleAnim=Com_open_idle_AI,
-                SeatProxyIndex=1,
-                bIsExterior=true,
+                PositionDownAnim=Com_close_idle,
+                PositionUpAnim=Com_close_idle,
+                PositionIdleAnim=Com_close_idle,
+                DriverIdleAnim=Com_close_idle,
+                AlternateIdleAnim=Com_close_idle,
+                SeatProxyIndex=`CRUSADER_COMMANDER_SPI,
+                bIsExterior=false,
                 LeftHandIKInfo=(PinEnabled=true),
                 RightHandIKInfo=(PinEnabled=true),
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Com_open_Flinch),
-                PositionDeathAnims=(Com_open_Death)
+                PositionFlinchAnims=(Com_close_idle),
+                PositionDeathAnims=(Com_close_idle)
             ),
 
             // 2
@@ -1615,28 +1627,28 @@ DefaultProperties
                 PositionCameraTag=None,
                 ViewFOV=70.0,
                 bRotateGunOnCommand=true,
-                PositionDownAnim=Com_close,
+                PositionDownAnim=Com_close_idle,
                 PositionIdleAnim=Com_close_idle,
                 DriverIdleAnim=Com_close_idle,
-                AlternateIdleAnim=Com_close_idle_AI,
-                SeatProxyIndex=1,
-                // PositionUpAnim=Com_gunnerTOclose,
+                AlternateIdleAnim=Com_close_idle,
+                SeatProxyIndex=`CRUSADER_COMMANDER_SPI,
+                PositionUpAnim=Com_close_idle,
                 LeftHandIKInfo=(PinEnabled=true),
                 RightHandIKInfo=(PinEnabled=true),
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Com_close_Flinch),
-                PositionDeathAnims=(Com_close_Death)
+                PositionFlinchAnims=(Com_close_idle),
+                PositionDeathAnims=(Com_close_idle)
             )
         )
     )}
 
     Seats(2)={(
-        GunClass=class'DRVWeapon_PanzerIVF_Turret',
-        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_Crusader',
-        NeedleOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg_TOP',
-        RangeOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_range',
+        GunClass=class'DRVWeap_CrusaderMkIII_Turret',
+        SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_Crusader',
+        NeedleOverlayTexture=None,
+        RangeOverlayTexture=None,
         VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
         GunSocket=(Barrel,CoaxMG),
         GunPivotPoints=(gun_base,gun_base),
@@ -1644,7 +1656,7 @@ DefaultProperties
         TurretControls=(Turret_Gun,Turret_Main),
         CameraTag=None,
         CameraOffset=-420,
-        bSeatVisible=true,
+        bSeatVisible=false,
         SeatBone=Turret,
         SeatAnimBlendName=GunnerPositionNode,
         DriverDamageMult=1.0,
@@ -1653,75 +1665,26 @@ DefaultProperties
         TracerFrequency=5,
         WeaponTracerClass=(none, class'M1919BulletTracer'),
         MuzzleFlashLightClass=(class'ROGrenadeExplosionLight', class'ROVehicleMGMuzzleFlashLight'),
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        SeatRotation=(Pitch=0,Yaw=0,Roll=0),
         VehicleBloodMICParameterName=Gore01,
-        // PositionDownAnim=Com_closeTOgunner,
         // SeatIconPos=(X=0.33,Y=0.35),
         // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
         SeatPositions=
         (
-            // 0
-            /*
-            (
-                bDriverVisible=false,
-                bAllowFocus=true,
-                PositionCameraTag=None,
-                ViewFOV=70.0,
-                bRotateGunOnCommand=true,
-                PositionUpAnim=Gunner_portTOclose,
-                PositionIdleAnim=Gunner_Close_Idle,
-                DriverIdleAnim=Gunner_Close_Idle,
-                AlternateIdleAnim=Gunner_Close_Idle_AI,
-                SeatProxyIndex=4,
-                LeftHandIKInfo=
-                (
-                    IKEnabled=false,
-                    // DefaultEffectorLocationTargetName=GunnerElevationWheel,
-                    // DefaultEffectorRotationTargetName=GunnerElevationWheel
-                ),
-                RightHandIKInfo=
-                (
-                    IKEnabled=false,
-                    // DefaultEffectorLocationTargetName=GunnerTraverseHandle,
-                    // DefaultEffectorRotationTargetName=GunnerTraverseHandle
-                ),
-                LeftFootIKInfo=(IKEnabled=false),
-                RightFootIKInfo=(IKEnabled=false),
-                PositionFlinchAnims=(Gunner_close_Flinch),
-                PositionDeathAnims=(Gunner_Death),
-                //LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0),
-                PositionInteractions=
-                (
-                    (
-                        InteractionIdleAnim=Gunner_sideport_Idle,
-                        StartInteractionAnim=Gunner_closeTOsideport,
-                        EndInteractionAnim=Gunner_sideportTOclose,
-                        FlinchInteractionAnim=Gunner_sideport_Flinch,
-                        ViewFOV=70,
-                        bAllowFocus=true,
-                        InteractionSocketTag=GunnerViewPort,
-                        InteractDotAngle=0.95,
-                        bUseDOF=true
-                    )
-                )
-            ),
-            */
-
-            // 0 (old 1)
             (
                 bDriverVisible=false,
                 bAllowFocus=false,
                 PositionCameraTag=Camera_Gunner,
-                ViewFOV=13.5,
+                ViewFOV=13.5, //2.4x zoom
                 bCamRotationFollowSocket=true,
                 bViewFromCameraTag=true,
                 bDrawOverlays=true,
-                PositionDownAnim=Gunner_closeTOport,
-                PositionIdleAnim=Gunner_port_idle,
-                DriverIdleAnim=Gunner_port_idle,
-                AlternateIdleAnim=Gunner_port_idle_AI,
-                SeatProxyIndex=4,
-                // LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0))), //2.4x zoom
+                PositionDownAnim=Gunner_close_idle,
+                PositionIdleAnim=Gunner_close_idle,
+                DriverIdleAnim=Gunner_close_idle,
+                AlternateIdleAnim=Gunner_close_idle,
+                SeatProxyIndex=`CRUSADER_GUNNER_SPI,
+                // LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0))),
                 LeftHandIKInfo=
                 (
                     IKEnabled=false,
@@ -1736,234 +1699,14 @@ DefaultProperties
                 ),
                 LeftFootIKInfo=(IKEnabled=false),
                 RightFootIKInfo=(IKEnabled=false),
-                PositionFlinchAnims=(Gunner_close_Flinch),
-                PositionDeathAnims=(Gunner_Death)
+                PositionFlinchAnims=(Gunner_close_idle),
+                PositionDeathAnims=(Gunner_close_idle)
             )
         )
     )}
 
-    Seats(3)={(
-        GunClass=class'DRVWeapon_PanzerIVF_HullMG',
-        SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_mg',
-        VignetteOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_vignette',
-        GunSocket=(MG_Barrel),
-        GunPivotPoints=(MG_Pitch),
-        TurretVarPrefix="HullMG",
-        TurretControls=(Hull_MG_Yaw,Hull_MG_Pitch),
-        CameraTag=None,
-        CameraOffset=-420,
-        bSeatVisible=true,
-        SeatBone=Chassis,
-        SeatAnimBlendName=HullMGPositionNode,
-        DriverDamageMult=1.0,
-        InitialPositionIndex=0,
-        FiringPositionIndex=0,
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
-        VehicleBloodMICParameterName=Gore03,
-        TracerFrequency=5,
-        WeaponTracerClass=(class'M1919BulletTracer',class'M1919BulletTracer'),
-        MuzzleFlashLightClass=(class'ROVehicleMGMuzzleFlashLight',class'ROVehicleMGMuzzleFlashLight'),
-        // SeatIconPos=(X=0.33,Y=0.35),
-        // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
-        SeatPositions=
-        (
-            /*
-            // 0
-            (
-                bDriverVisible=true,
-                bAllowFocus=true,
-                PositionCameraTag=None,
-                ViewFOV=70.0,
-                bRotateGunOnCommand=true,
-                PositionUpAnim=MG_open,
-                PositionIdleAnim=MG_open_idle,
-                DriverIdleAnim=MG_open_idle,
-                AlternateIdleAnim=MG_open_idle_AI,
-                SeatProxyIndex=2,
-                bIgnoreWeapon=true,
-                bIsExterior=true,
-                LeftHandIKInfo=(PinEnabled=true),
-                RightHandIKInfo=(PinEnabled=true),
-                HipsIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(MG_open_Flinch),
-                PositionDeathAnims=(MG_open_Death)
-            ),
-
-            // 1
-            (
-                bDriverVisible=false,bAllowFocus=true,
-                PositionCameraTag=None,ViewFOV=70.0,
-                bRotateGunOnCommand=true,PositionUpAnim=MG_portTOclose,
-                PositionDownAnim=MG_close,PositionIdleAnim=MG_close_idle,
-                DriverIdleAnim=MG_close_idle,AlternateIdleAnim=MG_close_idle_AI,
-                SeatProxyIndex=2,
-                bIgnoreWeapon=true,
-                LeftHandIKInfo=(PinEnabled=true),
-                RightHandIKInfo=(PinEnabled=true),
-                HipsIKInfo=(PinEnabled=true),
-                LeftFootIKInfo=(PinEnabled=true),
-                RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(MG_close_Flinch),
-                PositionDeathAnims=(MG_close_Death),
-                PositionInteractions=
-                ((
-                    InteractionIdleAnim=MG_sideport_Idle,
-                    StartInteractionAnim=MG_closeTOsideport,
-                    EndInteractionAnim=MG_sideportTOclose,
-                    FlinchInteractionAnim=MG_sideport_Flinch,
-                    ViewFOV=70,
-                    bAllowFocus=true,
-                    InteractionSocketTag=MGRightViewPort,
-                    InteractDotAngle=0.95,
-                    bUseDOF=true
-                ))
-            ),
-            */
-
-            // 0 (old 2)
-            (
-                bDriverVisible=false,
-                bAllowFocus=false,
-                PositionCameraTag=MG_Camera,ViewFOV=35.0,
-                bCamRotationFollowSocket=true,
-                bViewFromCameraTag=true,
-                bDrawOverlays=true,
-                bUseDOF=true,
-                PositionDownAnim=MG_closeTOport,
-                PositionIdleAnim=MG_port_idle,
-                bConstrainRotation=false,
-                YawContraintIndex=0,
-                PitchContraintIndex=1,
-                DriverIdleAnim=MG_port_idle,
-                AlternateIdleAnim=MG_port_idle_AI,
-                SeatProxyIndex=2, //2.0x zoom should be 16.25, for gameplay trying less zoom for now
-                LeftHandIKInfo=
-                (
-                    IKEnabled=false,
-                    // DefaultEffectorLocationTargetName=HullMGLeftHand,
-                    // DefaultEffectorRotationTargetName=HullMGLeftHand
-                ),
-                RightHandIKInfo=
-                (
-                    IKEnabled=false,
-                    // DefaultEffectorLocationTargetName=HullMGRightHand,
-                    // DefaultEffectorRotationTargetName=HullMGRightHand
-                ),
-                HipsIKInfo=(PinEnabled=true),
-                LeftFootIKInfo=(PinEnabled=true),
-                RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(MG_close_Flinch),
-                PositionDeathAnims=(MG_close_Death),
-                ChestIKInfo=
-                (
-                    IKEnabled=false,
-                    // DefaultEffectorLocationTargetName=DefaultHullMGReload,
-                    // DefaultEffectorRotationTargetName=DefaultHullMGReload
-                )
-            )
-        )
-    )}
-
-    Seats(4)={(
-        bNonEnterable=true,
-        SeatAnimBlendName=LoaderPositionNode,
-        TurretVarPrefix="Loader",
-        bSeatVisible=false,
-        SeatBone=Turret,
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
-        VehicleBloodMICParameterName=Gore01,
-        SeatPositions=
-        (
-            (
-                bDriverVisible=false,
-                PositionIdleAnim=Loader_idle,
-                AlternateIdleAnim=Loader_idle,
-                SeatProxyIndex=3,
-                /*
-                LeftHandIKInfo=(PinEnabled=true),
-                RightHandIKInfo=(PinEnabled=true),
-                HipsIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Loader_Flinch),
-                PositionDeathAnims=(Loader_Death),
-                HeightInfo=
-                (
-                    HeightDisplacementEnabled=false,
-                    AlternateHeightTargets=
-                    (
-                        (
-                            Action=DAct_ReloadCoaxMG,
-                            HeightDisplacementEnabled=true,
-                            OriginalHeightTargetName=DefualtMGReload,
-                            ModifiedHeightTargetName=CurrentMGReload
-                        )
-                    )
-                ),
-                LeftHandIKInfo=
-                (
-                    IKEnabled=false,
-                    AlternateEffectorTargets=
-                    (
-                        (
-                            Action=DAct_CannonReload_LH1,
-                            IKEnabled=true,
-                            PinEnabled=false,
-                            EffectorLocationTargetName=LoaderLHCannon1,
-                            EffectorRotationTargetName=LoaderLHCannon1
-                        ),
-                        (
-                            Action=DAct_CannonReload_LH2,
-                            IKEnabled=true,
-                            PinEnabled=false,
-                            EffectorLocationTargetName=LoaderLHCannon2,
-                            EffectorRotationTargetName=LoaderLHCannon2
-                        ),
-                        (
-                            Action=DAct_CannonReload_LH3,
-                            IKEnabled=true,
-                            PinEnabled=false,
-                            EffectorLocationTargetName=LoaderLHCannonBreech1,
-                            EffectorRotationTargetName=LoaderLHCannonBreech1
-                        ),
-                        (
-                            Action=DAct_CannonReload_LHOff,
-                            IKEnabled=false,
-                            PinEnabled=true
-                        )
-                    )
-                ),
-                RightHandIKInfo=
-                (
-                    IKEnabled=false,
-                    AlternateEffectorTargets=
-                    (
-                        (
-                            Action=DAct_CannonReload_RH1,
-                            IKEnabled=true,
-                            PinEnabled=false,
-                            EffectorLocationTargetName=LoaderRHCannon1,
-                            EffectorRotationTargetName=LoaderRHCannon1
-                        ),
-                        (
-                            Action=DAct_CannonReload_RH2,
-                            IKEnabled=true,
-                            PinEnabled=false,
-                            EffectorLocationTargetName=LoaderRHCannonMG1,
-                            EffectorRotationTargetName=LoaderRHCannonMG1
-                        ),
-                        (
-                            Action=DAct_CannonReload_RHOff,
-                            IKEnabled=false,
-                            PinEnabled=true
-                        )
-                    )
-                )
-                */
-            )
-        )
-    )}
-
-    SeatIndexPassRotateOnCommandToOtherSeat=1
-    SeatIndexToRotateOnCommandFromOtherSeat=2
+    SeatIndexPassRotateOnCommandToOtherSeat=2
+    SeatIndexToRotateOnCommandFromOtherSeat=1
 
     //_________________________
     // ROSkelControlTankWheels
@@ -2042,288 +1785,6 @@ DefaultProperties
         SuspensionTravel=17.5
     End Object
     Wheels(5)=LFWheel
-
-    /*
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_0
-        WheelRadius=16
-        BoneName="L_Wheel_00"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(0)=L_Wheel_0
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_1
-        WheelRadius=12
-        BoneName="L_Wheel_01"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=1.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(1)=L_Wheel_1
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_2
-        WheelRadius=12
-        BoneName="L_Wheel_02"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(2)=L_Wheel_2
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_3
-        WheelRadius=12
-        BoneName="L_Wheel_03"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(3)=L_Wheel_3
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_4
-        WheelRadius=12
-        BoneName="L_Wheel_04"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(4)=L_Wheel_4
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_5
-        WheelRadius=12
-        BoneName="L_Wheel_05"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(5)=L_Wheel_5
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_6
-        WheelRadius=12
-        BoneName="L_Wheel_06"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(6)=L_Wheel_6
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_7
-        WheelRadius=12
-        BoneName="L_Wheel_07"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(7)=L_Wheel_7
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_8
-        WheelRadius=12
-        BoneName="L_Wheel_08"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(8)=L_Wheel_8
-
-    Begin Object Class=ROVehicleWheel Name=L_Wheel_9
-        WheelRadius=32
-        BoneName="L_Wheel_09"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Left
-    End Object
-    Wheels(9)=L_Wheel_9
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_0
-        WheelRadius=16
-        BoneName="R_Wheel_00"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(10)=R_Wheel_0
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_1
-        WheelRadius=12
-        BoneName="R_Wheel_01"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=1.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(11)=R_Wheel_1
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_2
-        WheelRadius=12
-        BoneName="R_Wheel_02"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(12)=R_Wheel_2
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_3
-        WheelRadius=12
-        BoneName="R_Wheel_03"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(13)=R_Wheel_3
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_4
-        WheelRadius=12
-        BoneName="R_Wheel_04"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(14)=R_Wheel_4
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_5
-        WheelRadius=12
-        BoneName="R_Wheel_05"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(15)=R_Wheel_5
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_6
-        WheelRadius=12
-        BoneName="R_Wheel_06"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(16)=R_Wheel_6
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_7
-        WheelRadius=12
-        BoneName="R_Wheel_07"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(17)=R_Wheel_7
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_8
-        WheelRadius=12
-        BoneName="R_Wheel_08"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(18)=R_Wheel_8
-
-    Begin Object Class=ROVehicleWheel Name=R_Wheel_9
-        WheelRadius=32
-        BoneName="R_Wheel_09"
-        BoneOffset=(X=0.0,Y=0,Z=0.0)
-        SuspensionTravel=25
-        SteerFactor=0.0
-        LongSlipFactor=1000.0
-        LatSlipFactor=20000.0
-        HandbrakeLongSlipFactor=150.0
-        HandbrakeLatSlipFactor=1000.0
-        Side=SIDE_Right
-    End Object
-    Wheels(19)=R_Wheel_9
-    */
 
     /** Vehicle Sim */
 
@@ -2432,7 +1893,7 @@ DefaultProperties
     // Muzzle Flashes
     VehicleEffects(TankVFX_Firing1)=(EffectStartTag=PanzerIVGCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankMuzzle',EffectSocket=Barrel,bRestartRunning=true)
     VehicleEffects(TankVFX_Firing2)=(EffectStartTag=PanzerIVGCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankCannon_Dust',EffectSocket=attachments_body_ground,bRestartRunning=true)
-    VehicleEffects(TankVFX_Firing3)=(EffectStartTag=PanzerIVGHullMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=MG_Barrel)
+    //? VehicleEffects(TankVFX_Firing3)=(EffectStartTag=PanzerIVGHullMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=MG_Barrel)
     VehicleEffects(TankVFX_Firing4)=(EffectStartTag=PanzerIVGCoaxMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=CoaxMG)
     // Driving effects
     VehicleEffects(TankVFX_Exhaust)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_A_TankExhaust',EffectSocket=Exhaust)
@@ -2506,7 +1967,7 @@ DefaultProperties
 
 //  AIPurpose=AIP_Any
 
-    bDebugPenetration=true
+    bDebugPenetration=false
 
     VehHitZones(0)=(ZoneName=ENGINEBLOCK,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Engine,ZoneHealth=100,VisibleFrom=14)
     VehHitZones(1)=(ZoneName=ENGINECORE,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Engine,ZoneHealth=300,VisibleFrom=14)
@@ -2529,12 +1990,12 @@ DefaultProperties
     VehHitZones(18)=(ZoneName=TURRETRINGSIX,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Mechanicals,ZoneHealth=10,VisibleFrom=14)
     VehHitZones(19)=(ZoneName=COAXIALMG,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Mechanicals,ZoneHealth=25)
     VehHitZones(20)=(ZoneName=MAINCANNONREAR,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Mechanicals,ZoneHealth=50,KillPercentage=0.3)
-    VehHitZones(21)=(ZoneName=DRIVERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=0,SeatProxyIndex=0,CrewBoneName=Driver_bone)
-    VehHitZones(22)=(ZoneName=DRIVERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=0,SeatProxyIndex=0,CrewBoneName=Driver_bone)
-    VehHitZones(23)=(ZoneName=COMMANDERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=2,SeatProxyIndex=2,CrewBoneName=Commander_Bone)
-    VehHitZones(24)=(ZoneName=COMMANDERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=2,SeatProxyIndex=2,CrewBoneName=Commander_Bone)
-    VehHitZones(25)=(ZoneName=GUNNERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=1SeatProxyIndex=1,CrewBoneName=Turretgunner_Bone)
-    VehHitZones(26)=(ZoneName=GUNNERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=1SeatProxyIndex=1,CrewBoneName=Turretgunner_Bone)
+    VehHitZones(21)=(ZoneName=DRIVERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=0,SeatProxyIndex=`CRUSADER_DRIVER_SPI,CrewBoneName=Driver_bone)
+    VehHitZones(22)=(ZoneName=DRIVERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=0,SeatProxyIndex=`CRUSADER_DRIVER_SPI,CrewBoneName=Driver_bone)
+    VehHitZones(23)=(ZoneName=COMMANDERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=1,SeatProxyIndex=`CRUSADER_COMMANDER_SPI,CrewBoneName=Commander_Bone)
+    VehHitZones(24)=(ZoneName=COMMANDERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=1,SeatProxyIndex=`CRUSADER_COMMANDER_SPI,CrewBoneName=Commander_Bone)
+    VehHitZones(25)=(ZoneName=GUNNERBODY,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewBody,CrewSeatIndex=2,SeatProxyIndex=`CRUSADER_GUNNER_SPI,CrewBoneName=Turretgunner_Bone)
+    VehHitZones(26)=(ZoneName=GUNNERHEAD,DamageMultiplier=1.0,VehicleHitZoneType=VHT_CrewHead,CrewSeatIndex=2,SeatProxyIndex=`CRUSADER_GUNNER_SPI,CrewBoneName=Turretgunner_Bone)
     VehHitZones(27)=(ZoneName=LEFTTRACKONE,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Track,ZoneHealth=800)
     VehHitZones(28)=(ZoneName=LEFTTRACKTWO,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Track,ZoneHealth=800)
     VehHitZones(29)=(ZoneName=LEFTTRACKTHREE,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Track,ZoneHealth=200)
@@ -2626,11 +2087,11 @@ DefaultProperties
     ArmorHitZones(61)=(ZoneName=TURRETLEFTTHREE,PhysBodyBoneName=Turret,ArmorPlateName=TURRETLEFT)
     ArmorHitZones(62)=(ZoneName=TURRETLEFTUNDERONE,PhysBodyBoneName=Turret,ArmorPlateName=TURRETLEFT)
     ArmorHitZones(63)=(ZoneName=TURRETLEFTUNDERTWO,PhysBodyBoneName=gun_base,ArmorPlateName=TURRETLEFT)
-    ArmorHitZones(64)=(ZoneName=TURRETLEFTUNDERTHREE,PhysBodyBoneName=Chassis,ArmorPlateName=TURRETLEFT)
-    ArmorHitZones(65)=(ZoneName=TURRETREARCENTRE,PhysBodyBoneName=Chassis,ArmorPlateName=CENTRETURRETREAR)
-    ArmorHitZones(66)=(ZoneName=TURRETREARLOWER,PhysBodyBoneName=Chassis,ArmorPlateName=LOWERTURRETREAR)
-    ArmorHitZones(67)=(ZoneName=ROOFMAIN,PhysBodyBoneName=Chassis,ArmorPlateName=TURRETROOF)
-    ArmorHitZones(68)=(ZoneName=ROOFRIGHT,PhysBodyBoneName=Chassis,ArmorPlateName=TURRETROOF)
+    ArmorHitZones(64)=(ZoneName=TURRETLEFTUNDERTHREE,PhysBodyBoneName=Turret,ArmorPlateName=TURRETLEFT)
+    ArmorHitZones(65)=(ZoneName=TURRETREARCENTRE,PhysBodyBoneName=Turret,ArmorPlateName=CENTRETURRETREAR)
+    ArmorHitZones(66)=(ZoneName=TURRETREARLOWER,PhysBodyBoneName=Turret,ArmorPlateName=LOWERTURRETREAR)
+    ArmorHitZones(67)=(ZoneName=ROOFMAIN,PhysBodyBoneName=Turret,ArmorPlateName=TURRETROOF)
+    ArmorHitZones(68)=(ZoneName=ROOFRIGHT,PhysBodyBoneName=Turret,ArmorPlateName=TURRETROOF)
     ArmorHitZones(69)=(ZoneName=ROOFLEFT,PhysBodyBoneName=Turret,ArmorPlateName=TURRETROOF)
     ArmorHitZones(70)=(ZoneName=ROOFBACK,PhysBodyBoneName=Turret,ArmorPlateName=UPPERTURRETREAR)
     ArmorHitZones(71)=(ZoneName=TURRETRINGARMOURBACKLEFT,PhysBodyBoneName=Turret,ArmorPlateName=TURRETRINGARMOUR)
@@ -2727,9 +2188,9 @@ DefaultProperties
 
     SeatTextureOffsets(0)=(PositionOffSet=(X=-16,Y=-21,Z=0),bTurretPosition=0)
     SeatTextureOffsets(1)=(PositionOffSet=(X=0,Y=+10,Z=0),bTurretPosition=1)
-    SeatTextureOffsets(2)=(PositionOffSet=(X=+16,Y=-21,Z=0),bTurretPosition=0)
-    SeatTextureOffsets(3)=(PositionOffSet=(X=+8,Y=-4,Z=0),bTurretPosition=1)
-    SeatTextureOffsets(4)=(PositionOffSet=(X=-8,Y=-4,Z=0),bTurretPosition=1)
+    // SeatTextureOffsets(2)=(PositionOffSet=(X=+16,Y=-21,Z=0),bTurretPosition=0)
+    // SeatTextureOffsets(3)=(PositionOffSet=(X=+8,Y=-4,Z=0),bTurretPosition=1)
+    SeatTextureOffsets(2)=(PositionOffSet=(X=-8,Y=-4,Z=0),bTurretPosition=1)
 
     SpeedoMinDegree=5461
     SpeedoMaxDegree=60075

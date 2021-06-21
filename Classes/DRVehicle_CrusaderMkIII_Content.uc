@@ -161,7 +161,7 @@ DefaultProperties
     RoleSelectionImage=Texture2D'ui_textures.Textures.ger_tank_pzIVg'
 
     // Driver
-    SeatProxies(0)={(
+    SeatProxies(`CRUSADER_DRIVER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -169,10 +169,10 @@ DefaultProperties
         HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
         BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=0,
-        PositionIndex=1)}
+        PositionIndex=0)}
 
     // Commander
-    SeatProxies(1)={(
+    SeatProxies(`CRUSADER_COMMANDER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -180,32 +180,10 @@ DefaultProperties
         HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
         BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=1,
-        PositionIndex=1)}
-
-    // Hull MG
-    SeatProxies(2)={(
-        TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
-        HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
-        HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
-        HeadphonesMeshType=none,
-        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
-        BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
-        SeatIndex=3,
-        PositionIndex=2)}
-
-    // Loader
-    SeatProxies(3)={(
-        TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
-        HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
-        HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
-        HeadphonesMeshType=none,
-        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
-        BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
-        SeatIndex=4,
         PositionIndex=0)}
 
     // Gunner
-    SeatProxies(4)={(
+    SeatProxies(`CRUSADER_GUNNER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -216,7 +194,7 @@ DefaultProperties
         PositionIndex=0)}
 
     // Seat proxy animations
-    // SeatProxyAnimSet=AnimSet'CHR_Playeranim_Master.Anim.CHR_Panzer4G_Anim_Master'
+    SeatProxyAnimSet=AnimSet'DR_VH_Common.Anim.CHR_Panzer4G_Anim_Master'
 
     //----------------------------------------------------------------
     //                 Tank Attachments

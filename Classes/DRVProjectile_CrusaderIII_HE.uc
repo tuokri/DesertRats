@@ -2,8 +2,7 @@ class DRVProjectile_CrusaderIII_HE extends DRTankCannonProjectile;
 
 DefaultProperties
 {
-
-		//MK.10T HE
+    // MK.10T HE
     BallisticCoefficient=1.45
     Speed=38100 //762 M/S
     MaxSpeed=38100
