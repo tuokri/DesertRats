@@ -46,15 +46,11 @@ DefaultProperties
     SightRanges[16]=(SightRange=1900,SightPitch=16384,SightSlideOffset=1.15,SightPositionOffset=-1.99,AddedPitch=198)
     SightRanges[17]=(SightRange=2000,SightPitch=16384,SightSlideOffset=1.28,SightPositionOffset=-2.25,AddedPitch=208)
 
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Loop_3P',
-        FirstPersonCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Auto_LP')
-
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1918.Play_WEP_M1918_Single_3P',
-        FirstPersonCue=AkEvent'WW_WEP_M1918.Play_WEP_M1918_Fire_Single')
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Loop_3P',FirstPersonCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Auto_LP')
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_M1918.Play_WEP_M1918_Single_3P',FirstPersonCue=AkEvent'WW_WEP_M1918.Play_WEP_M1918_Fire_Single')
 
     // Advanced (High RPM) Fire Effects
     bLoopingFireSnd(DEFAULT_FIREMODE)=true
-    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail_3P',
-        FirstPersonCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail')
+    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail_3P',FirstPersonCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail')
     bLoopHighROFSounds(DEFAULT_FIREMODE)=true
 }

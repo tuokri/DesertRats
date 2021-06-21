@@ -164,25 +164,12 @@ DefaultProperties
     // needed to show muzzle flashes
     bShowFireFXWhenHidden=true
 
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Loop_3P',
-    FirstPersonCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Auto_LP')
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Loop_3P',FirstPersonCue=AkEvent'DR_AUD_MG34.Play_WEP_MG34_Auto_LP')
 
     // Advanced (High RPM) Fire Effects
     bLoopingFireSnd(DEFAULT_FIREMODE)=true
-    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail_3P',
-        FirstPersonCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail')
+    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail_3P',FirstPersonCue=AkEvent'WW_WEP_RPD.Play_WEP_RPD_Tail')
     bLoopHighROFSounds(DEFAULT_FIREMODE)=true
-
-    /*
-    // TODO: Use MG34 package for audio.
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_LP_M', FirstPersonCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_Loop_Sur')
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_Single_M', FirstPersonCue=AkEvent'WW_RO2_WEP_MG34_RO2.Play_MG_MG34_Fire_Single_Sur')
-
-    // Advanced (High RPM) Fire Effects
-    bLoopingFireSnd(DEFAULT_FIREMODE)=true
-    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG34_RO2.Stop_MG_MG34_Fire_LP_M', FirstPersonCue=AkEvent'WW_RO2_WEP_MG34_RO2.Stop_MG_MG34_Fire_Loop_Sur')
-    bLoopHighROFSounds(DEFAULT_FIREMODE)=true
-    */
 
     bHasIronSights=true
 
