@@ -532,27 +532,26 @@ DefaultProperties
     RightWheels(1)="R_Wheel_01"
 
     /** Physics Wheels */
-
     Wheels.Empty
 
     // Right Rear Wheel
     Begin Object Name=RRWheel
         BoneName="R_Wheel_01"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
         WheelRadius=22
         SteerFactor=-0.1
-        SuspensionTravel=15
+        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(0)=RRWheel
 
     // Right Front Wheel
     Begin Object Name=RFWheel
-        BoneName="R_Wheel_01"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
+        BoneName="R_Wheel_00"
+        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
         WheelRadius=22
         SteerFactor=1.0
-        SuspensionTravel=15
+        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(1)=RFWheel
@@ -560,10 +559,10 @@ DefaultProperties
     // Left Rear Wheel
     Begin Object Name=LRWheel
         BoneName="L_Wheel_01"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
         WheelRadius=22
         SteerFactor=-0.1
-        SuspensionTravel=15
+        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(2)=LRWheel
@@ -571,10 +570,10 @@ DefaultProperties
     // Left Front Wheel
     Begin Object Name=LFWheel
         BoneName="L_Wheel_00"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
         WheelRadius=22
         SteerFactor=1.0
-        SuspensionTravel=15
+        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(3)=LFWheel
