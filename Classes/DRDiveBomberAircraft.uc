@@ -67,6 +67,7 @@ replication
 }
 
 // TODO: Make this a macro or somethinge reusable.
+// TODO: Make this run on server and tell clients to add this to their list.
 simulated function AudioInit()
 {
     local DRAudioComponent DRAC;
@@ -84,6 +85,31 @@ simulated function AudioInit()
                 }
             }
         }
+    }
+}
+
+reliable client function ClientRegisterAudioComponents()
+{
+    local DRAudioComponent DRAC;
+    local DRPlayerController DRPC;
+
+    ForEach LocalPlayerControllers(class'DRPlayerController', DRPC)
+    {
+        if (DRPC.AudioManager != None)
+        {
+            ForEach ComponentList(class'DRAudioComponent', DRAC)
+            {
+                DRPC.AudioManager.RegisterAudioComponent(DRAC);
+            }
+        }
+    }
+}
+
+function AudioInit2()
+{
+    if (Role == ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
+    {
+        ClientRegisterAudioComponents();
     }
 }
 
@@ -942,7 +968,7 @@ DefaultProperties
         SkeletalMesh=SkeletalMesh'DR_VH_CMD.Mesh.JU87_BOMB_SKEL'
         PhysicsAsset=PhysicsAsset'VH_VN_ARVN_Skyraider.Phys.Skyraider_Physics'
         AnimSets[0]=AnimSet'VH_VN_ARVN_Skyraider.Animation.AUS_Skyraider_anim'
-        Materials[0]=MaterialInstanceConstant'DR_VH_CMD.MIC.M_JU87'
+        Materials[0]=MaterialInstanceConstant'DR_VH_CMD.MIC.M_JU87_1'
     End Object
 
     AmbientSound=None
