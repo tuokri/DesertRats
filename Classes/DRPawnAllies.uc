@@ -15,7 +15,7 @@ DefaultProperties
     HeadAndArmsMesh=SkeletalMesh'DR__PLACEHOLDER_CHR.Mesh.UK_Kead'
     HeadAndArmsMICTemplate=MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_05_Rolled_INST' // TODO: CORRECT HEAD??
 
-    HeadgearMesh=SkeletalMesh'DR_CHR_UK.Mesh.UK_Headgear_Brodie_Straight'
+    HeadgearMesh=SkeletalMesh'DR_CHR_UK.Headgear.UKr_Brodie_Straight'
 
     Begin Object Name=ROPawnSkeletalMeshComponent
         AnimSets(11)=AnimSet'DR_CHR.Anim.CHR_Allies_Unique'
