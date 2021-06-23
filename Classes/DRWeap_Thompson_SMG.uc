@@ -3,6 +3,11 @@ class DRWeap_Thompson_SMG extends ROWeap_M1A1_SMG
 
 `include(DesertRats\Classes\DRWeaponPickupMessagesOverride.uci)
 
+function AddKill(Pawn KilledPawn, optional class<DamageType> dmgType)
+{
+	super(ROProjectileWeapon).AddKill(KilledPawn, dmgType);
+}
+
 DefaultProperties
 {
 	WeaponContentClass(0)="DesertRats.DRWeap_Thompson_SMG_Content"
