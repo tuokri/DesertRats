@@ -36,7 +36,10 @@ var repnotify TakeHitInfo DeathHitInfo_ProxyLoader;
 var repnotify TakeHitInfo DeathHitInfo_ProxyGunner;
 
 /** Scope material. Caching it here so that it does not get cooked out */
-var MaterialInstanceConstant ScopeLensMIC;
+// var MaterialInstanceConstant ScopeLensMIC;
+
+var DRDestroyedTankTrack DestroyedLeftTrack;
+var DRDestroyedTankTrack DestroyedRightTrack;
 
 replication
 {
@@ -92,11 +95,39 @@ simulated event ReplicatedEvent(name VarName)
     }
 }
 
+simulated function DisableLeftTrack()
+{
+    local vector SpawnLoc;
+    local rotator SpawnRot;
+
+    super.DisableLeftTrack();
+
+    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Left', SpawnLoc, SpawnRot);
+
+    Mesh.SetMaterial(1, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
+    DestroyedLeftTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
+
+    `dr("DestroyedLeftTrack = " $ DestroyedLeftTrack);
+}
+
+simulated function DisableRightTrack()
+{
+    local vector SpawnLoc;
+    local rotator SpawnRot;
+
+    super.DisableRightTrack();
+
+    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Right', SpawnLoc, SpawnRot);
+
+    Mesh.SetMaterial(2, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
+    DestroyedRightTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
+
+    `dr("DestroyedRightTrack = " $ DestroyedRightTrack);
+}
+
 simulated event PostBeginPlay()
 {
     local int i;
-
-    `dr("DRVehicle_PanzerIVF.PostBeginPlay()...");
 
     super.PostBeginPlay();
 
@@ -136,8 +167,6 @@ simulated event PostBeginPlay()
     {
         mesh.MinLodModel = 1;
     }
-
-    `dr("DRVehicle_PanzerIVF.PostBeginPlay() finished");
 }
 
 /**
@@ -307,10 +336,11 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
 /** Turn the vehicle interior visibility on or off. */
 simulated function SetInteriorVisibility(bool bVisible)
 {
-    local int i;
+    // local int i;
 
-    super.SetInteriorVisibility(bVisible);
+    super.SetInteriorVisibility(False);
 
+    /*
     if ( bVisible && !bGeneratedInteriorMICs )
     {
         ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(1)));
@@ -341,6 +371,7 @@ simulated function SetInteriorVisibility(bool bVisible)
 
         bGeneratedInteriorMICs = true;
     }
+    */
 }
 
 simulated function ReplaceInteriorMICs(MeshComponent MeshComp)
@@ -745,13 +776,13 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
     local bool bAttachProxy;
     local float AnimTimer;
     local name TransitionAnim, TimerName;
-    local VehicleCrewProxy VCP;
+    local DRVehicleCrewProxy VCP;
     local bool bTransitionWithoutProxy;
     local bool bUseExteriorAnim;
 
     super.HandleProxySeatTransition(NewSeatIndex, OldSeatIndex);
 
-    VCP = SeatProxies[GetSeatProxyIndexForSeatIndex(NewSeatIndex)].ProxyMeshActor;
+    VCP = DRVehicleCrewProxy(SeatProxies[GetSeatProxyIndexForSeatIndex(NewSeatIndex)].ProxyMeshActor);
 
     bUseExteriorAnim = IsSeatPositionOutsideTank(OldSeatIndex);
 
@@ -1352,11 +1383,13 @@ defaultproperties
 
 //  DrawScale=1.35
 
+    bNoAnimTransition=true
+
     Seats(0)={(
-        CameraTag=None,
+        CameraTag=Driver_Camera,
         CameraOffset=-420,
         SeatAnimBlendName=DriverPositionNode,
-        bSeatVisible=true,
+        bSeatVisible=false,
         SeatBone=Chassis,
         DriverDamageMult=1.0,
         InitialPositionIndex=0,
@@ -1458,10 +1491,10 @@ defaultproperties
                 ViewFOV=70.0,
                 bViewFromCameraTag=true,
                 bDrawOverlays=true,
-                // PositionDownAnim=Driver_closeTOport,
-                // PositionIdleAnim=Driver_port_idle,
-                // DriverIdleAnim=Driver_port_idle,
-                // AlternateIdleAnim=Driver_port_idle_AI,
+                PositionDownAnim=Driver_close_idle,
+                PositionIdleAnim=Driver_close_idle,
+                DriverIdleAnim=Driver_close_idle,
+                AlternateIdleAnim=Driver_close_idle,
                 SeatProxyIndex=0,
                 LeftHandIKInfo=
                 (
@@ -1505,8 +1538,8 @@ defaultproperties
                     DefaultEffectorRotationTargetName=DriverGasPedal
                     */
                 ),
-                PositionFlinchAnims=(Driver_close_Flinch),
-                PositionDeathAnims=(Driver_close_Death)
+                PositionFlinchAnims=(Driver_close_idle),
+                PositionDeathAnims=(Driver_close_idle)
             )
         )
     )}
@@ -1537,10 +1570,10 @@ defaultproperties
                 PositionCameraTag=None,
                 ViewFOV=5.4,
                 bRotateGunOnCommand=false,
-                PositionUpAnim=Com_open_idle,
-                PositionIdleAnim=Com_open_idle,
-                DriverIdleAnim=Com_open_idle,
-                AlternateIdleAnim=Com_open_idle_AI,
+                PositionUpAnim=Com_close_idle,
+                PositionIdleAnim=Com_close_idle,
+                DriverIdleAnim=Com_close_idle,
+                AlternateIdleAnim=Com_close_idle,
                 SeatProxyIndex=1,
                 bIsExterior=true,
                 LeftHandIKInfo=(PinEnabled=true),
@@ -1548,8 +1581,8 @@ defaultproperties
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Com_open_Flinch),
-                PositionDeathAnims=(Com_open_Death)
+                PositionFlinchAnims=(Com_close_idle),
+                PositionDeathAnims=(Com_close_idle)
             ),
 
             // 1
@@ -1559,11 +1592,11 @@ defaultproperties
                 PositionCameraTag=None,
                 ViewFOV=70.0,
                 bRotateGunOnCommand=true,
-                PositionDownAnim=Com_open_idle,
-                PositionUpAnim=Com_open,
-                PositionIdleAnim=Com_open_idle,
-                DriverIdleAnim=Com_open_idle,
-                AlternateIdleAnim=Com_open_idle_AI,
+                PositionDownAnim=Com_close_idle,
+                PositionUpAnim=Com_close_idle,
+                PositionIdleAnim=Com_close_idle,
+                DriverIdleAnim=Com_close_idle,
+                AlternateIdleAnim=Com_close_idle,
                 SeatProxyIndex=1,
                 bIsExterior=true,
                 LeftHandIKInfo=(PinEnabled=true),
@@ -1571,8 +1604,8 @@ defaultproperties
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Com_open_Flinch),
-                PositionDeathAnims=(Com_open_Death)
+                PositionFlinchAnims=(Com_close_idle),
+                PositionDeathAnims=(Com_close_idle)
             ),
 
             // 2
@@ -1582,10 +1615,10 @@ defaultproperties
                 PositionCameraTag=None,
                 ViewFOV=70.0,
                 bRotateGunOnCommand=true,
-                PositionDownAnim=Com_close,
+                PositionDownAnim=Com_close_idle,
                 PositionIdleAnim=Com_close_idle,
                 DriverIdleAnim=Com_close_idle,
-                AlternateIdleAnim=Com_close_idle_AI,
+                AlternateIdleAnim=Com_close_idle,
                 SeatProxyIndex=1,
                 // PositionUpAnim=Com_gunnerTOclose,
                 LeftHandIKInfo=(PinEnabled=true),
@@ -1593,8 +1626,8 @@ defaultproperties
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Com_close_Flinch),
-                PositionDeathAnims=(Com_close_Death)
+                PositionFlinchAnims=(Com_close_idle),
+                PositionDeathAnims=(Com_close_idle)
             )
         )
     )}
@@ -1614,7 +1647,7 @@ defaultproperties
         TurretControls=(Turret_Gun,Turret_Main),
         CameraTag=None,
         CameraOffset=-420,
-        bSeatVisible=true,
+        bSeatVisible=false,
         SeatBone=Turret,
         SeatAnimBlendName=GunnerPositionNode,
         DriverDamageMult=1.0,
@@ -1623,9 +1656,8 @@ defaultproperties
         TracerFrequency=5,
         WeaponTracerClass=(none, class'M1919BulletTracer'),
         MuzzleFlashLightClass=(class'ROGrenadeExplosionLight', class'ROVehicleMGMuzzleFlashLight'),
-        SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
+        SeatRotation=(Pitch=0,Yaw=0,Roll=0),
         VehicleBloodMICParameterName=Gore01,
-        // PositionDownAnim=Com_closeTOgunner,
         // SeatIconPos=(X=0.33,Y=0.35),
         // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
         SeatPositions=
@@ -1686,10 +1718,10 @@ defaultproperties
                 bCamRotationFollowSocket=true,
                 bViewFromCameraTag=true,
                 bDrawOverlays=true,
-                PositionDownAnim=Gunner_closeTOport,
-                PositionIdleAnim=Gunner_port_idle,
-                DriverIdleAnim=Gunner_port_idle,
-                AlternateIdleAnim=Gunner_port_idle_AI,
+                PositionDownAnim=Gunner_close_idle,
+                PositionIdleAnim=Gunner_close_idle,
+                DriverIdleAnim=Gunner_close_idle,
+                AlternateIdleAnim=Gunner_close_idle,
                 SeatProxyIndex=4,
                 // LookAtInfo=(LookAtEnabled=true,DefaultLookAtTargetName=GunnerTraverseHandle,HeadInfluence=0.0,BodyInfluence=1.0))), //2.4x zoom
                 LeftHandIKInfo=
@@ -1706,8 +1738,8 @@ defaultproperties
                 ),
                 LeftFootIKInfo=(IKEnabled=false),
                 RightFootIKInfo=(IKEnabled=false),
-                PositionFlinchAnims=(Gunner_close_Flinch),
-                PositionDeathAnims=(Gunner_Death)
+                PositionFlinchAnims=(Gunner_close_idle),
+                PositionDeathAnims=(Gunner_close_idle)
             )
         )
     )}
@@ -1799,13 +1831,13 @@ defaultproperties
                 bViewFromCameraTag=true,
                 bDrawOverlays=true,
                 bUseDOF=true,
-                PositionDownAnim=MG_closeTOport,
-                PositionIdleAnim=MG_port_idle,
+                PositionDownAnim=MG_close_idle,
+                PositionIdleAnim=MG_close_idle,
                 bConstrainRotation=false,
                 YawContraintIndex=0,
                 PitchContraintIndex=1,
-                DriverIdleAnim=MG_port_idle,
-                AlternateIdleAnim=MG_port_idle_AI,
+                DriverIdleAnim=MG_close_idle,
+                AlternateIdleAnim=MG_close_idle,
                 SeatProxyIndex=2, //2.0x zoom should be 16.25, for gameplay trying less zoom for now
                 LeftHandIKInfo=
                 (
@@ -1822,8 +1854,8 @@ defaultproperties
                 HipsIKInfo=(PinEnabled=true),
                 LeftFootIKInfo=(PinEnabled=true),
                 RightFootIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(MG_close_Flinch),
-                PositionDeathAnims=(MG_close_Death),
+                PositionFlinchAnims=(MG_close_idle),
+                PositionDeathAnims=(MG_close_idle),
                 ChestIKInfo=
                 (
                     IKEnabled=false,
@@ -1849,12 +1881,12 @@ defaultproperties
                 PositionIdleAnim=Loader_idle,
                 AlternateIdleAnim=Loader_idle,
                 SeatProxyIndex=3,
+                PositionFlinchAnims=(Loader_idle),
+                PositionDeathAnims=(Loader_idle),
                 /*
                 LeftHandIKInfo=(PinEnabled=true),
                 RightHandIKInfo=(PinEnabled=true),
                 HipsIKInfo=(PinEnabled=true),
-                PositionFlinchAnims=(Loader_Flinch),
-                PositionDeathAnims=(Loader_Death),
                 HeightInfo=
                 (
                     HeightDisplacementEnabled=false,
@@ -2695,7 +2727,7 @@ defaultproperties
     SpeedoMaxDegree=60075
     SpeedoMaxSpeed=1365 //100 km/h
 
-    ScopeLensMIC=MaterialInstanceConstant'WP_VN_VC_SVD.Materials.VC_SVD_LenseMat'
+    // ScopeLensMIC=MaterialInstanceConstant'WP_VN_VC_SVD.Materials.VC_SVD_LenseMat'
 
     RanOverDamageType=DRDmgType_RunOver_PanzerIV
 

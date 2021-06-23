@@ -85,7 +85,7 @@ DefaultProperties
                 SeatRotation=(Pitch=0,Yaw=0,Roll=0),
                 VehicleBloodMICParameterName=Gore03,
                 TracerFrequency=5,
-                WeaponTracerClass=(class'DT_UCBulletTracer',class'DT_UCBulletTracer'),
+                //? WeaponTracerClass=(class'DT_UCBulletTracer',class'DT_UCBulletTracer'),
                 MuzzleFlashLightClass=(class'ROVehicleMGMuzzleFlashLight',class'ROVehicleMGMuzzleFlashLight'),
                 VehicleBloodMICParameterName=Gore01,
                 )}

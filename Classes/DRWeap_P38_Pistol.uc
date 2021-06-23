@@ -8,7 +8,7 @@ DefaultProperties
     WeaponContentClass(0)="DesertRats.DRWeap_P38_Pistol_Content"
     //? WeaponContentClass(1)="DesertRats.DRWeap_P38_Pistol_Level2"
     //? WeaponContentClass(2)="DesertRats.DRWeap_P38_Pistol_Level3"
-    RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
+    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
     //? RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
     //? RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_P38'
 

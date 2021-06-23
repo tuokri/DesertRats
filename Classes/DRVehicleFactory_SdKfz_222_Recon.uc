@@ -9,7 +9,7 @@ DefaultProperties
     Begin Object Name=CollisionCylinder
         CollisionHeight=+60.0
         CollisionRadius=+90.0
-        Translation=(X=0.0,Y=0.0,Z=0.0)
+        Translation=(X=0.0,Y=0.0,Z=60)
         bAlwaysRenderIfSelected=true
     End Object
 

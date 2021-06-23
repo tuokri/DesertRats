@@ -7,7 +7,6 @@ DefaultProperties
 
     Begin Object Name=ROSVehicleMesh
         SkeletalMesh=SkeletalMesh'DR_VH_UK_CrusaderIII.Mesh.CrusaderIII_Rig'
-        //MorphSets[0]=MorphTargetSet'VH_Goliath.Mesh.SK_VH_Goliath_Morph'
         AnimTreeTemplate=AnimTree'DR_VH_UK_CrusaderIII.Anim.CrusaderIII_AnimTree'
         PhysicsAsset=PhysicsAsset'DR_VH_UK_CrusaderIII.Phy.CrusaderIII_Rig_Physics'
         // AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_anim_Master')

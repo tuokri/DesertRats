@@ -6,7 +6,6 @@ DefaultProperties
 
     Begin Object Name=ROSVehicleMesh
         SkeletalMesh=SkeletalMesh'DR_VH_UK_M3Stuart.Mesh.StuartM3_Rig'
-        //MorphSets[0]=MorphTargetSet'VH_Goliath.Mesh.SK_VH_Goliath_Morph'
         AnimTreeTemplate=AnimTree'DR_VH_UK_M3Stuart.Anim.StuartM3_AnimTree'
         PhysicsAsset=PhysicsAsset'DR_VH_UK_M3Stuart.Phy.StuartM3_Rig_Physics'
         // AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_anim_Master')
@@ -214,7 +213,7 @@ DefaultProperties
         PositionIndex=0)}
 
     // Seat proxy animations
-    // SeatProxyAnimSet=AnimSet'CHR_Playeranim_Master.Anim.CHR_Panzer4G_Anim_Master'
+    SeatProxyAnimSet=AnimSet'DR_VH_UK_M4A1Sherman.Anim.CHR_Sherman_Anim_Master'
 
     //----------------------------------------------------------------
     //                 Tank Attachments

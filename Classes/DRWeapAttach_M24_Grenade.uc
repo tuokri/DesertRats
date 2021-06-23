@@ -13,5 +13,5 @@ DefaultProperties
         CullDistance=5000
     End Object
 
-    WeaponClass=class'DRWeap_M1939_Grenade'
+    WeaponClass=class'DRWeap_M24_Grenade'
 }

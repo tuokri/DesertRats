@@ -150,17 +150,14 @@ DefaultProperties
     ShellEjectSocket=ShellEjectSocket
     ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_MG34'
 
-
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_LP', FirstPersonCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_Loop_Sur_01')
-
+    //? WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_LP', FirstPersonCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_Loop_Sur_01')
 
     // Advanced (High RPM) Fire Effects
     bLoopingFireSnd(DEFAULT_FIREMODE)=true
-    WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_End', FirstPersonCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_LoopEnd_Sur')
+    //? WeaponFireLoopEndSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_End', FirstPersonCue=AkEvent'WW_RO2_WEP_MG42_RO2.Play_MG_MG42_Fire_LoopEnd_Sur')
     bLoopHighROFSounds(DEFAULT_FIREMODE)=true
 
     bHasIronSights=true;
-
 
     //Equip and putdown
     WeaponPutDownAnim=MG42_putaway

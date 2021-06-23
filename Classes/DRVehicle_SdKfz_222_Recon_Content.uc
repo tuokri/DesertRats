@@ -110,29 +110,29 @@ DefaultProperties
 
     // -------------------------------- Dead -----------------------------------------------------------
 
-    DestroyedSkeletalMesh=SkeletalMesh'WF_Vehicles_Jeep50Cal.Mesh.jeep_destroyed_50cal'
-    DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'WF_Vehicles_Jeep50Cal.Mesh.jeep_destroyed_50cal'
-    DestroyedPhysicsAsset=PhysicsAsset'WF_Vehicles_Jeep50Cal.Physics.jeep_destroyed_50cal_Physics'
-    DestroyedMaterial=MaterialInstanceConstant'WF_Vehicles_Jeep50Cal.M_Willy_Jeep_broken'
-    DestroyedMaterial2=MaterialInstanceConstant'WF_Vehicles_Jeep50Cal.M_Willy_50cal'
-    DestroyedMaterial3=MaterialInstanceConstant'WF_Vehicles_Jeep50Cal.M_Willy_50cal_mount'
-
+    // TODO: hud and destroyed stuff.
+    //? DestroyedSkeletalMesh=SkeletalMesh'WF_Vehicles_Jeep50Cal.Mesh.jeep_destroyed_50cal'
+    //? DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'WF_Vehicles_Jeep50Cal.Mesh.jeep_destroyed_50cal'
+    //? DestroyedPhysicsAsset=PhysicsAsset'WF_Vehicles_Jeep50Cal.Physics.jeep_destroyed_50cal_Physics'
+    //? DestroyedMaterial=MaterialInstanceConstant'WF_Vehicles_Jeep50Cal.M_Willy_Jeep_broken'
+    //? DestroyedMaterial2=MaterialInstanceConstant'WF_Vehicles_Jeep50Cal.M_Willy_50cal'
+    //? DestroyedMaterial3=MaterialInstanceConstant'WF_Vehicles_Jeep50Cal.M_Willy_50cal_mount'
 
     // HUD
-    HUDBodyTexture=Texture2D'WF_Vehicles_Jeep50Cal.UI.ui_hud_Jeep_VehicleBase'
+    // HUDBodyTexture=Texture2D'WF_Vehicles_Jeep50Cal.UI.ui_hud_Jeep_VehicleBase'
     HUDTurretTexture=none
     DriverOverlayTexture=none
 
     HUDMainCannonTexture=none
-    HUDGearBoxTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_Transmission'
-    HUDFrontArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_FrontArmor'
-    HUDBackArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_RearArmor'
-    HUDLeftArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_LeftArmor'
-    HUDRightArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_RightArmor'
-    HUDRightSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
-    HUDLeftSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
+    // HUDGearBoxTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_Transmission'
+    // HUDFrontArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_FrontArmor'
+    // HUDBackArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_RearArmor'
+    // HUDLeftArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_LeftArmor'
+    // HUDRightArmorTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.SDKfZ.ui_hud_sdkfz_RightArmor'
+    // HUDRightSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
+    // HUDLeftSteerWheelTexture=Texture2D'UI_Textures_VehiclePack.HUD.Vehicles.ui_hud_transport_SteerWheel'
 
-    RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
+    // RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
 
     // Driver
     SeatProxies(0)={(

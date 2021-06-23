@@ -1,4 +1,4 @@
-class DRVehicle_CrusaderMkIII extends DRVehicleTank
+class DRVehicle_SdKfz_222_Recon_Old extends DRVehicleTank
     abstract;
 
 /** ambient sound component for machine gun */
@@ -37,10 +37,6 @@ var repnotify TakeHitInfo DeathHitInfo_ProxyGunner;
 
 /** Scope material. Caching it here so that it does not get cooked out */
 var MaterialInstanceConstant ScopeLensMIC;
-
-// TODO:
-var DRDestroyedTankTrack DestroyedLeftTrack;
-var DRDestroyedTankTrack DestroyedRightTrack;
 
 replication
 {
@@ -81,36 +77,6 @@ simulated event ReplicatedEvent(name VarName)
     {
        super.ReplicatedEvent(VarName);
     }
-}
-
-simulated function DisableLeftTrack()
-{
-    local vector SpawnLoc;
-    local rotator SpawnRot;
-
-    super.DisableLeftTrack();
-
-    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Left', SpawnLoc, SpawnRot);
-
-    Mesh.SetMaterial(1, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
-    DestroyedLeftTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
-
-    `dr("DestroyedLeftTrack = " $ DestroyedLeftTrack);
-}
-
-simulated function DisableRightTrack()
-{
-    local vector SpawnLoc;
-    local rotator SpawnRot;
-
-    super.DisableRightTrack();
-
-    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Right', SpawnLoc, SpawnRot);
-
-    Mesh.SetMaterial(2, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
-    DestroyedRightTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
-
-    `dr("DestroyedRightTrack = " $ DestroyedRightTrack);
 }
 
 simulated event PostBeginPlay()
@@ -1333,7 +1299,7 @@ function TankIntDamTest(int MIC, int DamageArea, Float Amount)
 
 DefaultProperties
 {
-    Team=`ALLIES_TEAM_INDEX
+    Team=`AXIS_TEAM_INDEX
 
     Health=600
     MaxSpeed=573    // 42 km/h
@@ -1556,6 +1522,7 @@ DefaultProperties
         )
     )}
 
+    /*
     Seats(1)={(
         TurretVarPrefix="Cuppola",
         BinocOverlayTexture=Texture2D'WP_VN_VC_Binoculars.Materials.BINOC_overlay',
@@ -1707,40 +1674,38 @@ DefaultProperties
 
     SeatIndexPassRotateOnCommandToOtherSeat=2
     SeatIndexToRotateOnCommandFromOtherSeat=1
+    */
+
+    LeftSteerableWheelIndex=0
+    RightSteerableWheelIndex=0
+    LeftSteerableSimWheelIndex=3
+    RightSteerableSimWheelIndex=1
+    MaxVisibleSteeringAngle=45.0
 
     //_________________________
     // ROSkelControlTankWheels
     //
     LeftWheels.Empty
-    LeftWheels(0)="L_Wheel_01"
-    LeftWheels(1)="L_Wheel_02"
-    LeftWheels(2)="L_Wheel_03"
-    LeftWheels(3)="L_Wheel_04"
-    LeftWheels(4)="L_Wheel_05"
-    LeftWheels(5)="L_Wheel_06"
-    LeftWheels(6)="L_Wheel_07"
+    LeftWheels(0)="L_Wheel_00"
+    LeftWheels(1)="L_Wheel_01"
     //
     RightWheels.Empty
-    RightWheels(0)="R_Wheel_01"
-    RightWheels(1)="R_Wheel_02"
-    RightWheels(2)="R_Wheel_03"
-    RightWheels(3)="R_Wheel_04"
-    RightWheels(4)="R_Wheel_05"
-    RightWheels(5)="R_Wheel_06"
-    RightWheels(6)="R_Wheel_07"
+    RightWheels(0)="R_Wheel_00"
+    RightWheels(1)="R_Wheel_01"
 
     /** Physics Wheels */
     Wheels.Empty
 
     // Right Rear Wheel
     Begin Object Name=RRWheel
-        BoneName="R_Wheel_06"
-        BoneOffset=(X=0.0,Y=0,Z=12.5)
-        WheelRadius=44
-        SuspensionTravel=17.5
+        BoneName="R_Wheel_01"
+        BoneOffset=(X=0.0,Y=0,Z=0)
+        WheelRadius=22
+        SuspensionTravel=15
     End Object
     Wheels(0)=RRWheel
 
+    /*
     // Right middle wheel
     Begin Object Name=RMWheel
         BoneName="R_Wheel_04"
@@ -1749,25 +1714,27 @@ DefaultProperties
         SuspensionTravel=17.5
     End Object
     Wheels(1)=RMWheel
+    */
 
     // Right Front Wheel
     Begin Object Name=RFWheel
-        BoneName="R_Wheel_02"
-        BoneOffset=(X=0.0,Y=0,Z=12.5)
-        WheelRadius=44
-        SuspensionTravel=17.5
+        BoneName="R_Wheel_00"
+        BoneOffset=(X=0.0,Y=0,Z=0)
+        WheelRadius=22
+        SuspensionTravel=15
     End Object
-    Wheels(2)=RFWheel
+    Wheels(1)=RFWheel
 
     // Left Rear Wheel
     Begin Object Name=LRWheel
-        BoneName="L_Wheel_06"
+        BoneName="L_Wheel_01"
         BoneOffset=(X=0.0,Y=0,Z=12.5)
-        WheelRadius=44
-        SuspensionTravel=17.5
+        WheelRadius=22
+        SuspensionTravel=15
     End Object
-    Wheels(3)=LRWheel
+    Wheels(2)=LRWheel
 
+    /*
     // Left Middle Wheel
     Begin Object Name=LMWheel
         BoneName="L_Wheel_04"
@@ -1776,19 +1743,22 @@ DefaultProperties
         SuspensionTravel=17.5
     End Object
     Wheels(4)=LMWheel
+    */
 
     // Left Front Wheel
     Begin Object Name=LFWheel
-        BoneName="L_Wheel_02"
-        BoneOffset=(X=0.0,Y=0,Z=12.5)
-        WheelRadius=44
-        SuspensionTravel=17.5
+        BoneName="L_Wheel_00"
+        BoneOffset=(X=0.0,Y=0,Z=0)
+        WheelRadius=22
+        SuspensionTravel=15
     End Object
-    Wheels(5)=LFWheel
+    Wheels(3)=LFWheel
 
     /** Vehicle Sim */
 
+    // Begin Object class=ROVehicleSimHalftrack Name=SimObjectHalfTrack
     Begin Object Name=SimObject
+        EngineDamping=2
         // Transmission - GearData
         GearArray(0)={(
             // Real world - [5.64] 5.5 kph reverse
@@ -1890,10 +1860,14 @@ DefaultProperties
 
     TreadSpeedScale=2.5 //2.75
 
+    // TODO:
+    bCanFlip=True
+    bStayUpright=False
+
     // Muzzle Flashes
     VehicleEffects(TankVFX_Firing1)=(EffectStartTag=PanzerIVGCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankMuzzle',EffectSocket=Barrel,bRestartRunning=true)
     VehicleEffects(TankVFX_Firing2)=(EffectStartTag=PanzerIVGCannon,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_B_TankCannon_Dust',EffectSocket=attachments_body_ground,bRestartRunning=true)
-    // VehicleEffects(TankVFX_Firing3)=(EffectStartTag=PanzerIVGHullMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=MG_Barrel)
+    //? VehicleEffects(TankVFX_Firing3)=(EffectStartTag=PanzerIVGHullMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=MG_Barrel)
     VehicleEffects(TankVFX_Firing4)=(EffectStartTag=PanzerIVGCoaxMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=CoaxMG)
     // Driving effects
     VehicleEffects(TankVFX_Exhaust)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_A_TankExhaust',EffectSocket=Exhaust)
@@ -1906,23 +1880,23 @@ DefaultProperties
     VehicleEffects(TankVFX_DeathSmoke2)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke_2)
     VehicleEffects(TankVFX_DeathSmoke3)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke_3)
 
-    TrackSoundParamScale=0.00004 // top speed : 25,000
+    TrackSoundParamScale=0.00004    // top speed : 25,000
 
-    //  CollisionSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_Collide'
-    //  EnterVehicleSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_Start'
-    //  ExitVehicleSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_Stop'
+//  CollisionSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_Collide'
+//  EnterVehicleSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_Start'
+//  ExitVehicleSound=SoundCue'A_Vehicle_Goliath.SoundCues.A_Vehicle_Goliath_Stop'
 
-    //  WheelParticleEffects[0]=(MaterialType=Generic,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Dust_Effects.P_Goliath_Wheel_Dust')
-    //  WheelParticleEffects[1]=(MaterialType=Dirt,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Dust_Effects.P_Goliath_Wheel_Dust')
-    //  WheelParticleEffects[2]=(MaterialType=Water,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Water_Effects.P_Goliath_Water_Splash')
-    //  WheelParticleEffects[3]=(MaterialType=Snow,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Dust_Effects.P_Goliath_Wheel_Dust')
+//  WheelParticleEffects[0]=(MaterialType=Generic,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Dust_Effects.P_Goliath_Wheel_Dust')
+//  WheelParticleEffects[1]=(MaterialType=Dirt,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Dust_Effects.P_Goliath_Wheel_Dust')
+//  WheelParticleEffects[2]=(MaterialType=Water,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Water_Effects.P_Goliath_Water_Splash')
+//  WheelParticleEffects[3]=(MaterialType=Snow,ParticleTemplate=ParticleSystem'Envy_Level_Effects_2.Vehicle_Dust_Effects.P_Goliath_Wheel_Dust')
 
     // Initialize sound parameters.
     SquealThreshold=250.0
     EngineStartOffsetSecs=2.0
     EngineStopOffsetSecs=0.0//1.0
 
-    //  IconCoords=(U=831,V=0,UL=27,VL=38)
+//  IconCoords=(U=831,V=0,UL=27,VL=38)
 
     BigExplosionSocket=FX_Fire
     ExplosionTemplate=ParticleSystem'DR_VH_FX.FX_VEH_Tank_C_Explosion'
@@ -1969,6 +1943,7 @@ DefaultProperties
 
     bDebugPenetration=false
 
+    /*
     VehHitZones(0)=(ZoneName=ENGINEBLOCK,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Engine,ZoneHealth=100,VisibleFrom=14)
     VehHitZones(1)=(ZoneName=ENGINECORE,DamageMultiplier=1.0,VehicleHitZoneType=VHT_Engine,ZoneHealth=300,VisibleFrom=14)
     VehHitZones(2)=(ZoneName=AMMOSTOREONE,DamageMultiplier=100.0,VehicleHitZoneType=VHT_Ammo,ZoneHealth=10,KillPercentage=0.3,VisibleFrom=13)
@@ -2134,7 +2109,7 @@ DefaultProperties
     ArmorPlates(28)=(PlateName=TURRETROOF,ArmorZoneType=AZT_TurretRoof,PlateThickness=12,OverallHardness=370,bHighHardness=false)
     ArmorPlates(29)=(PlateName=UPPERTURRETREAR,ArmorZoneType=AZT_TurretBack,PlateThickness=25,OverallHardness=350,bHighHardness=false)
     ArmorPlates(30)=(PlateName=TURRETRINGARMOUR,ArmorZoneType=AZT_Weakspots,PlateThickness=20,OverallHardness=350,bHighHardness=false)
-
+    */
 
     EngineIdleRPM=500
     EngineNormalRPM=1800
@@ -2187,10 +2162,10 @@ DefaultProperties
     CoaxMGTextureOffset=(PositionOffset=(X=+6,Y=-14,Z=0),MySizeX=6,MYSizeY=14)
 
     SeatTextureOffsets(0)=(PositionOffSet=(X=-16,Y=-21,Z=0),bTurretPosition=0)
-    SeatTextureOffsets(1)=(PositionOffSet=(X=0,Y=+10,Z=0),bTurretPosition=1)
+    // SeatTextureOffsets(1)=(PositionOffSet=(X=0,Y=+10,Z=0),bTurretPosition=1)
     // SeatTextureOffsets(2)=(PositionOffSet=(X=+16,Y=-21,Z=0),bTurretPosition=0)
     // SeatTextureOffsets(3)=(PositionOffSet=(X=+8,Y=-4,Z=0),bTurretPosition=1)
-    SeatTextureOffsets(2)=(PositionOffSet=(X=-8,Y=-4,Z=0),bTurretPosition=1)
+    // SeatTextureOffsets(2)=(PositionOffSet=(X=-8,Y=-4,Z=0),bTurretPosition=1)
 
     SpeedoMinDegree=5461
     SpeedoMaxDegree=60075

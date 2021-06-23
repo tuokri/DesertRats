@@ -1,4 +1,4 @@
-class DRVehicle_PanzerIVF_Content extends DRVehicle_PanzerIVF
+class DRVehicle_SdKfz_222_Recon_Content_Old extends DRVehicle_SdKfz_222_Recon_Old
     placeable;
 
 DefaultProperties
@@ -6,11 +6,11 @@ DefaultProperties
     // ------------------------------- Mesh --------------------------------------------------------------
 
     Begin Object Name=ROSVehicleMesh
-        SkeletalMesh=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.Ger_PZIV_Rig_Master'
-        AnimTreeTemplate=AnimTree'DR_VH_DAK_PanzerIV_F.Anim.AT_VH_PanzerIVG_New'
-        PhysicsAsset=PhysicsAsset'DR_VH_DAK_PanzerIV_F.Phys.Ger_PZIV_Rig_new_Physics'
-        AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_anim_Master')
-        AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_Destroyed_anim_Master')
+        SkeletalMesh=SkeletalMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_Rig'
+        AnimTreeTemplate=AnimTree'DR_VH_DAK_SDKFZ222.Anim.SdKfz222_AnimTree'
+        PhysicsAsset=PhysicsAsset'DR_VH_DAK_SDKFZ222.Phy.SdKfz222_Rig_Physics'
+        // AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_anim_Master')
+        // AnimSets.Add(AnimSet'DR_VH_DAK_PanzerIV_F.Anim.PZIV_Destroyed_anim_Master')
     End Object
 
     // -------------------------------- Sounds -----------------------------------------------------------
@@ -134,12 +134,13 @@ DefaultProperties
     */
     // -------------------------------- Dead -----------------------------------------------------------
 
-    DestroyedSkeletalMesh=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.Ger_PZIV_Destroyed_Master'
-    DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.PZIV_Body_Destroyed'
-    DestroyedPhysicsAsset=PhysicsAsset'DR_VH_DAK_PanzerIV_F.Phys.Ger_PZIV_Destroyed_Physics'
-    DestroyedMaterial=MaterialInstanceConstant'DR_VH_DAK_PanzerIV_F.MIC.VH_DAK_PZIV_Destroyed_INST'
-    DestroyedFXMaterial=MaterialInstanceConstant'DR_VH_FX.MIC.VH_Fire_INST'
-    DestroyedTurretClass=class'DRVehicleDeathTurret_PanzerIVF'
+    DestroyedSkeletalMesh=SkeletalMesh'DR_VH_UK_CrusaderIII.Mesh.CrusaderIII_Destr_Rig'
+    DestroyedSkeletalMeshWithoutTurret=SkeletalMesh'DR_VH_UK_CrusaderIII.Mesh.CrusaderIII_Destr_Body'
+    DestroyedPhysicsAsset=PhysicsAsset'DR_VH_UK_CrusaderIII.Phy.CrusaderIII_Destr_Rig_Physics'
+    //? DestroyedMaterial=MaterialInstanceConstant'DR_VH_DAK_PanzerIV_F.MIC.VH_DAK_PZIV_Destroyed_INST'
+    DestroyedMaterial=MaterialInstanceConstant'DR_VH_UK_CrusaderIII.Materials.M_MKIII_Hull_Destroyed'
+    //? DestroyedFXMaterial=Material'Vehicle_Mats.M_Common_Vehicles.Tank_Fireplanes'
+    DestroyedTurretClass=class'DRVehicleDeathTurret_CrusaderMkIII'
 
     // HUD
     HUDBodyTexture=Texture2D'ui_textures.HUD.Vehicles.ui_hud_tank_pz4_body'
@@ -167,10 +168,11 @@ DefaultProperties
         HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
         BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=0,
-        PositionIndex=1)}
+        PositionIndex=0)}
 
+    /*
     // Commander
-    SeatProxies(1)={(
+    SeatProxies(`CRUSADER_COMMANDER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -178,32 +180,10 @@ DefaultProperties
         HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
         BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=1,
-        PositionIndex=1)}
-
-    // Hull MG
-    SeatProxies(2)={(
-        TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
-        HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
-        HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
-        HeadphonesMeshType=none,
-        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
-        BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
-        SeatIndex=3,
-        PositionIndex=2)}
-
-    // Loader
-    SeatProxies(3)={(
-        TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
-        HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
-        HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
-        HeadphonesMeshType=none,
-        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
-        BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
-        SeatIndex=4,
         PositionIndex=0)}
 
     // Gunner
-    SeatProxies(4)={(
+    SeatProxies(`CRUSADER_GUNNER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -212,6 +192,7 @@ DefaultProperties
         BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=2,
         PositionIndex=0)}
+    */
 
     // Seat proxy animations
     SeatProxyAnimSet=AnimSet'DR_VH_Common.Anim.CHR_Panzer4G_Anim_Master'
@@ -445,7 +426,6 @@ DefaultProperties
     MeshAttachments(12)={(AttachmentName=TurretCuppolaComponent,Component=TurretAttachment2,bAttachToSocket=true,AttachmentTargetName=attachments_turret)}
     MeshAttachments(13)={(AttachmentName=TurretDetails1Component,Component=TurretAttachment5,bAttachToSocket=true,AttachmentTargetName=attachments_turret)}
     MeshAttachments(14)={(AttachmentName=TurretBasketComponent,Component=TurretAttachment7,bAttachToSocket=true,AttachmentTargetName=attachments_turret)}
-    */
 
-    MeshAttachments.Empty
+    */
 }

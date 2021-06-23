@@ -53,7 +53,7 @@ DefaultProperties
 
     Category=ROIC_Primary   //ROIC_Primary
     Weight=3.7              //KG
-    InvIndex=DRII_KAR98_SCOPED_RIFLE
+    InvIndex=`DRII_KAR98_SCOPED_RIFLE
     InventoryWeight=5
 
     PlayerIronSightFOV=40.0
@@ -370,10 +370,8 @@ DefaultProperties
     BayonetAttackRange=103.0
     MeleeAttackCoolDownInSeconds=0.4
 
-    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',
-        FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',
-        FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
+    WeaponFireSnd(DEFAULT_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single_3P',FirstPersonCue=AkEvent'WW_WEP_Mosin.Play_WEP_Mosin_Fire_Single')
 
     ScopedSensitivityMod=1.5
 }

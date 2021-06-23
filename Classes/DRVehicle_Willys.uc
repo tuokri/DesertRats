@@ -1,4 +1,4 @@
-class DRVehicle_Willys extends ROVehicleTransport
+class DRVehicle_Willys extends DRVehicleTransport
     abstract;
 
 var array<MaterialInstanceConstant> ReplacedInteriorMICs;
@@ -24,7 +24,6 @@ var array<GearData> GearArrayHigh;
 var ETransferCaseRange TransferCaseRange;
 
 // Replicated information about the passenger positions
-// TODO: what the hell? These aren't even used anywhere...
 var repnotify byte PassengerOneCurrentPositionIndex;
 var repnotify bool bDrivingPassengerOne;
 var repnotify byte PassengerTwoCurrentPositionIndex;
@@ -124,7 +123,6 @@ simulated event ReplicatedEvent(name VarName)
     {
         PlaySeatProxyDeathHitEffects(0, DeathHitInfo_ProxyDriver);
     }
-
     else
     {
        super.ReplicatedEvent(VarName);
@@ -313,17 +311,15 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
     // Update the hit info for each seat proxy pertaining to this vehicle
     switch( SeatProxyIndex )
     {
-    case 0:
-        // Driver
-        DeathHitInfo_ProxyDriver.Damage = Damage;
-        DeathHitInfo_ProxyDriver.HitLocation = HitLocation;
-        DeathHitInfo_ProxyDriver.Momentum = Momentum;
-        DeathHitInfo_ProxyDriver.DamageType = DamageType;
-        break;
-
+        case 0:
+            // Driver
+            DeathHitInfo_ProxyDriver.Damage = Damage;
+            DeathHitInfo_ProxyDriver.HitLocation = HitLocation;
+            DeathHitInfo_ProxyDriver.Momentum = Momentum;
+            DeathHitInfo_ProxyDriver.DamageType = DamageType;
+            break;
     }
 
-    // Call super!
     Super.DamageSeatProxy(SeatProxyIndex, Damage, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
 }
 

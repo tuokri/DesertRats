@@ -2,8 +2,7 @@ class DRVProjectile_StuartII_HE extends DRTankCannonProjectile;
 
 DefaultProperties
 {
-
-		//M63 HE
+    // M63 HE
     BallisticCoefficient=1.1
     Speed=39600 //792 M/S
     MaxSpeed=39600

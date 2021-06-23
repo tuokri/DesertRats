@@ -1282,6 +1282,11 @@ function SetLeftVehicleFlag()
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+exec function DumpScriptTrace()
+{
+    ScriptTrace();
+}
+
 exec function BlowupVehicles(optional bool bHitAmmo = false, optional int DeadVehicleType = 999)
 {
     ServerBlowUpVehicles(bHitAmmo, DeadVehicleType);

@@ -12,9 +12,9 @@ DefaultProperties
 
     // Weapon SkeletalMesh
     Begin Object Name=SkeletalMeshComponent0
-        SkeletalMesh=SkeletalMesh'WP_3rd_Master.Mesh.MG42_3rd_Master'
-        Animations=AnimTree'WP_3rd_Master.Animation.MG42_3rd_Tree'
-        AnimSets(0)=AnimSet'WP_3rd_Master.Anim.MG42_3rd_anim'
+        //? SkeletalMesh=SkeletalMesh'WP_3rd_Master.Mesh.MG42_3rd_Master'
+        //? Animations=AnimTree'WP_3rd_Master.Animation.MG42_3rd_Tree'
+        //? AnimSets(0)=AnimSet'WP_3rd_Master.Anim.MG42_3rd_anim'
         CullDistance=5000
     End Object
 
@@ -26,14 +26,14 @@ DefaultProperties
 
     // Shell eject FX
     ShellEjectSocket=ShellEjectSocket
-    ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_MG34'
+    //? ShellEjectPSCTemplate=ParticleSystem'RP_WEP_Gun_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_MG34'
 
     // Tracer FX
-    TracerClass=class'MG42BulletTracer'
+    //? TracerClass=class'MG42BulletTracer'
     TracerFrequency=10
 
     // ROPawn weapon specific animations
-    CHR_AnimSet=AnimSet'RCHRPlayeranim_Master.Weapons.CHR_MG42'
+    //? CHR_AnimSet=AnimSet'RCHRPlayeranim_Master.Weapons.CHR_MG42'
 
     // Firing animations
     FireAnim=Shoot

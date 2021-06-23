@@ -19,7 +19,7 @@ DefaultProperties
     // Pickup staticmesh
     Begin Object Name=PickupMesh
         SkeletalMesh=SkeletalMesh'DR_WP_DAK_P38_Walther.Meshes_3rd.P38_3rd_RS2'
-        PhysicsAsset=PhysicsAsset'WP_3rd_Master.Phy.P38_3rd_Master_Physics'
+        //? PhysicsAsset=PhysicsAsset'WP_3rd_Master.Phy.P38_3rd_Master_Physics'
         CollideActors=true
         BlockActors=true
         BlockZeroExtent=true

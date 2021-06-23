@@ -55,5 +55,5 @@ DefaultProperties
     End Object
     */
 
-    bDebugWeapon=True
+    bDebugWeapon=False
 }

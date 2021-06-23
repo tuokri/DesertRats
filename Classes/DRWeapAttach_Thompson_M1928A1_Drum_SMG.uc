@@ -2,7 +2,7 @@ class DRWeapAttach_Thompson_M1928A1_Drum_SMG extends DRWeapAttach_Thompson_SMG;
 
 DefaultProperties
 {
-    WeaponClass=class'DRWeap_Thompson_M1928A1_Drum_SMG'
+    WeaponClass=class'DRWeap_Thompson_M1928A1_SMG'
 
     // Weapon SkeletalMesh
     Begin Object Name=SkeletalMeshComponent0

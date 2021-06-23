@@ -66,7 +66,7 @@ DefaultProperties
     // TODO:
     ProjFlightTemplate=ParticleSystem'FX_WEP_Gun_Three.Tracers.FX_WEP_Gun_A_TankShell_Tracer'
 
-    LensFlareEffect=none
+    // LensFlareEffect=none
     ExplosionLightClass=none
     ShockwaveDecal=none
 

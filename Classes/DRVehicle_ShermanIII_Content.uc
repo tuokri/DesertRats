@@ -144,7 +144,7 @@ DefaultProperties
     // HUD
     HUDBodyTexture=Texture2D'DR_VH_UK_M4A1Sherman.UITextures.ui_tank_M4A3_US_body'
     HUDTurretTexture=Texture2D'DR_VH_UK_M4A1Sherman.UITextures.ui_tank_M4A3_US_turret'
-    DriverOverlayTexture=Texture2D'ui_textures.VehicleOptics.ui_hud_vehicle_optics_PZIV_driver'
+    //? DriverOverlayTexture=Texture2D'ui_textures.VehicleOptics.ui_hud_vehicle_optics_PZIV_driver'
     HUDMainCannonTexture=Texture2D'DR_VH_UK_M4A1Sherman.UITextures.ui_tank_M4A3_US_maingun'
     HUDGearBoxTexture=Texture2D'ui_textures.HUD.Vehicles.ui_hud_tank_transmition_PZ'
     HUDFrontArmorTexture=Texture2D'DR_VH_UK_M4A1Sherman.UITextures.ui_tank_M4A3_US_bodyfront'

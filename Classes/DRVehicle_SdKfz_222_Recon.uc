@@ -323,16 +323,17 @@ DefaultProperties
     ExitOffset=(X=-150,Y=0,Z=0)
 
     Begin Object Name=CollisionCylinder
-        CollisionHeight=0.0
-        CollisionRadius=260.0
-        Translation=(X=0.0,Y=0.0,Z=0.0)
+        CollisionHeight=60
+        CollisionRadius=180
+        Translation=(X=0.0,Y=0.0,Z=60.0)
     End Object
     CylinderComponent=CollisionCylinder
 
     bDontUseCollCylinderForRelevancyCheck=true
-    RelevancyHeight=0.0
-    RelevancyRadius=175.0
+    RelevancyHeight=60.0
+    RelevancyRadius=180.0
 
+    /*
     Begin Object class=PointLightComponent name=InteriorLight_0
         Radius=100.0
         LightColor=(R=255,G=170,B=130)
@@ -351,13 +352,14 @@ DefaultProperties
 
     VehicleLights(0)={(AttachmentName=InteriorLightComponent0,Component=InteriorLight_0,bAttachToSocket=true,AttachmentTargetName=interior_light_0)}
     VehicleLights(1)={(AttachmentName=InteriorLightComponent1,Component=InteriorLight_1,bAttachToSocket=true,AttachmentTargetName=interior_light_1)}
+    */
 
     Seats(0)={(
         CameraTag=Driver_Camera,
         CameraOffset=-420,
         SeatAnimBlendName=DriverPositionNode,
         bSeatVisible=false,
-        SeatBone=Chassis,
+        SeatBone=Turret,
         DriverDamageMult=1.0,
         InitialPositionIndex=0,
         SeatRotation=(Pitch=0,Yaw=0,Roll=0),
@@ -537,10 +539,10 @@ DefaultProperties
     // Right Rear Wheel
     Begin Object Name=RRWheel
         BoneName="R_Wheel_01"
-        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10)
         WheelRadius=22
+        SuspensionTravel=32
         SteerFactor=-0.1
-        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(0)=RRWheel
@@ -548,10 +550,10 @@ DefaultProperties
     // Right Front Wheel
     Begin Object Name=RFWheel
         BoneName="R_Wheel_00"
-        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10)
         WheelRadius=22
+        SuspensionTravel=32
         SteerFactor=1.0
-        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(1)=RFWheel
@@ -559,10 +561,10 @@ DefaultProperties
     // Left Rear Wheel
     Begin Object Name=LRWheel
         BoneName="L_Wheel_01"
-        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10)
         WheelRadius=22
+        SuspensionTravel=32
         SteerFactor=-0.1
-        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(2)=LRWheel
@@ -570,10 +572,10 @@ DefaultProperties
     // Left Front Wheel
     Begin Object Name=LFWheel
         BoneName="L_Wheel_00"
-        BoneOffset=(X=0.0,Y=0.0,Z=-10.0)
+        BoneOffset=(X=0.0,Y=0.0,Z=-10)
         WheelRadius=22
+        SuspensionTravel=32
         SteerFactor=1.0
-        SuspensionTravel=25
         bPoweredWheel=True
     End Object
     Wheels(3)=LFWheel
@@ -707,23 +709,24 @@ DefaultProperties
     EngineTemp3DGaugeFireDestroyedAngle=22756
     */
 
+    // TODO: all effects
     // Muzzle Flashes
-    VehicleEffects(TankVFX_Firing1)=(EffectStartTag=HTHullMG,EffectTemplate=ParticleSystem'FX_MuzzleFlashes.Emitters.muzzleflash_3rdP',EffectSocket=MG_Barrel)
-    // Shell Ejects
-    VehicleEffects(TankVFX_Firing2)=(EffectStartTag=HTHullMG,EffectTemplate=ParticleSystem'FX_Vehicles_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_MG34_HT',EffectSocket=MG_ShellEject,bInteriorEffect=true,bNoKillOnRestart=true)
-    // Driving effects
-    VehicleEffects(TankVFX_Exhaust)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,EffectTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_exhaust',EffectSocket=Exhaust)
-    VehicleEffects(TankVFX_TreadWing)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,bStayActive=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_Tank_A_Wing_Dirt_T34',EffectSocket=FX_Master)
-    // Damage
-    VehicleEffects(TankVFX_DmgSmoke)=(EffectStartTag=DamageSmoke,EffectEndTag=NoDamageSmoke,bRestartRunning=false,EffectTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_damaged_burning_new',EffectSocket=attachments_engine)
-    VehicleEffects(TankVFX_DmgInterior)=(EffectStartTag=DamageInterior,EffectEndTag=NoInternalSmoke,bRestartRunning=false,bInteriorEffect=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_Interior_Penetrate',EffectSocket=attachments_body)
-    // Death
-    VehicleEffects(TankVFX_DeathSmoke1)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke1)
-    VehicleEffects(TankVFX_DeathSmoke2)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke2)
-    VehicleEffects(TankVFX_DeathSmoke3)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke3)
+    // VehicleEffects(TankVFX_Firing1)=(EffectStartTag=HTHullMG,EffectTemplate=ParticleSystem'FX_MuzzleFlashes.Emitters.muzzleflash_3rdP',EffectSocket=MG_Barrel)
+    // // Shell Ejects
+    // VehicleEffects(TankVFX_Firing2)=(EffectStartTag=HTHullMG,EffectTemplate=ParticleSystem'FX_Vehicles_Two.ShellEjects.FX_Wep_A_ShellEject_PhysX_Ger_MG34_HT',EffectSocket=MG_ShellEject,bInteriorEffect=true,bNoKillOnRestart=true)
+    // // Driving effects
+    // VehicleEffects(TankVFX_Exhaust)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,EffectTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_exhaust',EffectSocket=Exhaust)
+    // VehicleEffects(TankVFX_TreadWing)=(EffectStartTag=EngineStart,EffectEndTag=EngineStop,bStayActive=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Three.FX_VEH_Tank_A_Wing_Dirt_T34',EffectSocket=FX_Master)
+    // // Damage
+    // VehicleEffects(TankVFX_DmgSmoke)=(EffectStartTag=DamageSmoke,EffectEndTag=NoDamageSmoke,bRestartRunning=false,EffectTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_damaged_burning_new',EffectSocket=attachments_engine)
+    // VehicleEffects(TankVFX_DmgInterior)=(EffectStartTag=DamageInterior,EffectEndTag=NoInternalSmoke,bRestartRunning=false,bInteriorEffect=true,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_Interior_Penetrate',EffectSocket=attachments_body)
+    // // Death
+    // VehicleEffects(TankVFX_DeathSmoke1)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke1)
+    // VehicleEffects(TankVFX_DeathSmoke2)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke2)
+    // VehicleEffects(TankVFX_DeathSmoke3)=(EffectStartTag=Destroyed,EffectEndTag=NoDeathSmoke,EffectTemplate=ParticleSystem'FX_VEH_Tank_Two.FX_VEH_Tank_A_SmallSmoke',EffectSocket=FX_Smoke3)
 
     BigExplosionSocket=FX_Fire
-    ExplosionTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_destroyed'
+    //? ExplosionTemplate=ParticleSystem'FX_Vehicles_Two.SDKfZ.FX_SdKfz_destroyed'
 
     ExplosionDamageType=class'RODmgType_VehicleExplosion'
     ExplosionDamage=100.0
@@ -823,6 +826,6 @@ DefaultProperties
 
     bDestroyedTracksCauseTurn=false
 
-    RanOverDamageType=WFDmgType_RunOverJeep
+    //? RanOverDamageType=WFDmgType_RunOverJeep
     TransportType=ROTT_Halftrack
 }

@@ -775,13 +775,13 @@ simulated function HandleProxySeatTransition(int NewSeatIndex, int OldSeatIndex)
     local bool bAttachProxy;
     local float AnimTimer;
     local name TransitionAnim, TimerName;
-    local VehicleCrewProxy VCP;
+    local DRVehicleCrewProxy VCP;
     local bool bTransitionWithoutProxy;
     local bool bUseExteriorAnim;
 
     super.HandleProxySeatTransition(NewSeatIndex, OldSeatIndex);
 
-    VCP = SeatProxies[GetSeatProxyIndexForSeatIndex(NewSeatIndex)].ProxyMeshActor;
+    VCP = DRVehicleCrewProxy(SeatProxies[GetSeatProxyIndexForSeatIndex(NewSeatIndex)].ProxyMeshActor);
 
     bUseExteriorAnim = IsSeatPositionOutsideTank(OldSeatIndex);
 
@@ -1326,7 +1326,7 @@ DefaultProperties
     Begin Object Name=CollisionCylinder
         CollisionHeight=60.0
         CollisionRadius=260.0
-        Translation=(X=0.0,Y=0.0,Z=52.0)
+        Translation=(X=0.0,Y=0.0,Z=0.0)
     End Object
     CylinderComponent=CollisionCylinder
 
@@ -1655,7 +1655,6 @@ DefaultProperties
         MuzzleFlashLightClass=(class'ROGrenadeExplosionLight', class'ROVehicleMGMuzzleFlashLight'),
         SeatRotation=(Pitch=0,Yaw=16384,Roll=0),
         VehicleBloodMICParameterName=Gore01,
-        // PositionDownAnim=Com_closeTOgunner,
         // SeatIconPos=(X=0.33,Y=0.35),
         // WeaponEffects=((SocketName=TurretFireSocket,Offset=(X=-125),Scale3D=(X=14.0,Y=10.0,Z=10.0))),
         SeatPositions=
@@ -1987,7 +1986,7 @@ DefaultProperties
     // Right Rear Wheel
     Begin Object Name=RRWheel
         BoneName="R_Wheel_06"
-        BoneOffset=(X=0,Y=0,Z=0)
+        BoneOffset=(X=0,Y=0,Z=-5)
         WheelRadius=22
     End Object
     Wheels(0)=RRWheel
@@ -1995,7 +1994,7 @@ DefaultProperties
     // Right middle wheel
     Begin Object Name=RMWheel
         BoneName="R_Wheel_04"
-        BoneOffset=(X=0,Y=0,Z=0)
+        BoneOffset=(X=0,Y=0,Z=-10)
         WheelRadius=13
     End Object
     Wheels(1)=RMWheel
@@ -2003,7 +2002,7 @@ DefaultProperties
     // Right Front Wheel
     Begin Object Name=RFWheel
         BoneName="R_Wheel_02"
-        BoneOffset=(X=0,Y=0,Z=0)
+        BoneOffset=(X=0,Y=0,Z=-10)
         WheelRadius=13
     End Object
     Wheels(2)=RFWheel
@@ -2011,7 +2010,7 @@ DefaultProperties
     // Left Rear Wheel
     Begin Object Name=LRWheel
         BoneName="L_Wheel_06"
-        BoneOffset=(X=0,Y=0,Z=0)
+        BoneOffset=(X=0,Y=0,Z=-5)
         WheelRadius=22
     End Object
     Wheels(3)=LRWheel
@@ -2019,7 +2018,7 @@ DefaultProperties
     // Left Middle Wheel
     Begin Object Name=LMWheel
         BoneName="L_Wheel_04"
-        BoneOffset=(X=0,Y=0,Z=0)
+        BoneOffset=(X=0,Y=0,Z=-10)
         WheelRadius=13
     End Object
     Wheels(4)=LMWheel
@@ -2027,7 +2026,7 @@ DefaultProperties
     // Left Front Wheel
     Begin Object Name=LFWheel
         BoneName="L_Wheel_02"
-        BoneOffset=(X=0,Y=0,Z=0)
+        BoneOffset=(X=0,Y=0,Z=-10)
         WheelRadius=13
     End Object
     Wheels(5)=LFWheel

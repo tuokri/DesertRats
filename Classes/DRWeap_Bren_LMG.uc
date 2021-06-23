@@ -15,10 +15,10 @@ simulated event PostInitAnimTree(SkeletalMeshComponent SkelComp)
     }
 }
 
+/*
 simulated function PlayWeaponAnimation(name Sequence, float fDesiredDuration,
     optional bool bLoop, optional SkeletalMeshComponent SkelMesh)
 {
-    // TODO: check that RecoilSkelContorl is not null?
     if (bUsingSights && (Sequence == 'Bren_shoulder_shoot' || Sequence == 'Bren_shoulder_shootLAST'))
     {
         PlayRecoil();
@@ -28,6 +28,7 @@ simulated function PlayWeaponAnimation(name Sequence, float fDesiredDuration,
         super.PlayWeaponAnimation(Sequence, fDesiredDuration, bLoop, SkelMesh);
     }
 }
+*/
 
 simulated function PlayRecoil()
 {
@@ -38,6 +39,7 @@ simulated function PlayRecoil()
     }
 }
 
+/*
 simulated function PlayAnimation(name Sequence, optional float fDesiredDuration,
     optional bool bLoop, optional float TweenTime = 0.1)
 {
@@ -52,6 +54,7 @@ simulated function PlayAnimation(name Sequence, optional float fDesiredDuration,
 
     super.PlayAnimation(Sequence, fDesiredDuration, bLoop, TweenTime);
 }
+*/
 
 // Temp fix for left hand yaw.
 // TODO: remove when (if) we have proper anims.
@@ -135,9 +138,6 @@ simulated function SightIndexUpdated()
     }
     IronSightPosition.Z=SightRanges[SightRangeIndex].SightPositionOffset;
     PlayerViewOffset.Z=SightRanges[SightRangeIndex].SightPositionOffset;
-
-    // TODO: This is a temp message til we get the hud range stuff in
-    //Instigator.ClientMessage("Sight Range Set To: "$SightRanges[SightRangeIndex].SightRange$" Meters");
 }
 
 simulated exec function SwitchFireMode()
@@ -197,10 +197,15 @@ DefaultProperties
     BurstWaitTime=0.9
 
     // Recoil
-    maxRecoilPitch=65//130
-    minRecoilPitch=55//110
-    maxRecoilYaw=35//50
-    minRecoilYaw=-25//-40
+    maxRecoilPitch=160//130//65//130
+    minRecoilPitch=140//110//55//110
+    maxRecoilYaw=100//70//35//50
+    minRecoilYaw=-75//-50//-25//-40
+    maxDeployedRecoilPitch=65//130
+    minDeployedRecoilPitch=55//110
+    maxDeployedRecoilYaw=35//50
+    minDeployedRecoilYaw=-25//-40
+    minDeployedRecoilYawAbsolute=25
     RecoilRate=0.07
     RecoilMaxYawLimit=1500
     RecoilMinYawLimit=64035
@@ -254,17 +259,17 @@ DefaultProperties
     //Hip fire
     WeaponFireAnim(0)=Bren_shoulder_shoot
     WeaponFireAnim(1)=Bren_shoulder_shoot
-    WeaponFireLastAnim=Bren_shoulder_shootLAST//MP40_shootLAST
+    WeaponFireLastAnim=Bren_shoulder_shootLAST
     //Shouldered fire
     WeaponFireShoulderedAnim(0)=Bren_shoulder_shoot
     WeaponFireShoulderedAnim(1)=Bren_shoulder_shoot
-    WeaponFireLastShoulderedAnim=Bren_shoulder_shootLAST//MP40_shootLAST
+    WeaponFireLastShoulderedAnim=Bren_shoulder_shootLAST
     // Fire using iron sights
     // NOTE: actually done with recoil skel control.
     WeaponFireSightedAnim(0)=Bren_shoulder_shoot
     WeaponFireSightedAnim(1)=Bren_shoulder_shoot
     WeaponFireLastSightedAnim=Bren_shoulder_shootLAST
-    // WeaponFireLastSightedAnim=Bren_deploy_shootLAST//MP40_iron_shootLAST
+    // WeaponFireLastSightedAnim=Bren_deploy_shootLAST
     // Bipod deployed fire
     WeaponFireDeployedAnim(0)=Bren_deploy_shoot
     WeaponFireDeployedAnim(1)=Bren_deploy_shoot
@@ -425,8 +430,8 @@ DefaultProperties
     ROBarrelClass=class'ROMGBarrelM1919'
     bTrackBarrelHeat=true
     BarrelHeatBone=Barrel
-    BarrelChangeAnim=none
-    InitialBarrels=1
+    BarrelChangeAnim=Bren_deploy_changebarrel
+    InitialBarrels=2
 
     /*
     ROBarrelClass=class'WFMGBarrelBren'

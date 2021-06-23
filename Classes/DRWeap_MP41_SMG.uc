@@ -154,8 +154,7 @@ DefaultProperties
 
     SwayScale=0.8//1.1
 
-    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Single_3P',
-        FirstPersonCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Fire_Single')
+    WeaponFireSnd(ALTERNATE_FIREMODE)=(DefaultCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Single_3P',FirstPersonCue=AkEvent'WW_WEP_MP40.Play_WEP_MP40_Fire_Single')
 
     //? RetractedStockFrontCollisionBufferDist=7.5
 

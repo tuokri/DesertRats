@@ -3,7 +3,7 @@ class DRVProjectile_PanzerIIIJ_HE extends DRTankCannonProjectile;
 DefaultProperties
 {
 
-		//Pzgr. HE-T
+        //Pzgr. HE-T
     BallisticCoefficient=1.4
     Speed=34250 //685 M/S
     MaxSpeed=34250

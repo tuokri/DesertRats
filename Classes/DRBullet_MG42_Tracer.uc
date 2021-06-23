@@ -8,8 +8,9 @@ DefaultProperties
     Speed=43000         //860m/s    //MuzzleVel(m/s) * 50
     MaxSpeed=43000      //860m/s    //MuzzleVel(m/s) * 50
 
-    ProjFlightTemplate=ParticleSystem'RP_WEP_Gun_Three.Tracers.FX_Wep_Gun_A_MGTracer_Axis'
-    ProjExplosionTemplate=ParticleSystem'RP_WEP_Gun_Three.Tracers.FX_Wep_Gun_A_MGTracer_Deflect_Axis'
+    // TODO:
+    //? ProjFlightTemplate=ParticleSystem'DR_WEP_FX.Tracers.FX_Wep_Gun_A_MGTracer_Axis'
+    //? ProjExplosionTemplate=ParticleSystem'DR_WEP_FX.Tracers.FX_Wep_Gun_A_MGTracer_Deflect_Axis'
 
     TracerLightClass=class'ROGame.ROBulletTracerLightRed'
 }

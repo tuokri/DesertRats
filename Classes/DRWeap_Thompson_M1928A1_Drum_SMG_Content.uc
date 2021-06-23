@@ -35,6 +35,9 @@ DefaultProperties
         bSyncActorLocationToRootRigidBody=true
     End Object
 
+    PlayerViewOffset=(X=2.5,Y=4.5,Z=-2.25)//(X=1,Y=4,Z=-2)
+    IronSightPosition=(X=-2,Y=0,Z=0)
+
     //Equip and putdown
     WeaponPutDownAnim=M1928A1_putaway
     WeaponEquipAnim=M1928A1_pullout
