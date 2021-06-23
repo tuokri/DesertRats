@@ -54,7 +54,6 @@ function float GetAdjustedAudioClassVolume(EAudioClass AudioClass)
     }
 }
 
-// TODO: Refactor? Is switch-case really good for this?
 function UpdateVolume(float NewVolume, EAudioClass AudioClass)
 {
     local DRAudioComponent DRAC;
@@ -65,7 +64,7 @@ function UpdateVolume(float NewVolume, EAudioClass AudioClass)
             MasterVolume = NewVolume;
             foreach MasterComponents(DRAC)
             {
-                DRAC.VolumeMultiplier = MasterVolume;
+                DRAC.AdjustVolume(0.1, MasterVolume);
                 `log("Adjusting " $ DRAC $ " MasterVolume = " $ MasterVolume);
             }
             // Need to also update other classes if master is changed.
@@ -76,7 +75,7 @@ function UpdateVolume(float NewVolume, EAudioClass AudioClass)
             SFXVolume = NewVolume;
             foreach SFXComponents(DRAC)
             {
-                DRAC.VolumeMultiplier = GetAdjustedAudioClassVolume(AudioClass);
+                DRAC.AdjustVolume(0.1, GetAdjustedAudioClassVolume(AudioClass));
                 `log("Adjusting " $ DRAC $ " SFXVolume = " $ SFXVolume);
             }
             break;
@@ -84,7 +83,7 @@ function UpdateVolume(float NewVolume, EAudioClass AudioClass)
             MusicVolume = NewVolume;
             foreach MusicComponents(DRAC)
             {
-                DRAC.VolumeMultiplier = GetAdjustedAudioClassVolume(AudioClass);
+                DRAC.AdjustVolume(0.1, GetAdjustedAudioClassVolume(AudioClass));
                 `log("Adjusting " $ DRAC $ " MusicVolume = " $ MusicVolume);
             }
             break;
@@ -96,14 +95,16 @@ function UpdateVolume(float NewVolume, EAudioClass AudioClass)
     SaveConfig();
 }
 
-function RegisterAudioComponent(DRAudioComponent DRAC)
+// TODO: Store original volume modifier of component / cue?
+function RegisterAudioComponent(const out DRAudioComponent DRAC)
 {
-    local EAudioClass AudioClass;
+    `log(DRAC $ " original AC VolumeMultiplier = " $ DRAC.VolumeMultiplier);
+    `log(DRAC.SoundCue $ " original SC VolumeMultiplier = " $ DRAC.SoundCue.VolumeMultiplier);
+    DRAC.AdjustVolume(0.1, GetAdjustedAudioClassVolume(DRAC.AudioClass));
+    `log(DRAC $ " adjusted AC VolumeMultiplier = " $ DRAC.VolumeMultiplier);
+    `log(DRAC.SoundCue $ " original SC VolumeMultiplier = " $ DRAC.SoundCue.VolumeMultiplier);
 
-    AudioClass = DRAC.AudioClass;
-    DRAC.VolumeMultiplier = GetAdjustedAudioClassVolume(AudioClass);
-
-    switch (AudioClass)
+    switch (DRAC.AudioClass)
     {
         case EAC_MASTER:
             MasterComponents.AddItem(DRAC);
@@ -115,7 +116,7 @@ function RegisterAudioComponent(DRAudioComponent DRAC)
             MusicComponents.AddItem(DRAC);
             break;
         default:
-            `warn("RegisterAudioComponent: invalid audio class: " $ AudioClass);
+            `warn("RegisterAudioComponent: invalid audio class: " $ DRAC.AudioClass);
             break;
     }
 }
