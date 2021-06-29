@@ -135,8 +135,9 @@ DefaultProperties
     HUDBackArmorTexture=Texture2D'DR_VH_DAK_SdKfz.UITextures.ui_hud_sdkfz_RearArmor'
     HUDLeftArmorTexture=Texture2D'DR_VH_DAK_SdKfz.UITextures.ui_hud_sdkfz_LeftArmor'
     HUDRightArmorTexture=Texture2D'DR_VH_DAK_SdKfz.UITextures.ui_hud_sdkfz_RightArmor'
-    HUDRightSteerWheelTexture=Texture2D'DR_UI.Vehicle.ui_hud_transport_SteerWheel'
-    HUDLeftSteerWheelTexture=Texture2D'DR_UI.Vehicle.ui_hud_transport_SteerWheel'
+    // TODO: Check these wheel textures:
+    HUDRightSteerWheelTexture=Texture2D'DR_VH_DAK_SdKfz.UITextures.ui_hud_sdkfz_RightSteerWheel'
+    HUDLeftSteerWheelTexture=Texture2D'DR_VH_DAK_SdKfz.UITextures.ui_hud_sdkfz_LeftSteerWheel'
 
     //? RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
 

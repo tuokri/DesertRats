@@ -422,9 +422,9 @@ DefaultProperties
         Brightness=1.0
         LightingChannels=(Unnamed_1=TRUE,BSP=FALSE,Static=FALSE,Dynamic=FALSE,CompositeDynamic=FALSE)
     End Object
+
     VehicleLights(0)={(AttachmentName=InteriorLightComponent0,Component=InteriorLight_0,bAttachToSocket=true,AttachmentTargetName=interior_light_0)}
     VehicleLights(1)={(AttachmentName=InteriorLightComponent1,Component=InteriorLight_1,bAttachToSocket=true,AttachmentTargetName=interior_light_1)}
-
 
     Seats(0)={( CameraTag=none,
                 CameraOffset=-420,
@@ -841,7 +841,7 @@ DefaultProperties
 
     TreadSpeedParameterName=Tank_Tread_Speed
     TrackSoundParamScale=0.000033
-    TreadSpeedScale=2.5
+    TreadSpeedScale=-2.5
 
     RPM3DGaugeMaxAngle=52793
     EngineIdleRPM=0 // Lowest marker on visible speedo is 300
