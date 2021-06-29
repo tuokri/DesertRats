@@ -58,7 +58,7 @@ var vector CurveCenterExitDive;
 
 replication
 {
-    if (bNetDirty && (Role == ROLE_Authority))
+    if (/*bNetDirty && */Role == ROLE_Authority)
         CurveCenterEnterDive, CurveCenterExitDive, RollAngleInURT, DiveAngleInURT,
         DivingState, AscensionAngleInURT, RollUnitsPerSecond, PitchUnitsPerSecondExit,
         PitchUnitsPerSecondEnter, bAccelerating, AccelPerSecondEnter,
@@ -183,7 +183,7 @@ simulated function Tick(float DeltaTime)
 
     // DrawDebugCoordinateSystem(Location, Rotation, 5000);
 
-    if (Role == ROLE_Authority)
+    if (Role == ROLE_Authority || WorldInfo.NetMode == NM_Standalone)
     {
         switch (DivingState)
         {

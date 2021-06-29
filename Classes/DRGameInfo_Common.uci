@@ -1,3 +1,6 @@
+// 20 meters. Defined in ROGameInfo.
+`define BATTLECHATTER_PAWN_GROUP_RADIUS 1000
+
 static event class<GameInfo> SetGameType(string MapName, string Options, string Portal)
 {
     local string ThisMapPrefix;
@@ -33,3 +36,372 @@ function RestartPlayerCommon(Controller NewPlayer)
         DRPC.ClearLeftVehicleFlag();
     }
 }
+
+// --- BEGIN SOUNDCUE BACKPORT ---
+function HandleBattleChatterEvent(Pawn VoicePawn, int BattleChatterEventIndex, optional PlayerReplicationInfo VoicePRI)
+{
+    local Pawn APawn;
+    local int ModifierIndex, i, CmpResult;
+    local byte VOXMessageFrequencyPriority, CurrentVoiceFreqSetting;
+    local float TeamMorale, EventTime;
+
+    if ( `DEBUG_VOICECOMS )
+        `log("HandleBattleChatterEvent" @ VoicePawn @ BattleChatterEventIndex @ VoicePawn.PlayerReplicationInfo @ VoicePRI);
+
+    if ( VoicePawn == none || VoicePawn.GetTeamNum() >= 2 || (VoicePawn.Health <= 0 && (!VoicePawn.IsInState('SlowlyDying') || BattleChatterEventIndex != `BATTLECHATTER_SlowlyDying) && (BattleChatterEventIndex < `BATTLECHATTER_DyingFast || BattleChatterEventIndex > `BATTLECHATTER_Wounded) && BattleChatterEventIndex < `BATTLECHATTER_Burning) )
+    {
+        if ( `DEBUG_VOICECOMS )
+        {
+            if ( VoicePawn == none )
+                `log("HandleBattleChatterEvent no pawn");
+            else
+                `log("HandleBattleChatterEvent dead pawn" @ VoicePawn @ VoicePawn.GetTeamNum() @ VoicePawn.Health @ (!VoicePawn.IsInState('SlowlyDying') || BattleChatterEventIndex != `BATTLECHATTER_SlowlyDying) @ (BattleChatterEventIndex < `BATTLECHATTER_DyingFast || BattleChatterEventIndex > `BATTLECHATTER_Wounded));
+        }
+
+        return;
+    }
+
+    EventTime = WorldInfo.TimeSeconds;
+
+    if ( BattleChatterEventIndex != `BATTLECHATTER_DyingFast && (BattleChatterEventIndex < `BATTLECHATTER_EnemySpottedInfantry || BattleChatterEventIndex > `BATTLECHATTER_TankEnemySpottedHelicopter) )
+    {
+        // Add between a twentieth and a quarter second delay between the event and the voice replication
+        EventTime += 0.05 + FRand() * 0.2;
+    }
+
+    if( ROPlayerController(VoicePawn.Controller) == none ||
+        ROPlayerController(VoicePawn.Controller).VoiceMessageFrequency < 0 ||
+        ROPlayerController(VoicePawn.Controller).VoiceMessageFrequency > 255 )
+    {
+        if ( `DEBUG_VOICECOMS )
+        {
+            // CLBIT-4386 If we don't have an ROAIController, be silent. Previously logging this was causing some log spam. -Nate
+            if(ROAIController(VoicePawn.Controller) != none)
+                `log("!!! "@VoicePawn.Controller@" VoiceMessageFrequency is invalid! Setting to 'All'");
+        }
+
+        CurrentVoiceFreqSetting = 0;
+    }
+    else
+    {
+        CurrentVoiceFreqSetting = byte(ROPlayerController(VoicePawn.Controller).VoiceMessageFrequency);
+
+        if( CurrentVoiceFreqSetting < 0 ||
+            CurrentVoiceFreqSetting > 2 )
+        {
+            if ( `DEBUG_VOICECOMS )
+                `log("!!!"@VoicePawn.Controller@"VoiceMessageFrequency is invalid! Defaulting to 'All' as "@CurrentVoiceFreqSetting@" != 0, 1 or 2.");
+
+            CurrentVoiceFreqSetting = 0;
+        }
+    }
+
+    // We want to ensure our CurrentVoiceFreqSetting is either 1 (All), 2 (Critical) or 4 (Minimal).
+    if(CurrentVoiceFreqSetting == 2)
+        CurrentVoiceFreqSetting = 4;
+    else
+        CurrentVoiceFreqSetting += 1;
+
+    // Get the frequency priority of this battle chatter.
+    VOXMessageFrequencyPriority = class'ROVoicePack'.default.VoiceComs[BattleChatterEvents[BattleChatterEventIndex].VoiceComIndices[ModifierIndex]].VoiceMessageFrequencyPriority;
+
+    // Use a spiffy new variable to store the computed bit value because we can't do this in the control statement in UDK3 (yay).
+    CmpResult = byte(CurrentVoiceFreqSetting & VOXMessageFrequencyPriority);
+
+    // Check our VoiceComs message frequency to determine if/when we should play. This basically causes an early-out of our battle chatter sound doesn't meet our chatter settings.
+    switch(CurrentVoiceFreqSetting)
+    {
+        case 1: // All. Will always play regardless.
+            if(CmpResult == 0)
+            {
+                if ( `DEBUG_VOICECOMS )
+                    `log(":::"@VoicePawn@" NOT playing battle chatter. BattleChatter sound is not All and our VoiceMessageFrequency setting is set for All. This should be _rare_ and hopefully intentional.");
+                return;
+            }
+        break;
+        case 2: // Critial
+            if(CmpResult == 0)
+            {
+                // We're not a "Critical" battle chatter, bail.
+                if ( `DEBUG_VOICECOMS )
+                    `log(":::"@VoicePawn@" NOT playing battle chatter. BattleChatter sound is not Critical and our VoiceMessageFrequency is set for Critical.");
+                return;
+            }
+        break;
+        case 4: // Minimal (with Radius Check).
+            if(CmpResult > 0)
+            {
+                // Find any enemy team members nearby...
+                foreach WorldInfo.AllPawns(class'Pawn', APawn, VoicePawn.Location, `BATTLECHATTER_PAWN_GROUP_RADIUS)
+                {
+                    if (   APawn.Controller != none
+                        && APawn.Controller.bIsPlayer
+                        && APawn != VoicePawn
+                        && APawn.GetTeamNum() != VoicePawn.GetTeamNum() )
+                    {
+                        // If we found any within our radius, don't play this battle chatter and bail.
+                        if ( `DEBUG_VOICECOMS )
+                            `log("::: Found at least 1 enemy within 20m of "@VoicePawn.Controller.PlayerReplicationInfo.PlayerName@", not playing this Battlechatter.");
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                // This battechatter isn't marked as "miniaml".
+                if ( `DEBUG_VOICECOMS )
+                    `log(":::"@VoicePawn.Controller.PlayerReplicationInfo.PlayerName@" NOT playing battle chatter. BattleChatter sound is not Minimal and our VoiceMessageFrequency is set for Minimal.");
+                return;
+            }
+        break;
+        default:
+            // How'd we get there? Just warn and continue as we've made it past all the check logic at this point so it doesn't really matter now.
+            if ( `DEBUG_VOICECOMS )
+                `log("!!! Invalid CurrentVoiceFreqSetting value ("@VoicePawn.Controller.PlayerReplicationInfo.PlayerName$"."$CurrentVoiceFreqSetting@")! Proceeding as 'All'.");
+        break;
+    }
+
+    // If this Battle Chatter Event should only be used at a certain interval within a certain radius of another event, make sure we're not too close to a recent event
+    if ( BattleChatterEvents[BattleChatterEventIndex].bUseEventRadiusList )
+    {
+        if ( `DEBUG_VOICECOMS )
+            `log("HandleBattleChatterEvent - bUseEventRadiusList" @ VoicePawn @ BattleChatterEventIndex);
+
+        for ( i = 0; i < BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList.Length; i++ )
+        {
+            if ( WorldInfo.TimeSeconds > BattleChatterEvents[BattleChatterEventIndex].EventRadiusTimeoutList[i] )
+            {
+                BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList.Remove(i, 1);
+                BattleChatterEvents[BattleChatterEventIndex].EventRadiusTimeoutList.Remove(i, 1);
+
+                i--;
+                continue;
+            }
+
+            if ( VSizeSq(BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList[i] - VoicePawn.Location) < BattleChatterEvents[BattleChatterEventIndex].EventRadiusSq )
+            {
+                if ( `DEBUG_VOICECOMS )
+                    `log("HandleBattleChatterEvent found recent message nearby" @ VoicePawn.Location @ BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList[i] @ VSizeSq(BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList[i] - VoicePawn.Location) @ BattleChatterEvents[BattleChatterEventIndex].EventRadiusSq);
+
+                return;
+            }
+        }
+    }
+
+    // If this Battle Chatter Event only triggers when they're in a group, make sure they're near some friendlies
+    if ( BattleChatterEvents[BattleChatterEventIndex].bOnlyInGroup )
+    {
+        i = 0;
+
+        foreach WorldInfo.AllPawns(class'Pawn', APawn, VoicePawn.Location, `BATTLECHATTER_PAWN_GROUP_RADIUS)
+        {
+            if ( APawn.Controller != none && APawn.Controller.bIsPlayer && APawn != VoicePawn && APawn.GetTeamNum() == VoicePawn.GetTeamNum() &&
+                    ((ROTurret(APawn) == none || ROTurret(APawn).Driver != VoicePawn) && (ROTurret(VoicePawn) == none || ROTurret(VoicePawn).Driver != APawn)) )
+            {
+                if ( `DEBUG_VOICECOMS )
+                    `log("HandleBattleChatterEvent found team mate nearby" @ APawn @ VoicePawn);
+
+                i++;
+                break;
+            }
+        }
+
+        if ( i <= 0 )
+        {
+            if ( `DEBUG_VOICECOMS )
+                `log("HandleBattleChatterEvent failed to find team mate nearby");
+
+            return;
+        }
+    }
+
+    // Determine which Modifier to use: Commander/Hero; Suppressed; or High, Low, or Normal Morale
+    if( BattleChatterEvents[BattleChatterEventIndex].bIgnoreMorale )
+    {
+        ModifierIndex = 0;
+    }
+    else if ( BattleChatterEvents[BattleChatterEventIndex].VoiceComIndices[4] >= 0 && IsHeroOrCommander(VoicePawn) )
+    {
+        ModifierIndex = 4;
+    }
+    else if ( BattleChatterEvents[BattleChatterEventIndex].VoiceComIndices[3] >= 0 && ROPawn(VoicePawn) != none && ROPawn(VoicePawn).Suppression >= 50.0 )
+    {
+        ModifierIndex = 3;
+    }
+    else
+    {
+        if ( bCampaignGame && (BattleChatterEventIndex == `BATTLECHATTER_SpawnedAttacking || BattleChatterEventIndex == `BATTLECHATTER_SpawnedDefending || BattleChatterEventIndex == `BATTLECHATTER_SpawnedFireFight || BattleChatterEventIndex == `BATTLECHATTER_SpawnedNeutral) )
+        {
+            TeamMorale = 0.0;
+
+            for ( i = 0; i < `CAMPAIGN_REGIONS; i++ )
+            {
+                if ( RegionOwners[i] == VoicePawn.GetTeamNum() )
+                {
+                    TeamMorale += 1.0;
+                }
+            }
+
+            if ( TeamMorale > 6.0 )
+            {
+                // High Morale
+                ModifierIndex = 1;
+            }
+            else if ( TeamMorale < 4.0 )
+            {
+                // Low Morale
+                ModifierIndex = 2;
+            }
+            else
+            {
+                ModifierIndex = 0;
+            }
+        }
+        else
+        {
+            TeamMorale = ROTeamInfo(WorldInfo.GRI.Teams[VoicePawn.GetTeamNum()]).Morale;
+
+            if ( TeamMorale >= HIGH_MORALE )
+            {
+                ModifierIndex = 1;
+            }
+            else if ( TeamMorale <= LOW_MORALE )
+            {
+                ModifierIndex = 2;
+            }
+            else // Normal Morale
+            {
+                ModifierIndex = 0;
+            }
+        }
+    }
+
+    // If this Battle Chatter Event has random chance of occuring, see if we should randomly discard it
+    if ( FRand() > BattleChatterEvents[BattleChatterEventIndex].ChanceEventCausesChatter[ModifierIndex] )
+    {
+        if ( `DEBUG_VOICECOMS )
+            `log("HandleBattleChatterEvent failed random" @ BattleChatterEvents[BattleChatterEventIndex].ChanceEventCausesChatter[ModifierIndex]);
+
+        return;
+    }
+
+    AddDelayedBattleChatterEvent(EventTime, VoicePawn, BattleChatterEvents[BattleChatterEventIndex].VoiceComIndices[ModifierIndex], VoicePRI != none ? VoicePRI : (VoicePawn.PlayerReplicationInfo != none ? VoicePawn.PlayerReplicationInfo : (ROPawn(VoicePawn) != none ? ROPawn(VoicePawn).MyOldPRI : none)));
+
+    // Set the next time an event like this should be able to occur in this area
+    if ( BattleChatterEvents[BattleChatterEventIndex].bUseEventRadiusList )
+    {
+        i = BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList.Length;
+        BattleChatterEvents[BattleChatterEventIndex].EventRadiusLocationList[i] = VoicePawn.Location;
+        BattleChatterEvents[BattleChatterEventIndex].EventRadiusTimeoutList[i] = WorldInfo.TimeSeconds + BattleChatterEvents[BattleChatterEventIndex].MinIntervalBetweenEvents * (0.8 + FRand() * 0.4);
+    }
+}
+
+function AddDelayedBattleChatterEvent(float EventTime, Pawn VoicePawn, int VoiceComIndex, optional PlayerReplicationInfo VoicePRI)
+{
+    local int i;
+
+    // Keep the Delayed Battle Chatter Events sorted by which event should replicate first
+    for ( i = 0; i < DelayedBattleChatterEvents.Length; i++ )
+    {
+        if ( EventTime < DelayedBattleChatterEvents[i].EventTime )
+        {
+            break;
+        }
+    }
+
+    if ( `DEBUG_VOICECOMS )
+        `log("Adding to Delayed Battle Chatter Events" @ i @ VoiceComIndex);
+
+    // Add this Battle Chatter Event to the Delayed list
+    DelayedBattleChatterEvents.Insert(i, 1);
+    DelayedBattleChatterEvents[i].EventTime = EventTime;
+    DelayedBattleChatterEvents[i].VoicePawn = VoicePawn;
+    DelayedBattleChatterEvents[i].VoicePRI = VoicePRI != none ? VoicePRI : VoicePawn.PlayerReplicationInfo;
+    DelayedBattleChatterEvents[i].VoiceComIndex = VoiceComIndex;
+
+    // Make sure the Delayed Battle Chatter Event timer is going
+    if ( !IsTimerActive('BroadcastDelayedBattleChatterEvent') )
+    {
+        if ( `DEBUG_VOICECOMS )
+            `log("Setting timer for BroadcastDelayedBattleChatterEvent" @ FMax(DelayedBattleChatterEvents[0].EventTime - WorldInfo.TimeSeconds, 0.01));
+
+        SetTimer(FMax(DelayedBattleChatterEvents[0].EventTime - WorldInfo.TimeSeconds, 0.01), false, 'BroadcastDelayedBattleChatterEvent');
+    }
+}
+
+// TODO:
+function BroadcastDelayedBattleChatterEvent()
+{
+    local ROPlayerReplicationInfo PRI;
+    local DelayedBattleChatterEvent DBCEvent;
+
+    if ( `DEBUG_VOICECOMS )
+        `log("BroadcastDelayedBattleChatterEvent called" @ DelayedBattleChatterEvents[0].VoiceComIndex @ DelayedBattleChatterEvents[0].VoicePawn @ DelayedBattleChatterEvents[0].VoicePawn.Health);
+
+    DBCEvent = DelayedBattleChatterEvents[0];
+
+    // Broadcast the first Battle Chatter Event in the list and discard it.
+    if ( DBCEvent.VoicePawn != none && (DBCEvent.VoiceComIndex >= `VOICECOM_Burning || DBCEvent.VoicePawn.Health > 0 ||
+         (DBCEvent.VoicePawn.IsInState('SlowlyDying') || (DBCEvent.VoiceComIndex == `VOICECOM_SlowlyDying ||
+         DBCEvent.VoiceComIndex == `VOICECOM_SlowlyDying_Hero)) || (DBCEvent.VoiceComIndex >= `VOICECOM_DyingFast && DBCEvent.VoiceComIndex <= `VOICECOM_Wounded)) )
+    {
+        if ( class'ROVoicePack'.default.VoiceComs[DBCEvent.VoiceComIndex].Type == ROVCT_Vehicle || ROVehicleBase(DBCEvent.VoicePawn) != none )
+        {
+            if ( DBCEvent.VoicePRI != none )
+            {
+                PRI = ROPlayerReplicationInfo(DBCEvent.VoicePRI);
+            }
+            else
+            {
+                PRI = ROPlayerReplicationInfo(DBCEvent.VoicePawn.PlayerReplicationInfo);
+            }
+
+            if ( PRI != none )
+            {
+                if ( `DEBUG_VOICECOMS )
+                    `log("BroadcastDelayedBattleChatterEvent using Tank Battle Chatter path");
+
+                BroadcastLocalizedVoiceCom(DBCEvent.VoiceComIndex, DBCEvent.VoicePawn, , , DBCEvent.VoicePRI, true, PRI.GetTeamNum(), PRI.SquadIndex);
+            }
+        }
+        else
+        {
+            BroadcastLocalizedVoiceCom(DBCEvent.VoiceComIndex, DBCEvent.VoicePawn, , , DBCEvent.VoicePRI, true);
+        }
+    }
+
+    DelayedBattleChatterEvents.Remove(0, 1);
+
+    // If there are more Battle Chatter Events waiting, set this Timer function to run again for the next event.
+    if (DelayedBattleChatterEvents.Length > 0)
+    {
+        if (`DEBUG_VOICECOMS)
+        {
+            `log("BroadcastDelayedBattleChatterEvent setting timer to call again"
+                @ (DelayedBattleChatterEvents[0].EventTime - WorldInfo.TimeSeconds));
+        }
+
+        SetTimer(DelayedBattleChatterEvents[0].EventTime - WorldInfo.TimeSeconds, false, 'BroadcastDelayedBattleChatterEvent');
+    }
+}
+
+// TODO: instead of hijacking the above functions, use ReceiveLocalizedVoiceCom or PlayVoiceCom instead?
+// NOTE: class SoundCue extends AkBaseSoundObject
+// NOTE: --> we can play SoundCues with PlaySoundBase?!?! (no volume control though??)
+// NOTE: native function PlayVoice(AkEvent InSoundCue, vector SoundLocation);
+// NOTE: --> cannot play SoundCues with this though...
+// NOTE: PlaySoundBase can be used with a location...
+// TODO: Manage SoundCues with DRAudioManager and try to use PlaySoundBase with SoundCues.
+// TODO: Test if PlaySoundBase and PlayVoice have any difference in practice. (PlayVoice does IsAudible check...)
+// TODO: Do we need to do something like PlaySoundBase(MyDRAudioComponent.SoundCue...)?
+// TODO: Or before playing use client local manager to get volume multiplier for the Cue?
+// TODO: --> MyAudioManager.GetVolumeForClass(DRSoundCue DRSC) {return ClassToVolumeMap[DRSC.Class]}?
+// TODO: Check ClientHearSound... Can be spatialized, which is good!
+// TODO: We can use ClientHearSoundCustom with our DRAudioComponent.
+// TODO: --> This should work for sounds played on the server...
+// TODO: --> Might need to use the other above methods for sounds played by other clients.
+// TODO: Or use something like this: (bad idea though? too many unreliable RPCs?)
+// TODO: --> BroadCastStuff() {ServerPlaySound(...)}
+// TODO: --> ServerPlaySound() {ClientHearSound(...)}
+
+// --- END SOUNDCUE BACKPORT ---

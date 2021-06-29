@@ -1,4 +1,3 @@
-
 class DRGameInfoTerritories extends ROGameInfoTerritories
     config(Game_DesertRats_GameInfo);
 
@@ -583,6 +582,8 @@ function CaptureTimer()
     }
 }
 
+// TODO: Content classes indexing? We always get first element now. (It's legacy LevelIndex from RO2).
+// TODO: Store which content class is used in map info?
 function class<Pawn> GetPlayerClass(Controller C)
 {
     local ROPlayerReplicationInfo ROPRI;
@@ -590,18 +591,20 @@ function class<Pawn> GetPlayerClass(Controller C)
 
     ROPRI = ROPlayerReplicationInfo(C.PlayerReplicationInfo);
 
-    if ( ROPRI != none )
+    if (ROPRI != none)
     {
-        if ( ROPRI.RoleInfo != none )
+        if (ROPRI.RoleInfo != none)
         {
-            if ( ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX )
+            if (ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX)
             {
-                PawnClass = class<Pawn>(DynamicLoadObject("DesertRats.DRPawnAxis", class'Class'));
+                PawnClass = class<Pawn>(DynamicLoadObject(
+                    class'DRGameInfo'.default.NorthRoleContentClasses.LevelContentClasses[0], class'Class'));
                 return PawnClass;
             }
-            else if ( ROPRI.Team.TeamIndex == `ALLIES_TEAM_INDEX )
+            else if (ROPRI.Team.TeamIndex == `ALLIES_TEAM_INDEX)
             {
-                PawnClass = class<Pawn>(DynamicLoadObject("DesertRats.DRPawnAllies", class'Class'));
+                PawnClass = class<Pawn>(DynamicLoadObject(
+                    class'DRGameInfo'.default.SouthRoleContentClasses.LevelContentClasses[0], class'Class'));
                 return PawnClass;
             }
             else
@@ -1554,12 +1557,11 @@ function NavigationPoint FindPlayerStartWithOverride(Controller Player, int Spaw
     }
 }
 
-
-defaultproperties
+DefaultProperties
 {
     `DRGICommonDP
 
-    bDisableCharCustMenu=true
+    bDisableCharCustMenu=False
 
     SquadSpawnMethod[0]=ROSSM_SquadLeader
     SquadSpawnMethod[1]=ROSSM_SquadLeader
