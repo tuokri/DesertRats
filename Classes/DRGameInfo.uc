@@ -5,6 +5,8 @@ class DRGameInfo extends ROGameInfo
 var localized string AxisBotNames[32];
 var localized string AlliesBotNames[32];
 
+`include(DesertRats\Classes\DRGameInfo_Common.uci)
+
 DefaultProperties
 {
     MenuMusicTrack=None
