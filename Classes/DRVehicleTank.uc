@@ -315,3 +315,8 @@ simulated event Tick(float DeltaTime)
         $ Seats[GetGunnerSeatIndex()].TurretControllers[1].DeltaRotation,,'DRDEV');
 }
 */
+
+simulated function bool CanEnterVehicle(Pawn P)
+{
+    return !bDeadVehicle && super.CanEnterVehicle(P);
+}

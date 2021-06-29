@@ -105,3 +105,8 @@ simulated function SpawnOrReplaceSeatProxy(int SeatIndex, ROPawn ROP, optional b
         }
     }
 }
+
+simulated function bool CanEnterVehicle(Pawn P)
+{
+    return !bDeadVehicle && super.CanEnterVehicle(P);
+}
