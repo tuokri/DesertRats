@@ -1,4 +1,4 @@
-class DRVWeap_UC_Bren_HullMG extends ROVWeap_Transport_HullMG
+class DRVWeap_UC_Bren_HullMG extends DRVWeap_Transport_HullMG
     abstract
     HideDropDown;
 
