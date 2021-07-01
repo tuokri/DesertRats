@@ -65,19 +65,16 @@ AlliesBotNames[30]="Bartlett"
 AlliesBotNames[31]="Welsh"
 
 
-
-
 [DRMapInfo]
-NorthernArmyNames[0]="AFRIKA CORPS"
+NorthernArmyNames[0]="Afrika Korps"
 NorthernArmyShortNames[0]="DAK"
-SouthernArmyNames[0]="7TH ARMOURED"
+SouthernArmyNames[0]="Eighth Army"
 SouthernArmyShortNames[0]="UK"
+
 
 [DRUISceneTeamSelect]
 TeamDescriptions[0]="The Deutsches Afrikakorps was the German expeditionary force in Libya and Tunisia during the North African Campaign of World War II."
-TeamDescriptions[1]="The 7th Armoured Division was an armoured division of the British Army whose exploits in the Western Desert Campaign gained it the Desert Rats nickname."
-
-
+TeamDescriptions[1]="The Eighth Army was a field army formation of the British Army during the Second World War, fighting in the North African and Italian campaigns."
 
 
 [DRRoleInfo]
@@ -124,8 +121,6 @@ MyName="COMMANDER"
 
 [DRRoleInfoAlliesCommander]
 MyName="COMMANDER"
-
-
 
 
 [DRWeap_Webley_Revolver]
