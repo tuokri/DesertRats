@@ -360,28 +360,6 @@ function ShiftTransferCase(ETransferCaseRange Range)
     }
 }
 
-function bool DriverLeave(bool bForceLeave)
-{
-    local bool bLeaving;
-    local ROPawn CachedDriver;
-    local DRPlayerController DRPC;
-
-    CachedDriver = ROPawn(Driver);
-    bLeaving = Super.DriverLeave(bForceLeave);
-    if (bLeaving && CachedDriver != None)
-    {
-        CachedDriver.Velocity = Velocity;
-        DRPC = DRPlayerController(CachedDriver.Controller);
-        if (DRPC != None)
-        {
-            DRPC.SetLeftVehicleFlag();
-        }
-        // `dr("VVel=" $ Velocity $ ", PVel=" $ CachedDriver.Velocity);
-    }
-
-    return bLeaving;
-}
-
 // TODO: We'll want these in the future.
 function SetPendingDestroyIfEmpty(float WaitToDestroyTime);
 function DestroyIfEmpty();

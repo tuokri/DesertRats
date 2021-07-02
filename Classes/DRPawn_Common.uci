@@ -1,3 +1,17 @@
+var private bool bLeftVehicleRecently;
+
+function ClearLeftVehicleFlag()
+{
+    bLeftVehicleRecently = False;
+    ClearTimer('ClearLeftVehicleFlag');
+}
+
+function SetLeftVehicleFlag()
+{
+    bLeftVehicleRecently = True;
+    SetTimer(3, False, 'ClearLeftVehicleFlag');
+}
+
 simulated function SetPawnElementsByConfig(bool bViaReplication,
     optional ROPlayerReplicationInfo OverrideROPRI)
 {
@@ -201,7 +215,7 @@ function TakeFallingDamage()
             MakeNoise(1.0);
             if (Velocity.Z < Threshold2 || SpeedXY > Abs(Threshold2))
             {
-                if (DRPlayerController(Controller).bLeftVehicleRecently)
+                if (bLeftVehicleRecently)
                 {
                     EffectiveSpeed = FMax(Velocity.Z * -1, SpeedXY);
                 }

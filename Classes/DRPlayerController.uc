@@ -5,8 +5,6 @@ var bool RoundEnd;
 var bool MatchEnd;
 var bool Ducking;
 
-var bool bLeftVehicleRecently;
-
 var MusicTrackStruct PendingSong;
 
 var AudioComponent StingerComp;
@@ -1266,18 +1264,6 @@ reliable protected server function ServerLeanLeft(bool leanstate)
     }
 }
 
-function ClearLeftVehicleFlag()
-{
-    bLeftVehicleRecently = False;
-    ClearTimer('ClearLeftVehicleFlag');
-}
-
-function SetLeftVehicleFlag()
-{
-    bLeftVehicleRecently = True;
-    SetTimer(3, False, 'ClearLeftVehicleFlag');
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1480,9 +1466,9 @@ exec function ForceStukaStrike(optional bool bAircraftPOV = False,
     DoTestStukaStrike(bAircraftPOV, Altitude, PayloadDropHeight, AngleOfDive);
 }
 
-exec function ForceStrafingRun(int PitchRate, int Altitude, int Distance)
+exec function ForceStrafingRun(int PitchRate, int Altitude, int DistanceToTarget)
 {
-    ServerForceStrafingRun(PitchRate, Altitude, Distance);
+    ServerForceStrafingRun(PitchRate, Altitude, DistanceToTarget);
 }
 
 reliable private server function ServerForceStrafingRun(int PitchRate, int Altitude, int Distance)

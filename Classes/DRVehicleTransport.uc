@@ -110,3 +110,30 @@ simulated function bool CanEnterVehicle(Pawn P)
 {
     return !bDeadVehicle && super.CanEnterVehicle(P);
 }
+
+function bool DriverLeave(bool bForceLeave)
+{
+    local bool bLeaving;
+    local ROPawn CachedDriver;
+
+    CachedDriver = ROPawn(Driver);
+    bLeaving = Super.DriverLeave(bForceLeave);
+
+    if (bLeaving && CachedDriver != None)
+    {
+        // Preserve momentum.
+        CachedDriver.Velocity = Velocity;
+
+        // TODO: Stupid casting, maybe we should have a common base pawn class after all...
+        if (DRPawnAxis(CachedDriver) != None)
+        {
+            DRPawnAxis(CachedDriver).SetLeftVehicleFlag();
+        }
+        else if (DRPawnAllies(CachedDriver) != None)
+        {
+            DRPawnAllies(CachedDriver).SetLeftVehicleFlag();
+        }
+    }
+
+    return bLeaving;
+}
