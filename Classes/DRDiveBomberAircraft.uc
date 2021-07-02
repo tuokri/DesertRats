@@ -68,6 +68,7 @@ replication
 
 // TODO: Make this a macro or somethinge reusable.
 // TODO: Make this run on server and tell clients to add this to their list.
+// TODO: Not needed to do like explained above. These actors exits client side too.
 simulated function AudioInit()
 {
     local DRAudioComponent DRAC;
@@ -88,6 +89,7 @@ simulated function AudioInit()
     }
 }
 
+// NOTE: Shit because actor is null on client side with this method for some reason.
 reliable client function ClientRegisterAudioComponents()
 {
     local DRAudioComponent DRAC;
@@ -105,6 +107,7 @@ reliable client function ClientRegisterAudioComponents()
     }
 }
 
+// NOTE: SHIT.
 function AudioInit2()
 {
     if (Role == ROLE_Authority || WorldInfo.NetMode == NM_StandAlone)
