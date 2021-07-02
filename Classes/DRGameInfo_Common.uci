@@ -26,15 +26,43 @@ static event class<GameInfo> SetGameType(string MapName, string Options, string 
     return super.SetGameType(MapName, Options, Portal);
 }
 
-function RestartPlayerCommon(Controller NewPlayer)
+// TODO: Content classes indexing? We always get first element now. (It's legacy LevelIndex from RO2).
+// TODO: Store which content class is used in map info?
+function class<Pawn> GetPlayerClass(Controller C)
 {
-    local DRPlayerController DRPC;
+    local ROPlayerReplicationInfo ROPRI;
+    local class<Pawn> PawnClass;
 
-    DRPC = DRPlayerController(NewPlayer);
-    if (DRPC != None)
+    ROPRI = ROPlayerReplicationInfo(C.PlayerReplicationInfo);
+
+    if (ROPRI != none)
     {
-        DRPC.ClearLeftVehicleFlag();
+        if (ROPRI.RoleInfo != none)
+        {
+            if (ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX)
+            {
+                PawnClass = class<Pawn>(DynamicLoadObject(
+                    class'DRGameInfo'.default.NorthRoleContentClasses.LevelContentClasses[0], class'Class'));
+                return PawnClass;
+            }
+            else if (ROPRI.Team.TeamIndex == `ALLIES_TEAM_INDEX)
+            {
+                PawnClass = class<Pawn>(DynamicLoadObject(
+                    class'DRGameInfo'.default.SouthRoleContentClasses.LevelContentClasses[0], class'Class'));
+                return PawnClass;
+            }
+            else
+            {
+                `warn("Invalid team index:" @ ROPRI.Team.TeamIndex);
+            }
+        }
+        else
+        {
+            `warn("Player's Role Info is none");
+        }
     }
+
+    return DefaultPawnClass;
 }
 
 // --- BEGIN SOUNDCUE BACKPORT ---
