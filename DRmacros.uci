@@ -46,7 +46,10 @@
 
 
 // TODO:
-`define BALANCE_STATS_URL           "localhost"
+`define BALANCE_STATS_HOST          "localhost"
+`define BALANCE_STATS_PORT          10906
+`define TCP_BUFFER_SIZE             2048            // Ring buffer size for outbound data.
+`define MAX_RESOLVE_RETRIES         5               // Max number of URL resolve retries.
 
 
 // Pawn common macros.
@@ -61,9 +64,9 @@
     AIControllerClass=              class'DRAIController'               \n\
     HUDType=                        class'DRHUD'                        \n\
     TeamInfoClass=                  class'DRTeamInfo'                   \n\
+    PawnHandlerClass=               class'DRPawnHandler'                \n\
     // AIPawnClass=                 class'DRPawn'                       \n\
     // DefaultPawnClass=            class'DRPawn'                       \n\
-    // PawnHandlerClass=            class'DRPawnHandler'                \n\
     // PlayerReplicationInfoClass=  class'DRPlayerReplicationInfo'      \n\
 
 

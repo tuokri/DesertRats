@@ -3,6 +3,8 @@
 
 var config bool bBalanceStatsAnalyticsEnabled;
 
+var DRBufferedTcpLinkClient BalanceLoggingClient;
+
 struct ObjectiveInfo
 {
     var int ObjIndex;
@@ -25,15 +27,45 @@ struct BalanceStats
     var array<ObjectiveInfo> ObjInfos;
 };
 
-function SendBalanceStatsPackage(BalanceStats BStats)
+final function SendBalanceStatsPackage(const out BalanceStats BStats)
 {
     // Only for dedicated servers.
     if (Role == ROLE_Authority && WorldInfo.NetMode == NM_DedicatedServer)
     {
         if (bBalanceStatsAnalyticsEnabled)
         {
-            // TODO: Send over the wire.
+            ConnectBalanceClient();
+            BalanceLoggingClient.SendBufferedData(MakeBalanceStatsPackage(BStats));
         }
+    }
+}
+
+// TODO: define package structure.
+final function string MakeBalanceStatsPackage(const out BalanceStats BStats)
+{
+    return "";
+}
+
+function ConnectBalanceClient()
+{
+    if (BalanceLoggingClient == None)
+    {
+        BalanceLoggingClient = Spawn(class'DRBufferedTcpLinkClient');
+    }
+}
+
+// Stupid hack to avoid buffered TCP link client Open() from spamming logs if it fails.
+final function SetCancelOpenLinkTimer(float Time)
+{
+    SetTimer(Time, False, 'CancelOpenLink');
+}
+
+final function CancelOpenLink()
+{
+    if (BalanceLoggingClient != None && !BalanceLoggingClient.IsConnected())
+    {
+        `log("cancelling link connection attempt",, BalanceLoggingClient.name);
+        BalanceLoggingClient.Close();
     }
 }
 
