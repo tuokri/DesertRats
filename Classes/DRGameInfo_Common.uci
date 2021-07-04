@@ -1,6 +1,42 @@
 // 20 meters. Defined in ROGameInfo.
 `define BATTLECHATTER_PAWN_GROUP_RADIUS 1000
 
+var config bool bBalanceStatsAnalyticsEnabled;
+
+struct ObjectiveInfo
+{
+    var int ObjIndex;
+    var int ObjState;
+    var string ObjName;
+};
+
+struct BalanceStats
+{
+    var string MapName;
+    var string WinningTeamName;
+    var int MaxPlayers;
+    var int NumPlayers;
+    var int TimeRemainingSeconds;
+    var int AxisReinforcements;
+    var int AlliesReinforcements;
+    var bool bReverseRolesAndSpawns;
+    var int AxisTeamScore;
+    var int AlliesTeamScore;
+    var array<ObjectiveInfo> ObjInfos;
+};
+
+function SendBalanceStatsPackage(BalanceStats BStats)
+{
+    // Only for dedicated servers.
+    if (Role == ROLE_Authority && WorldInfo.NetMode == NM_DedicatedServer)
+    {
+        if (bBalanceStatsAnalyticsEnabled)
+        {
+            // TODO: Send over the wire.
+        }
+    }
+}
+
 static event class<GameInfo> SetGameType(string MapName, string Options, string Portal)
 {
     local string ThisMapPrefix;
@@ -12,11 +48,11 @@ static event class<GameInfo> SetGameType(string MapName, string Options, string 
     {
         return class'DRGameInfoTerritories';
     }
-    /*
     else if (ThisMapPrefix ~= "DRSU")
     {
         return class'DRGameInfoSupremacy';
     }
+    /*
     else if (ThisMapPrefix ~= "DRSK")
     {
         return class'DRGameInfoSkirmish';

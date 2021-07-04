@@ -113,6 +113,87 @@ function ScoreMGResupply(Controller Dropper, Controller Gunner)
     }
 }
 
+// Ends the current round and starts the next one.
+function RoundWon(int WinningTeam, byte WinCondition )
+{
+    local int i;
+    local int NumOfPlayers;
+    local string MapName;
+    local string WinningTeamName;
+    local ObjectiveInfo ObjInfo;
+    local BalanceStats BStats;
+
+    ClearTimer('DelayedCheckReinforcementLockdown');
+
+    if (bDebugMorale)
+    {
+        `log("RoundWon()");
+    }
+
+    SetMorale(255, 255);
+
+    MapName = string(WorldInfo.GetPackageName());
+    WinningTeamName = (WinningTeam == `AXIS_TEAM_INDEX ? "Axis" : "Allies");
+    NumOfPlayers = GetNumPlayers();
+
+    `log("BALANCE STATS:" @ MapName @ "|" @ MaxPlayers @ " max players |" @ NumOfPlayers
+        @ "players playing" @ "Teams Swapped=" @ bReverseRolesAndSpawns,,'DevBalanceStats');
+    `log("BALANCE STATS: WinningTeam=" $ WinningTeamName @ "Teams Swapped="
+        @ bReverseRolesAndSpawns,, 'DevBalanceStats');
+    `log("BALANCE STATS: TimeRemaining=" $ GameReplicationInfo.RemainingTime $ " seconds which is "
+        $ (GameReplicationInfo.RemainingTime / 60.0) $ " minutes" @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');
+    `log("BALANCE STATS: AxisReinforcements=" $ AxisTeam.ReinforcementsRemaining @ "AlliesReinforcements="
+        $ AlliesTeam.ReinforcementsRemaining @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');
+
+    BStats.MapName = MapName;
+    BStats.WinningTeamName = WinningTeamName;
+    BStats.MaxPlayers = MaxPlayers;
+    BStats.NumPlayers = NumOfPlayers;
+    BStats.TimeRemainingSeconds = GameReplicationInfo.RemainingTime;
+    BStats.AxisReinforcements = AxisTeam.ReinforcementsRemaining;
+    BStats.AlliesReinforcements = AlliesTeam.ReinforcementsRemaining;
+    BStats.bReverseRolesAndSpawns = bReverseRolesAndSpawns;
+
+    for (i = 0; i < Objectives.Length; i++)
+    {
+        ObjInfo.ObjIndex = Objectives[i].ObjIndex;
+        ObjInfo.ObjState = Objectives[i].ObjState;
+        ObjInfo.ObjName = Objectives[i].ObjName;
+
+        BStats.ObjInfos.AddItem(ObjInfo);
+
+        if (Objectives[i] != none && Objectives[i].bActive)
+        {
+            `log("BALANCE STATS: ActiveObjectives " $ i $ " = " $ Objectives[i].ObjName
+                @ "Status=" $ (Objectives[i].ObjState == `AXIS_TEAM_INDEX ? "Axis" : (
+                    Objectives[i].ObjState == `ALLIES_TEAM_INDEX ? "Allies" : "Neutral")),, 'DevBalanceStats');
+        }
+    }
+
+    /*
+    // Of course this class is territories, but this is to prevent subclasses logging stats against this game type
+    // This must be called BEFORE the super class, or it will miss the push to the TW servers!
+    if( Class.static.GetGameType() == ROGT_Territory )
+    {
+        AnalyticsLog("round_won_te", MostRecentObjIdxCaptured[`AXIS_TEAM_INDEX], MostRecentObjIdxCaptured[`ALLIES_TEAM_INDEX]);
+    }
+    */
+
+    super.RoundWon(WinningTeam, WinCondition);
+
+    `log("BALANCE STATS: AxisTeamScore=" $ AxisTeam.Score @ "AlliesTeamScore=" $ AlliesTeam.Score,, 'DevBalanceStats');
+
+    BStats.AxisTeamScore = AxisTeam.Score;
+    BStats.AlliesTeamScore = AlliesTeam.Score;
+
+    LastTeamObjectivesCaptured[`AXIS_TEAM_INDEX] = TeamObjectivesCaptured[`AXIS_TEAM_INDEX];
+    LastTeamObjectivesCaptured[`ALLIES_TEAM_INDEX] = TeamObjectivesCaptured[`ALLIES_TEAM_INDEX];
+    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`AXIS_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`AXIS_TEAM_INDEX];
+    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`ALLIES_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`ALLIES_TEAM_INDEX];
+
+    SendBalanceStatsPackage(BStats);
+}
+
 `ifndef(RELEASE)
 function ShowRoundStartScreen(optional bool AdminStart)
 {
@@ -582,45 +663,6 @@ function CaptureTimer()
     }
 }
 
-// TODO: Content classes indexing? We always get first element now. (It's legacy LevelIndex from RO2).
-// TODO: Store which content class is used in map info?
-function class<Pawn> GetPlayerClass(Controller C)
-{
-    local ROPlayerReplicationInfo ROPRI;
-    local class<Pawn> PawnClass;
-
-    ROPRI = ROPlayerReplicationInfo(C.PlayerReplicationInfo);
-
-    if (ROPRI != none)
-    {
-        if (ROPRI.RoleInfo != none)
-        {
-            if (ROPRI.Team.TeamIndex == `AXIS_TEAM_INDEX)
-            {
-                PawnClass = class<Pawn>(DynamicLoadObject(
-                    class'DRGameInfo'.default.NorthRoleContentClasses.LevelContentClasses[0], class'Class'));
-                return PawnClass;
-            }
-            else if (ROPRI.Team.TeamIndex == `ALLIES_TEAM_INDEX)
-            {
-                PawnClass = class<Pawn>(DynamicLoadObject(
-                    class'DRGameInfo'.default.SouthRoleContentClasses.LevelContentClasses[0], class'Class'));
-                return PawnClass;
-            }
-            else
-            {
-                `warn("Invalid team index:" @ ROPRI.Team.TeamIndex);
-            }
-        }
-        else
-        {
-            `warn("Player's Role Info is none");
-        }
-    }
-
-    return DefaultPawnClass;
-}
-
 function RestartPlayer(Controller NewPlayer)
 {
     local NavigationPoint StartSpot;
@@ -632,8 +674,6 @@ function RestartPlayer(Controller NewPlayer)
     local ROPlayerController ROPC, MySL;
     local rotator MySLRot;
     local bool bIgnoreRespawnTickets;
-
-    RestartPlayerCommon(NewPlayer);
 
     if ( bRestartLevel && WorldInfo.NetMode != NM_DedicatedServer &&
         WorldInfo.NetMode != NM_ListenServer && WorldInfo.NetMode != NM_StandAlone )

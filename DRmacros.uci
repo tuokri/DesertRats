@@ -1,4 +1,4 @@
-`define BUILDVER "0.5"
+`define BUILDVER "0.6"
 
 // `define RELEASE
 
@@ -40,9 +40,13 @@
 `define DRII_VICKERS_HMG            38
 
 // Seat proxy indices.
-`define CRUSADER_DRIVER_SPI        0
-`define CRUSADER_COMMANDER_SPI     1
-`define CRUSADER_GUNNER_SPI        2
+`define CRUSADER_DRIVER_SPI         0
+`define CRUSADER_COMMANDER_SPI      1
+`define CRUSADER_GUNNER_SPI         2
+
+
+// TODO:
+`define BALANCE_STATS_URL           "localhost"
 
 
 // Pawn common macros.
