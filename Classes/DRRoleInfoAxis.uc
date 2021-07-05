@@ -7,7 +7,8 @@ DefaultProperties
         SecondaryWeapons=(
             class'DRWeap_C96_Pistol',
             class'DRWeap_P38_Pistol',
-            class'DRWeap_Luger_Pistol'
+            class'DRWeap_Luger_Pistol',
+            class'DRWeap_BerettaM1934_Pistol',
             ),
     )}
 
