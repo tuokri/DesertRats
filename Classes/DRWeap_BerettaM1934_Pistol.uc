@@ -31,12 +31,14 @@ simulated function SlideForward()
     }
 }
 
+// TODO: Weight etc?
 DefaultProperties
 {
     WeaponContentClass(0)="DesertRats.DRWeap_BerettaM1934_Pistol_Content"
 
     WeaponClassType=ROWCT_HandGun
     TeamIndex=`AXIS_TEAM_INDEX
+    InvIdex=`DRII_BERETTA_M1934_PISTOL
 
     RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.VN_Weap_MakarovPM_Pistol'
 

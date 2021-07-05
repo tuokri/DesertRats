@@ -31,6 +31,7 @@
 `define DRII_MG34_LMG               12
 `define DRII_KAR98_SCOPED_RIFLE     13
 `define DRII_THOMPSON_M1928A1_SMG   14
+`define DRII_BERETTA_M1934_PISTOL   15
 
 `define DRII_DYNAMITE               34
 `define DRII_TNT                    35
