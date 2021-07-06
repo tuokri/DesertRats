@@ -38,11 +38,17 @@ DefaultProperties
 
     WeaponClassType=ROWCT_HandGun
     TeamIndex=`AXIS_TEAM_INDEX
-    InvIdex=`DRII_BERETTA_M1934_PISTOL
+    InvIndex=`DRII_BERETTA_M1934_PISTOL
 
     RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.VN_Weap_MakarovPM_Pistol'
 
-    WeaponReloadEmptyMagAnim=PM_reloadempty_slide
+    PlayerViewOffset=(X=6.0,Y=4.5,Z=-2.75)
+    ZoomInRotation=(Pitch=-910,Yaw=0,Roll=2910)
+    ShoulderedPosition=(X=5.0,Y=2.0,Z=-2.0)
+    IronSightPosition=(X=0,Y=0,Z=-0.4)
+
+    WeaponReloadEmptyMagAnim=PM_reloadempty_Slide
+    WeaponReloadEmptyMagIronAnim=PM_reloadempty_Ironsight_Slide
 
     SlideControlNegName=SlideControl_PM_Neg
 }
