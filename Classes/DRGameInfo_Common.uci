@@ -484,15 +484,18 @@ function BroadcastDelayedBattleChatterEvent()
 // TODO: instead of hijacking the above functions, use ReceiveLocalizedVoiceCom or PlayVoiceCom instead?
 // NOTE: class SoundCue extends AkBaseSoundObject
 // NOTE: --> we can play SoundCues with PlaySoundBase?!?! (no volume control though??)
+
 // NOTE: native function PlayVoice(AkEvent InSoundCue, vector SoundLocation);
 // NOTE: --> cannot play SoundCues with this though...
 // NOTE: PlaySoundBase can be used with a location...
+
 // TODO: Manage SoundCues with DRAudioManager and try to use PlaySoundBase with SoundCues.
 // TODO: Test if PlaySoundBase and PlayVoice have any difference in practice. (PlayVoice does IsAudible check...)
 // TODO: Do we need to do something like PlaySoundBase(MyDRAudioComponent.SoundCue...)?
 // TODO: Or before playing use client local manager to get volume multiplier for the Cue?
 // TODO: --> MyAudioManager.GetVolumeForClass(DRSoundCue DRSC) {return ClassToVolumeMap[DRSC.Class]}?
 // TODO: Check ClientHearSound... Can be spatialized, which is good!
+
 // TODO: We can use ClientHearSoundCustom with our DRAudioComponent.
 // TODO: --> This should work for sounds played on the server...
 // TODO: --> Might need to use the other above methods for sounds played by other clients.

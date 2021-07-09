@@ -2,6 +2,8 @@
 
 // `define RELEASE
 
+`define DEBUG_VOICECOMS True
+
 `define dr(msg,type) class'DRLogger'.static.DRDebugLog(`msg, class.name$"::"$GetFuncName(),`type)
 `define drtrace class'DRLogger'.static.DRDebugTrace("[TRACE]" @ default.class.name$"::"$GetFuncName())
 

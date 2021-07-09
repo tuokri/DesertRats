@@ -1,17 +1,47 @@
 class DRPlayerController extends ROPlayerController
     config(Game_DesertRats_Client);
 
-var bool RoundEnd;
-var bool MatchEnd;
-var bool Ducking;
 
+// MORALE MUSIC
+var bool bWaitingForVictoryMusicToEnd;
 var MusicTrackStruct PendingSong;
-
-var AudioComponent StingerComp;
 
 var(Sounds) SoundCue AxisWinTheme;
 var(Sounds) SoundCue AlliesWinTheme;
+var(Sounds) SoundCue AxisLossTheme;
+var(Sounds) SoundCue AlliesLossTheme;
 
+var(Sounds) SoundCue AxisRoundWinTheme;
+var(Sounds) SoundCue AlliesRoundWinTheme;
+var(Sounds) SoundCue AxisRoundLostTheme;
+var(Sounds) SoundCue AlliesRoundLostTheme;
+
+var DRAudioComponent StingerComp;
+
+var array<class <DRVoicePack> > NorthTeamVoicePacksCustom;    // North Unlocalized Voice Pack classes(used if we are on South and someone on North is speaking).
+var array<class <DRVoicePack> > SouthTeamVoicePacksCustom;    // South Unlocalized Voice Pack classes(used if we are on North and someone on South is speaking).
+var array<class <DRVoicePack> > SouthTeamAltVoicePacksCustom; // South Unlocalized Voice Pack classes(used if we are on North and someone on South is speaking).
+var array<DRVoicePack> TeamVoicePacksCustom;                // Opposing team in opposing team's language.
+
+// Store each voice pack by "Nation" index.
+var array<class <DRVoicePack> > AllTeamVoicePacksOneCustom;
+var array<class <DRVoicePack> > AllTeamVoicePacksTwoCustom;
+var array<class <DRVoicePack> > AllTeamVoicePacksThreeCustom;
+
+// Array of all available announcer packs (to support multiple nations).
+var array<class <DRAnnouncerPack> > AllAnnouncerPacksCustom;
+
+// Assigned announcer voices by team index.
+var DRAnnouncerPack AnnouncerPacksCustom[2];
+
+// OLD MORALE MUSIC
+// var bool RoundEnd;
+// var bool MatchEnd;
+// var bool Ducking;
+// var(Sounds) SoundCue AxisWinTheme;
+// var(Sounds) SoundCue AlliesWinTheme;
+
+// Custom audio volume control.
 var DRAudioManager AudioManager;
 
 
@@ -43,20 +73,23 @@ simulated event PostBeginPlay()
     {
         BulletImpactDecalManager = Spawn(class'DecalManager', self,, vect(0,0,0), rot(0,0,0));
         BulletImpactDecalManager.MaxActiveDecals = MaxBulletImpactDecals;
+
+        // TODO: more elegant.
+        // MusicComponent.Play();
     }
 
     Audio = class'Engine'.static.GetAudioDevice();
 
-    if ( Audio != None )
+    if (Audio != None)
     {
         Audio.InitSoundClassVolumes();
         MaxConcurrentHearSounds = Audio.MaxChannels * SoundChannelToHearSoundsRatio;
 
-        if( MaxConcurrentHearSounds < 2 )
+        if (MaxConcurrentHearSounds < 2)
         {
             MaxConcurrentHearSounds = 1;
         }
-        else if( MaxConcurrentHearSounds > Audio.MaxChannels)
+        else if (MaxConcurrentHearSounds > Audio.MaxChannels)
         {
             MaxConcurrentHearSounds = Audio.MaxChannels + 1; // +1 for our music hax AudioComponent
         }
@@ -65,17 +98,629 @@ simulated event PostBeginPlay()
     // We have no way to intercept changes in ROUISceneSettings, so we have to just keep checking
     SetTimer(1.0, true, 'CheckForVolumeChanges');
 
-    SetTimer(120.0, false, 'StartMusicFix');
+    // SetTimer(120.0, false, 'StartMusicFix');
 
     if ( OutsideMapWithSteam() )
     {
         CheckWorkshopSubscriptions();
     }
 
-    if( Role < ROLE_Authority )
+    if (Role < ROLE_Authority)
+    {
         ServerUpdatePlayerFOV(PlayerFOV, MyHud.SizeX, MyHud.SizeY);
+    }
 }
 
+// --- BEGIN SOUNDCUE BACKPORT ---
+
+function DRAudioComponent GetPooledAudioComponentCustom(SoundCue ASound, Actor SourceActor,
+    bool bStopWhenOwnerDestroyed, optional bool bUseLocation, optional vector SourceLocation,
+    optional EAudioClass AudioClass = EAC_SFX)
+{
+    local DRAudioComponent DRAC;
+
+    DRAC = DRAudioComponent(GetPooledAudioComponent(ASound, SourceActor,
+        bStopWhenOwnerDestroyed, bUseLocation, SourceLocation));
+    DRAC.AudioClass = AudioClass;
+
+    if (AudioManager != None)
+    {
+        AudioManager.RegisterAudioComponent(DRAC);
+    }
+
+    return DRAC;
+}
+
+// TODO: doesn't work yet!
+simulated function class<DRVoicePack> GetCustomVoicePack(class<ROVoicePack> VoicePack)
+{
+    return class'DRVoicePack'; // TODO: Hashmap?
+}
+
+// TODO: doesn't work yet!
+simulated function GetCustomAnnouncerPack(const out ROAnnouncerPack AnnouncerPack, const out DRAnnouncerPack CustomAnnouncerPack)
+{
+
+}
+
+reliable client event ReceiveLocalizedVoiceCom(Pawn VoicePawn, byte VoiceSeatIndex,
+    ROPlayerReplicationInfo VoicePRI, vector VoiceLocation, int VoiceComIndex,
+    optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
+{
+    local class<ROVoicePack> VoicePack;
+
+    // Make the voice be the driver if this is our local turret we are using. That
+    // way the code in ROPawn properly handles spatialization for this message.
+    if (VoicePawn == Pawn && ROTurret(VoicePawn) != none && ROTurret(VoicePawn).Driver != none)
+    {
+        VoicePawn = ROTurret(VoicePawn).Driver;
+    }
+
+    VoicePack = PlayVoiceCom(VoicePawn, VoiceSeatIndex, VoicePRI, VoiceLocation, VoiceComIndex);
+
+    if (VoicePack != none)
+    {
+        ReceiveLocalizedMessage(VoicePack.static.GetVoiceComMessageClass(VoiceComIndex),
+            VoicePack.static.GetVoiceComMessageIndex(VoiceComIndex), RelatedPRI_1, RelatedPRI_2, OptionalObject);
+    }
+}
+
+simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIndex,
+    ROPlayerReplicationInfo VoicePRI, vector VoiceLocation, int VoiceComIndex)
+{
+    local ROPawn PawnSpeaker;
+    local VehicleCrewProxy ProxySpeaker;
+    local class<ROVoicePack> VoicePack;
+
+    if (`DEBUG_VOICECOMS)
+    {
+        `log("PlayVoiceCom" @ VoicePawn @ VoiceSeatIndex @ VoicePRI @ VoiceLocation @ VoiceComIndex);
+    }
+
+    switch (VoiceComIndex)
+    {
+        case `VOICECOM_ReconPlaneInRoute:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_ReconConfirm,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_ReconPlaneDenied:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_ReconDeny,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_Ability1Confirm:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_Ability1Confirm,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_Ability2Confirm:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_Ability2Confirm,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_Ability3Confirm:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_Ability3Confirm,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_Ability1Deny:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_Ability1Deny,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_Ability2Deny:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_Ability2Deny,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_Ability3Deny:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_Ability3Deny,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+        case `VOICECOM_NoArtillery:
+            PlayAnnouncerSound(EROAVT_Radio, VoicePRI.Team.TeamIndex, EROARC_NoAbilityLeft,, VoiceLocation,
+                ROVehicleBase(VoicePawn), VoiceSeatIndex);
+            return none;
+    }
+
+    // If we're on the same team, use localized sounds
+    if (VoicePRI != none && VoicePRI.Team != none)
+    {
+        if (`DEBUG_VOICECOMS)
+        {
+            `log("PlayVoiceCom - Good PRI and Team" @ VoicePRI.Team.TeamIndex @ GetTeamNum() @ VoicePRI.VoicePackIndex);
+        }
+
+        if (VoicePRI.Team.TeamIndex == `AXIS_TEAM_INDEX)
+        {
+            if (VoicePRI.VoicePackIndex < NorthTeamVoicePacks.Length)
+            {
+                VoicePack = NorthTeamVoicePacks[VoicePRI.VoicePackIndex];
+            }
+            else
+            {
+                VoicePack = NorthTeamVoicePacks[0];
+            }
+        }
+        else
+        {
+            if (VoicePRI.bUsesAltVoicePacks)
+            {
+                if (VoicePRI.VoicePackIndex < SouthTeamAltVoicePacks.Length)
+                {
+                    VoicePack = SouthTeamAltVoicePacks[VoicePRI.VoicePackIndex];
+                }
+                else
+                {
+                    VoicePack = SouthTeamAltVoicePacks[0];
+                }
+            }
+            else
+            {
+                if (VoicePRI.VoicePackIndex < SouthTeamVoicePacks.Length)
+                {
+                    VoicePack = SouthTeamVoicePacks[VoicePRI.VoicePackIndex];
+                }
+                else
+                {
+                    VoicePack = SouthTeamVoicePacks[0];
+                }
+            }
+        }
+    }
+    else
+    {
+        `log("Failed to play voice/dialog - invalid team");
+        return None;
+    }
+
+    // if this is a vehicle, try to get the Pawn or Proxy that should be speaking
+    if (ROVehicle(VoicePawn) != none)
+    {
+        if (VoicePack.static.GetVoiceComType(VoiceComIndex) == ROVCT_Vehicle
+            || VoicePack.static.GetVoiceComType(VoiceComIndex) == ROVCT_RadioRequest)
+        {
+            PawnSpeaker = ROVehicle(VoicePawn).GetDriverForSeatIndex(VoiceSeatIndex);
+
+            if (PawnSpeaker == none)
+            {
+                ProxySpeaker = ROVehicle(VoicePawn).GetSeatProxyActorFromSeatIndex(VoiceSeatIndex);
+            }
+        }
+    }
+    else if (ROWeaponPawn(VoicePawn) != none && ROWeaponPawn(VoicePawn).MyVehicle != none)
+    {
+        PawnSpeaker = ROWeaponPawn(VoicePawn).MyVehicle.GetDriverForSeatIndex(VoiceSeatIndex);
+
+        if (PawnSpeaker == none)
+        {
+            ProxySpeaker = ROWeaponPawn(VoicePawn).MyVehicle.GetSeatProxyActorFromSeatIndex(VoiceSeatIndex);
+        }
+    }
+    else
+    {
+        PawnSpeaker = ROPawn(VoicePawn);
+    }
+
+    if (ProxySpeaker != none)
+    {
+        if (VoicePRI.Team.TeamIndex == `AXIS_TEAM_INDEX)
+        {
+            VoicePack = NorthTeamVoicePacks[ProxySpeaker.VoicePackIndex];
+        }
+        else
+        {
+            if(VoicePRI.bUsesAltVoicePacks)
+            {
+                VoicePack = SouthTeamAltVoicePacks[ProxySpeaker.VoicePackIndex];
+            }
+            else
+            {
+                VoicePack = SouthTeamVoicePacks[ProxySpeaker.VoicePackIndex];
+            }
+        }
+    }
+
+    // Only play vehicle coms or radio requests when in a vehicle
+    if (VoicePRI != none)
+    {
+        if (VoicePRI.TeamHelicopterArrayIndex != INDEX_NONE &&
+            VoicePRI.TeamHelicopterArrayIndex != 255 &&
+            VoicePack.static.GetVoiceComType(VoiceComIndex) != ROVCT_Vehicle &&
+            VoicePack.static.GetVoiceComType(VoiceComIndex) != ROVCT_RadioRequest)
+        {
+            return none;
+        }
+    }
+
+    // Determine how we want to play the sound
+    if (PawnSpeaker != none)
+    {
+        // Make Pawn say the line
+        PawnSpeaker.SpeakLine(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
+            VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher);
+    }
+    else if (ProxySpeaker != none)
+    {
+        // Make the AI Proxy say the line
+        ProxySpeaker.SpeakLine(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
+            VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher);
+    }
+    else
+    {
+        // TODO: need to replace all voicepacks with DRVoicePacks.
+        PlayVoiceCustom(VoicePack, VoiceComIndex, VoiceLocation);
+    }
+
+    return VoicePack;
+}
+
+simulated function PlayVoiceCustom(class<ROVoicePack> VoicePack, int VoiceComIndex, vector VoiceLocation)
+{
+    local SoundCue TestCue;
+    local DRAudioComponent TestComp;
+    local class<DRVoicePack> CustomVoicePack;
+
+    // TODO:
+    // SoundCue backport:
+    // Play SoundCue here instead, using pooled audio component.
+    // Volume control with audio manager.
+    CustomVoicePack = GetCustomVoicePack(VoicePack);
+    if (CustomVoicePack.static.IsCustomVoiceCom(VoiceComIndex))
+    {
+        TestCue = CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex);
+        // TODO: Self? SoundClass? Volume?
+        TestComp = GetPooledAudioComponentCustom(TestCue, Self, True, True, VoiceLocation);
+        TestComp.Play();
+    }
+    else
+    {
+        // Play the sound from VoiceLocation(without any replication).
+        PlayVoice(VoicePack.static.GetVoiceComSound(VoiceComIndex), VoiceLocation);
+    }
+}
+
+// TODO: CUSTOM METHOD FOR PLAYING SOUND FOR SOUNDCUE, USE VANILLA METHOD FOR AKEVENT!
+function PlayAnnouncerSound(byte VoxType, byte Team, byte VOXIndex, optional byte SubIndex,
+    optional vector PlayLocation, optional Actor Speaker, optional int SeatIndex)
+{
+    local AkEvent AnnouncerSound;
+    local SoundCue CustomAnnouncerSound;
+    local DRAnnouncerPack CustomAnnouncerPack;
+
+    GetCustomAnnouncerPack(AnnouncerPacks[Team], CustomAnnouncerPack);
+
+    if (CustomAnnouncerPack.IsCustomVoiceCom(VoxType, VOXIndex, SubIndex))
+    {
+        CustomAnnouncerSound = CustomAnnouncerPack.GetAnnouncerSoundCustom(
+            VoxType, VOXIndex, SubIndex, WorldInfo.TimeSeconds);
+    }
+    else
+    {
+        AnnouncerSound = AnnouncerPacks[Team].GetAnnouncerSound(VoxType, VOXIndex,
+            SubIndex, WorldInfo.TimeSeconds);
+    }
+
+    if (AnnouncerSound != none)
+    {
+        switch(VoxType)
+        {
+            case EROAVT_Objective:
+                PlaySoundBase(AnnouncerSound, true);
+                break;
+            case EROAVT_Radio:
+                if (Speaker != none)
+                    PlayPortableRadioSound(AnnouncerSound, Speaker, SeatIndex);
+                else
+                    PlaySoundBase(AnnouncerSound, true, false, true, PlayLocation);
+                break;
+            default:
+                PlaySoundBase(AnnouncerSound, true);
+        }
+    }
+}
+
+// --- END SOUNDCUE BACKPORT ---
+
+// --- BEGIN MORALE MUSIC ---
+
+simulated function PendingMoraleMusicUpdate()
+{
+    //`log(GetFuncName()$" bWaitingForVictoryMusicToEnd = "$bWaitingForVictoryMusicToEnd$" PendingSong = "$PendingSong.TheSoundCue);
+    //ClientMessage(GetFuncName()$" bWaitingForVictoryMusicToEnd = "$bWaitingForVictoryMusicToEnd$" PendingSong = "$PendingSong.TheSoundCue);
+
+    if ( !bWaitingForVictoryMusicToEnd )
+    {
+        ClearTimer('PendingMoraleMusicUpdate');
+        SetNewMoraleMusicTrack(PendingSong, false);
+    }
+}
+
+/**
+ * Set a new Morale Music Track to Play
+ *
+ * @param   NewMusicTrack   New music track to play
+ * @param   bMusicStinger   This music track is a "Stinger" so play it at full volume
+ */
+reliable client function SetNewMoraleMusicTrack(MusicTrackStruct NewMusicTrack, optional bool bMusicStinger)
+{
+    local AudioDevice Audio;
+    local float SoundFXVolume, MusicVolume;
+
+    Audio = class'Engine'.static.GetAudioDevice();
+    if ( Audio != None )
+    {
+        SoundFXVolume = Audio.AkSFXVolume;
+        MusicVolume = Audio.AkMusicVolume;
+    }
+
+    //`log(GetFuncName()$" NewMusicTrack = "$NewMusicTrack.TheSoundCue$" bMusicStinger = "$bMusicStinger$" bWaitingForVictoryMusicToEnd = "$bWaitingForVictoryMusicToEnd);
+    //ClientMessage(GetFuncName()$" NewMusicTrack = "$NewMusicTrack.TheSoundCue$" bMusicStinger = "$bMusicStinger$" bWaitingForVictoryMusicToEnd = "$bWaitingForVictoryMusicToEnd);
+    //ScriptTrace();
+
+    if (bWaitingForVictoryMusicToEnd)
+    {
+        if (PendingSong != NewMusicTrack)
+        {
+            PendingSong = NewMusicTrack;
+        }
+
+        if (!IsTimerActive('PendingMoraleMusicUpdate'))
+        {
+            SetTimer(0.5, true, 'PendingMoraleMusicUpdate');
+        }
+
+        return;
+    }
+
+    if (bMusicStinger)
+    {
+        // If the music isn't turned down, play the stinger at an adjusted
+        // volume that will be pretty close to the other music volume.
+        if (MusicVolume > 0 && SoundFXVolume > 0 && NewMusicTrack.TheSoundCue.VolumeMultiplier > 0)
+        {
+            NewMusicTrack.FadeInVolumeLevel = (MusicVolume/SoundFXVolume)/NewMusicTrack.TheSoundCue.VolumeMultiplier;
+        }
+        // If music is turned off, play the stinger at SoundFXVolume level.
+        else
+    {
+            NewMusicTrack.FadeInVolumeLevel = SoundFXVolume;
+        }
+    }
+    else
+    {
+        NewMusicTrack.FadeInVolumeLevel = MusicVolume;
+    }
+
+    UpdateMoraleMusicTrack(NewMusicTrack);
+}
+
+// TODO: fades. Crossfade with 2 components?
+// TODO: Volume control of WorldInfo music component?
+simulated function UpdateMoraleMusicTrack(MusicTrackStruct NewMusicTrack)
+{
+    `log("UpdateMoraleMusicTrack()",, 'DRAudio');
+
+    /*
+    if (NewMusicTrack.TheSoundCue == none)
+    {
+        `log("[GameMusic] Waiting for morale track to load. Retry in 1 sec",, 'DRAudio');
+        SetTimer(1.0, true, 'UpdateMoraleMusicTrack');
+    }
+    else
+    {
+        ClearTimer('UpdateMoraleMusicTrack');
+        MusicComponent.FadeOut(NewMusicTrack.FadeOutTime, NewMusicTrack.FadeOutVolumeLevel);
+        MusicComponent.SoundCue = NewMusicTrack.TheSoundCue;
+        MusicComponent.FadeIn(NewMusicTrack.FadeInTime, NewMusicTrack.FadeInVolumeLevel);
+    }
+    */
+
+    WorldInfo.UpdateMusicTrack(NewMusicTrack);
+}
+
+/**
+ * Change the volume of the Morale Music
+ *
+ * @param   NewVolume       What to change the volume to
+ * @param   TransitionTime  How long to take to blend to the new volume
+ */
+simulated function UpdateMusicVolume(float NewVolume, optional float TransitionTime)
+{
+    // Check if we are actually playing music
+    if ( WorldInfo.MusicComp != none && WorldInfo.CurrentMusicTrack.TheSoundCue != none )
+    {
+        // Transition time can't be zero
+        if( TransitionTime <= 0 )
+        {
+            TransitionTime = 0.001;
+        }
+        WorldInfo.MusicComp.AdjustVolume(TransitionTime, NewVolume);
+    }
+}
+
+simulated function ClearWaitingForVictoryMusicToEnd()
+{
+    bWaitingForVictoryMusicToEnd = false;
+    //`log(GetFuncName()$" bWaitingForVictoryMusicToEnd "$bWaitingForVictoryMusicToEnd);
+    //ScriptTrace();
+}
+
+/**
+ * Lower the volume of the morale music then bring it back up. Used for playing
+ * other music or sounds and lowering the morale music while those other sounds
+ * are playing.
+ *
+ * @param   StartDuckFadeLength     How long to take to blend to the new volume
+ * @param   DuckVolume              Volume to duck the music volume to
+ * @param   DuckDuration            How long to duck the music for
+ */
+reliable client function DuckMoraleMusic(float StartDuckFadeLength, float DuckVolume, float DuckDuration)
+{
+    local Float UsedDuration;
+
+    //`log(GetFuncName()$" for "$DuckDuration$" seconds");
+    //ScriptTrace();
+    UsedDuration = FMax((DuckDuration - 0.5), 0.01);
+    UpdateMusicVolume(DuckVolume, StartDuckFadeLength);
+    SetTimer(UsedDuration, false, 'ClearMoraleMusicDuck');
+}
+
+/**
+ * Clear the ducked morale music and return it to normal volume
+ */
+simulated function ClearMoraleMusicDuck()
+{
+    local AudioDevice Audio;
+    local float MusicVolume;
+
+    Audio = class'Engine'.static.GetAudioDevice();
+    if (Audio != None)
+    {
+        MusicVolume = Audio.AkMusicVolume;
+    }
+
+    `log(GetFuncName(),, 'DRAudio');
+    UpdateMusicVolume(MusicVolume, 0.5);
+}
+
+reliable client function MatchWon(
+    byte WinningTeam, byte WinCondition, optional bool bUseCapturesForTieBreaking, optional int NorthTeamPointsTotal, optional int SouthTeamPointsTotal,
+    optional int NorthRemainingReinforcements, optional int SouthRemainingReinforcements, optional int NorthTotalObjectivesCaptured,
+    optional int SouthTotalObjectivesCaptured, optional int RoundTime, optional int NorthFastestWinTime, optional int SouthFastestWinTime,
+    optional float NorthRoundScore, optional float SouthRoundScore, optional int NorthTotalTime, optional int SouthTotalTime,
+    optional byte NorthReachedObjectiveIndex, optional byte SouthReachedObjectiveIndex, optional int NorthEnemiesKilled,
+    optional int SouthEnemiesKilled, optional int NorthEnemiesRemaining, optional int SouthEnemiesRemaining, optional float RoundToMatchWinDelay,
+    optional float FadeOutDuration)
+{
+    if (WorldInfo.NetMode == NM_DedicatedServer)
+    {
+        return;
+    }
+
+    bWaitingForVictoryMusicToEnd = True;
+
+    if (RoundToMatchWinDelay == 0.f)
+    {
+        if (PlayerReplicationInfo.Team.TeamIndex == `NEUTRAL_TEAM_INDEX)
+        {
+            if (WinningTeam == `AXIS_TEAM_INDEX)
+            {
+                PlayAxisWinThemeStinger();
+                // PlaySoundBase(NorthWinTheme, true);
+            }
+            else if (WinningTeam == `ALLIES_TEAM_INDEX)
+            {
+                PlayAlliesWinThemeStinger();
+                // PlaySoundBase(SouthWinTheme, true);
+            }
+        }
+        else if (WinningTeam == `AXIS_TEAM_INDEX)
+        {
+            if (PlayerReplicationInfo.Team.TeamIndex == WinningTeam)
+            {
+                PlayAxisWinThemeStinger();
+                // PlaySoundBase(NorthWinTheme, true);
+                PlayAnnouncerSound(EROAVT_General, GetTeamNum(), EROAMC_MatchWon);
+            }
+            else
+            {
+                PlayAlliesLossThemeStinger();
+                // PlaySoundBase(SouthLossTheme, true);
+                PlayAnnouncerSound(EROAVT_General, GetTeamNum(), EROAMC_MatchLost);
+            }
+        }
+        else if (WinningTeam == `ALLIES_TEAM_INDEX)
+        {
+            if (PlayerReplicationInfo.Team.TeamIndex == WinningTeam)
+            {
+                PlayAlliesWinThemeStinger();
+                // PlaySoundBase(SouthWinTheme, true);
+                PlayAnnouncerSound(EROAVT_General, GetTeamNum(), EROAMC_MatchWon);
+            }
+            else
+            {
+                PlayAxisLossThemeStinger();
+                // PlaySoundBase(NorthLossTheme, true);
+                PlayAnnouncerSound(EROAVT_General, GetTeamNum(), EROAMC_MatchLost);
+            }
+        }
+
+        ShowMatchWinScreen(WinningTeam, WinCondition, bUseCapturesForTieBreaking, NorthTeamPointsTotal, SouthTeamPointsTotal, NorthRemainingReinforcements,
+                       SouthRemainingReinforcements, NorthTotalObjectivesCaptured, SouthTotalObjectivesCaptured, RoundTime,
+                       NorthFastestWinTime, SouthFastestWinTime, NorthRoundScore, SouthRoundScore, NorthTotalTime,
+                       SouthTotalTime, NorthReachedObjectiveIndex, SouthReachedObjectiveIndex, NorthEnemiesKilled,
+                       SouthEnemiesKilled, NorthEnemiesRemaining, SouthEnemiesRemaining );
+    }
+    else
+    {
+        /*RoundWon(RoundWinningTeam, RoundWinCondition, bUseCapturesForTieBreaking, NorthTeamPointsTotal, SouthTeamPointsTotal, NorthRemainingReinforcements,
+                       SouthRemainingReinforcements, NorthTotalObjectivesCaptured, SouthTotalObjectivesCaptured, RoundTime,
+                       NorthFastestWinTime, SouthFastestWinTime, NorthRoundScore, SouthRoundScore,
+                       WinningTeam < `ALLIES_TEAM_INDEX ? NorthReachedObjectiveIndex : SouthReachedObjectiveIndex,
+                       NorthEnemiesKilled, SouthEnemiesKilled, NorthEnemiesRemaining, SouthEnemiesRemaining);*/
+
+        if( FadeOutDuration > 0 )
+        {
+            StartRoundPreEndEffects(FadeOutDuration, RoundToMatchWinDelay);
+        }
+        else
+        {
+            // If we're delaying the display, but we have a fade out duration it means that the match is set to a single round,
+            // so DelayedMatchWon will get called from elsewhere.
+            SetTimer(RoundToMatchWinDelay, false, 'DelayedMatchWon');
+        }
+
+        StoredMatchWinInfo.WinningTeam = WinningTeam;
+        StoredMatchWinInfo.WinCondition = WinCondition;
+        StoredMatchWinInfo.bUseCapturesForTieBreaking = bUseCapturesForTieBreaking;
+        StoredMatchWinInfo.NorthTeamPointsTotal = NorthTeamPointsTotal;
+        StoredMatchWinInfo.SouthTeamPointsTotal = SouthTeamPointsTotal;
+        StoredMatchWinInfo.NorthRemainingReinforcements = NorthRemainingReinforcements;
+        StoredMatchWinInfo.SouthRemainingReinforcements = SouthRemainingReinforcements;
+        StoredMatchWinInfo.NorthTotalObjectivesCaptured = NorthTotalObjectivesCaptured;
+        StoredMatchWinInfo.SouthTotalObjectivesCaptured = SouthTotalObjectivesCaptured;
+        StoredMatchWinInfo.RoundTime = RoundTime;
+        StoredMatchWinInfo.NorthFastestWinTime = NorthFastestWinTime;
+        StoredMatchWinInfo.SouthFastestWinTime = SouthFastestWinTime;
+        StoredMatchWinInfo.NorthRoundScore = NorthRoundScore;
+        StoredMatchWinInfo.SouthRoundScore = SouthRoundScore;
+        StoredMatchWinInfo.NorthTotalTime = NorthTotalTime;
+        StoredMatchWinInfo.SouthTotalTime = SouthTotalTime;
+        StoredMatchWinInfo.NorthReachedObjectiveIndex = NorthReachedObjectiveIndex;
+        StoredMatchWinInfo.SouthReachedObjectiveIndex = SouthReachedObjectiveIndex;
+        StoredMatchWinInfo.NorthEnemiesKilled = NorthEnemiesKilled;
+        StoredMatchWinInfo.SouthEnemiesKilled = SouthEnemiesKilled;
+        StoredMatchWinInfo.NorthEnemiesRemaining = NorthEnemiesRemaining;
+        StoredMatchWinInfo.SouthEnemiesRemaining= SouthEnemiesRemaining;
+    }
+}
+
+simulated function PlayAxisWinThemeStinger()
+{
+    StingerComp.SoundCue = AxisWinTheme;
+    StingerComp.Play();
+    SetTimer(AxisWinTheme.GetCueDuration(),, 'ClearWaitingForVictoryMusicToEnd');
+    DuckMoraleMusic(0.05, 0.0, AxisWinTheme.GetCueDuration());
+}
+
+simulated function PlayAlliesWinThemeStinger()
+{
+    StingerComp.SoundCue = AlliesWinTheme;
+    StingerComp.Play();
+    SetTimer(AlliesWinTheme.GetCueDuration(),, 'ClearWaitingForVictoryMusicToEnd');
+    DuckMoraleMusic(0.05, 0.0, AlliesWinTheme.GetCueDuration());
+}
+
+// TODO:
+simulated function PlayAlliesLossThemeStinger()
+{
+
+}
+
+// TODO:
+simulated function PlayAxisLossThemeStinger()
+{
+
+}
+
+// --- END MORALE MUSIC ---
+
+/*
 function StartMusicFix()
 {
     // Sometimes the music just cuts off entirely for an unknown reason.
@@ -203,15 +848,6 @@ function PlayMusic()
     WorldInfo.MusicComp.FadeIn(0.0, WorldInfo.CurrentMusicTrack.FadeInVolumeLevel);
 }
 
-function PlayStinger(SoundCue StingerCue)
-{
-    `dr("",'M');
-
-    StingerComp.VolumeMultiplier = UserVolumeSetting();
-    StingerComp.SoundCue = StingerCue;
-    StingerComp.Play();
-}
-
 // If for some reason the music bugs out the client can restart it with this command
 exec function RestartMusic()
 {
@@ -234,76 +870,9 @@ exec function RestartMusic()
         `dr("Not Performing",'M');
     }
 }
+*/
 
-reliable client function MatchWon(byte WinningTeam, byte WinCondition, optional bool bUseCapturesForTieBreaking, optional int NorthTeamPointsTotal, optional int SouthTeamPointsTotal,
-                                optional int NorthRemainingReinforcements, optional int SouthRemainingReinforcements, optional int NorthTotalObjectivesCaptured,
-                                optional int SouthTotalObjectivesCaptured, optional int RoundTime, optional int NorthFastestWinTime, optional int SouthFastestWinTime,
-                                optional float NorthRoundScore, optional float SouthRoundScore, optional int NorthTotalTime, optional int SouthTotalTime,
-                                optional byte NorthReachedObjectiveIndex, optional byte SouthReachedObjectiveIndex, optional int NorthEnemiesKilled,
-                                optional int SouthEnemiesKilled, optional int NorthEnemiesRemaining, optional int SouthEnemiesRemaining, optional float RoundToMatchWinDelay,
-                                optional float FadeOutDuration)
-{
-    if (WorldInfo.NetMode == NM_DedicatedServer)
-    {
-        return;
-    }
-
-    if (RoundToMatchWinDelay == 0.f)
-    {
-        MatchEnd = true;
-        UpdateCurrentMoraleMusicTrack();
-
-        if (WinningTeam == `AXIS_TEAM_INDEX)
-        {
-            PlayStinger(AxisWinTheme);
-        }
-        else if (WinningTeam == `ALLIES_TEAM_INDEX)
-        {
-            PlayStinger(AlliesWinTheme);
-        }
-
-        ShowMatchWinScreen(WinningTeam, WinCondition, bUseCapturesForTieBreaking, NorthTeamPointsTotal, SouthTeamPointsTotal, NorthRemainingReinforcements,
-                            SouthRemainingReinforcements, NorthTotalObjectivesCaptured, SouthTotalObjectivesCaptured, RoundTime,
-                            NorthFastestWinTime, SouthFastestWinTime, NorthRoundScore, SouthRoundScore, NorthTotalTime,
-                            SouthTotalTime, NorthReachedObjectiveIndex, SouthReachedObjectiveIndex, NorthEnemiesKilled,
-                            SouthEnemiesKilled, NorthEnemiesRemaining, SouthEnemiesRemaining );
-    }
-    else
-    {
-        if (FadeOutDuration > 0)
-        {
-            StartRoundPreEndEffects(FadeOutDuration, RoundToMatchWinDelay);
-        }
-        else
-        {
-            SetTimer(RoundToMatchWinDelay, false, 'DelayedMatchWon');
-        }
-
-        StoredMatchWinInfo.WinningTeam = WinningTeam;
-        StoredMatchWinInfo.WinCondition = WinCondition;
-        StoredMatchWinInfo.bUseCapturesForTieBreaking = bUseCapturesForTieBreaking;
-        StoredMatchWinInfo.NorthTeamPointsTotal = NorthTeamPointsTotal;
-        StoredMatchWinInfo.SouthTeamPointsTotal = SouthTeamPointsTotal;
-        StoredMatchWinInfo.NorthRemainingReinforcements = NorthRemainingReinforcements;
-        StoredMatchWinInfo.SouthRemainingReinforcements = SouthRemainingReinforcements;
-        StoredMatchWinInfo.NorthTotalObjectivesCaptured = NorthTotalObjectivesCaptured;
-        StoredMatchWinInfo.SouthTotalObjectivesCaptured = SouthTotalObjectivesCaptured;
-        StoredMatchWinInfo.RoundTime = RoundTime;
-        StoredMatchWinInfo.NorthFastestWinTime = NorthFastestWinTime;
-        StoredMatchWinInfo.SouthFastestWinTime = SouthFastestWinTime;
-        StoredMatchWinInfo.NorthRoundScore = NorthRoundScore;
-        StoredMatchWinInfo.SouthRoundScore = SouthRoundScore;
-        StoredMatchWinInfo.NorthTotalTime = NorthTotalTime;
-        StoredMatchWinInfo.SouthTotalTime = SouthTotalTime;
-        StoredMatchWinInfo.NorthReachedObjectiveIndex = NorthReachedObjectiveIndex;
-        StoredMatchWinInfo.SouthReachedObjectiveIndex = SouthReachedObjectiveIndex;
-        StoredMatchWinInfo.NorthEnemiesKilled = NorthEnemiesKilled;
-        StoredMatchWinInfo.SouthEnemiesKilled = SouthEnemiesKilled;
-        StoredMatchWinInfo.NorthEnemiesRemaining = NorthEnemiesRemaining;
-        StoredMatchWinInfo.SouthEnemiesRemaining= SouthEnemiesRemaining;
-    }
-}
-
+/*
 function DelayedMatchWon()
 {
     MatchEnd = true;
@@ -335,7 +904,9 @@ function DelayedMatchWon()
                         StoredMatchWinInfo.SouthReachedObjectiveIndex, StoredMatchWinInfo.NorthEnemiesKilled, StoredMatchWinInfo.SouthEnemiesKilled,
                         StoredMatchWinInfo.NorthEnemiesRemaining, StoredMatchWinInfo.SouthEnemiesRemaining );
 }
+*/
 
+/*
 reliable client function ClientCloseTeamWinScreen()
 {
     `dr("",'M');
@@ -375,7 +946,7 @@ reliable client function DuckMoraleMusic(float StartDuckFadeLength, float DuckVo
 
     Ducking = true;
 
-    UsedDuration = FMax(DuckDuration /*(DuckDuration - 0.5)*/, 0.01);
+    UsedDuration = FMax(DuckDuration (DuckDuration - 0.5), 0.01);
 
     MusicVolume = UserVolumeSetting() * DuckVolumeModifier;
 
@@ -394,6 +965,8 @@ simulated function ClearMoraleMusicDuck()
 
     UpdateMusicVolume(UserVolumeSetting(), 0.5);
 }
+*/
+
 /*
 function HitThisCommon(ROTriggerRadio ROTR, optional ROVehicle ROV = none, optional int SeatIndex = -1)
 {
@@ -903,6 +1476,7 @@ reliable protected server function ServerEnableAntiAir()
     }
 }
 */
+
 function CheckPickup(out ROPawn P, out ROWeapon SwapWeapon, class<Inventory> ItemClass)
 {
     `drtrace;
@@ -1038,6 +1612,7 @@ function UsePickup(class<Inventory> ItemClass)
     }
 }
 
+// TODO: tank squad system.
 reliable protected server function ServerJoinSquad(int NewSquadIndex, optional bool bViaInvite)
 {
     if (ROPlayerReplicationInfo(PlayerReplicationInfo).RoleInfo.RoleType == RORIT_Tank)
@@ -1049,6 +1624,7 @@ reliable protected server function ServerJoinSquad(int NewSquadIndex, optional b
         super.ServerJoinSquad(NewSquadIndex, bViaInvite);
     }
 }
+
 /*
 simulated function FindUsableActor()
 {
@@ -1060,6 +1636,9 @@ simulated function FindUsableActor()
     }
 }
 */
+
+// TODO: check the need for this:
+/*
 function PlayAnnouncerSound(byte VoxType, byte Team, byte VOXIndex, optional byte SubIndex, optional vector PlayLocation, optional Actor Speaker, optional int SeatIndex)
 {
     if (VoxType == EROAVT_Radio)
@@ -1067,8 +1646,11 @@ function PlayAnnouncerSound(byte VoxType, byte Team, byte VOXIndex, optional byt
         super.PlayAnnouncerSound(VoxType, Team, VOXIndex, SubIndex, PlayLocation, Speaker, SeatIndex);
     }
 }
+*/
 
-function TriggerHint(int HintID, optional bool bTriggerDead) {}
+// TODO:
+// function TriggerHint(int HintID, optional bool bTriggerDead) {}
+
 /*
 function InitialiseCCMs()
 {
@@ -1642,12 +2224,19 @@ simulated exec function SetAddedPitch(int RangeIndex, int NewAddedPitch)
     ROWeapon(Pawn.Weapon).SightIndexUpdated();
 }
 
-exec function SetPlayerViewOffset(float X, float Y, float Z)
+simulated exec function SetPlayerViewOffset(float X, float Y, float Z)
 {
     ROWeapon(Pawn.Weapon).PlayerViewOffset = MakeVector(X, Y, Z);
 }
 
-exec function SetIronsightPosX(float NewX)
+simulated exec function SetZoomInRotation(int Pitch, int Yaw, int Roll)
+{
+    ROWeapon(Pawn.Weapon).ZoomInRotation.Pitch = Pitch;
+    ROWeapon(Pawn.Weapon).ZoomInRotation.Yaw = Yaw;
+    ROWeapon(Pawn.Weapon).ZoomInRotation.Roll = Roll;
+}
+
+simulated exec function SetIronsightPosX(float NewX)
 {
     ROWeapon(Pawn.Weapon).IronSightPosition.X = NewX;
     ROWeapon(Pawn.Weapon).PlayerViewOffset.X = NewX;
@@ -1771,6 +2360,7 @@ exec function ShowProxies()
     }
 }
 
+/*
 simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 {
     super.DisplayDebug(HUD, out_YL, out_YPos);
@@ -1854,6 +2444,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
     out_YPos += out_YL;
     HUD.Canvas.SetPos(4, out_YPos);
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `endif
@@ -1861,16 +2452,17 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 
 DefaultProperties
 {
-    TeamSelectSceneTemplate       = DRUISceneTeamSelect'DR_UI.UIScene.DRUIScene_TeamSelect'
-    // UnitSelectSceneTemplate=     WWUISceneUnitSelect'WinterWar_UI.UIScene.WWUIScene_UnitSelect'
-    // CharacterSceneTemplate=          WWUISceneCharacter'WinterWar_UI.UIScene.WWUIScene_Character'
-    // AfterActionReportSceneTemplate=  WWUISceneAfterActionReport'WinterWar_UI.UIScene.WWUIScene_AfterAction'
-    StoreSceneTemplate            = None
+    TeamSelectSceneTemplate= DRUISceneTeamSelect'DR_UI.UIScene.DRUIScene_TeamSelect'
+    // UnitSelectSceneTemplate=WWUISceneUnitSelect'WinterWar_UI.UIScene.WWUIScene_UnitSelect'
+    // CharacterSceneTemplate=WWUISceneCharacter'WinterWar_UI.UIScene.WWUIScene_Character'
+    // AfterActionReportSceneTemplate=WWUISceneAfterActionReport'WinterWar_UI.UIScene.WWUIScene_AfterAction'
+    StoreSceneTemplate=None
 
-    Begin Object Class=AudioComponent name=StingerComponent
-        OcclusionCheckInterval=0.1
+    Begin Object Class=DRAudioComponent name=StingerComponent
+        OcclusionCheckInterval=0.0
         bShouldRemainActiveIfDropped=true
         bStopWhenOwnerDestroyed=true
+        AudioClass=EAC_Music
     End Object
     StingerComp=StingerComponent
 
@@ -1882,22 +2474,24 @@ DefaultProperties
     // SouthTeamVoicePacks[1]=class'WWVoicePack_RUS_2'
     // SouthTeamVoicePacks[2]=class'WWVoicePack_RUS_3'
 
-    // AllAnnouncerPacks[`AXIS_TEAM_INDEX]= class'WWVoicePack_FIN_C'
-    // AllAnnouncerPacks[`ALLIES_TEAM_INDEX]=   class'WWVoicePack_RUS_C'
+    // AllAnnouncerPacks[`AXIS_TEAM_INDEX]=class'WWVoicePack_FIN_C'
+    // AllAnnouncerPacks[`ALLIES_TEAM_INDEX]=class'WWVoicePack_RUS_C'
 
     // AxisWinTheme=SoundCue'WinterWar_AUD_MUS.FIN.F_Victory_Cue'
     // AlliesWinTheme=SoundCue'WinterWar_AUD_MUS.SOV.R_Victory_Cue'
+    // AxisLossTheme=SoundCue''
+    // AlliesLossTheme=SoundCue''
 
-    RoundEnd=false
-    MatchEnd=false
-    Ducking=false
+    // RoundEnd=false
+    // MatchEnd=false
+    // Ducking=false
 
-    NorthWinTheme=  none
-    NorthLossTheme= none
-    SouthWinTheme=  none
-    SouthLossTheme= none
-    NorthRoundWinTheme= none
+    NorthWinTheme=none
+    NorthLossTheme=none
+    SouthWinTheme=none
+    SouthLossTheme=none
+    NorthRoundWinTheme=none
     NorthRoundLostTheme=none
-    SouthRoundWinTheme= none
+    SouthRoundWinTheme=none
     SouthRoundLostTheme=none
 }

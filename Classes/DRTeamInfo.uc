@@ -1,25 +1,41 @@
 class DRTeamInfo extends ROTeamInfo;
 
+// Morale
 var byte OldMorale;
-
-var bool NoTransitionCheck;
-
 var MusicTrackStruct NewMoraleMusicTrack;
 var MusicTrackStruct TransitionMusicTrack;
 
 struct ROMusicPlayList
 {
-    var name PlaylistName;
-    var array<string> CRef_MusicTracks;
+    // Name of this playlist for reference
+    var name                PlaylistName;
+
+    // References to all the tracks for this playlist
+    var array<string>       CRef_MusicTracks;
+
+    // The current index into the RadomPermutation array. The array is regenerated
+    // once the PermutationIndex == MusicTracks.length . At startup, PermutationIndex = -1
+    // which also causes the RandomPermutation array to be regenerated.
+    var int                 PermutationIndex;
+
+    // The random permutation array in order to to achieve random without replacement
+    // behavior. It contains radomized indices of the music tracks above.
+    var array<int>          RandomPermutation;
 };
 
-var ROMusicPlayList AxisLowMoralePlayList, AxisNormalMoralePlayList, AxisHighMoralePlayList,
-                    AlliesLowMoralePlayList, AlliesNormalMoralePlayList, AlliesHighMoralePlayList;
+// Music / morale playlists.
+var ROMusicPlayList AxisLowMoralePlayList;
+var ROMusicPlayList AxisNormalMoralePlayList;
+var ROMusicPlayList AxisHighMoralePlayList;
+var ROMusicPlayList AlliesLowMoralePlayList;
+var ROMusicPlayList AlliesNormalMoralePlayList;
+var ROMusicPlayList AlliesHighMoralePlayList;
 
-var MusicTrackStruct    AxisHigherMoraleTransitionTrack, AlliesHigherMoraleTransitionTrack,
-                        AxisLowerMoraleTransitionTrack, AlliesLowerMoraleTransitionTrack;
-
-var int TotalTrackSets, TrackIndex;
+// Morale transition music tracks
+var MusicTrackStruct AxisHigherMoraleTransitionTrack;
+var MusicTrackStruct AlliesHigherMoraleTransitionTrack;
+var MusicTrackStruct AxisLowerMoraleTransitionTrack;
+var MusicTrackStruct AlliesLowerMoraleTransitionTrack;
 
 simulated event ReplicatedEvent(name VarName)
 {
@@ -34,131 +50,177 @@ simulated event ReplicatedEvent(name VarName)
     }
 }
 
-simulated event PostBeginPlay()
+simulated function FixupMusicPlayList(out ROMusicPlayList InPlayList)
 {
-    super.PostBeginPlay();
+    local int i, SwapVal, RandVal;
+    local string NewPermutationString;
 
-    TrackIndex = rand(TotalTrackSets);
+    // On startup, initialize the random permutation
+    if( InPlayList.PermutationIndex == -1 )
+    {
+        `logd("[GameMusic] Startup. Generating permutation for playlist " $ InPlayList.PlaylistName);
+
+        InPlayList.RandomPermutation.Remove(0, InPlayList.RandomPermutation.Length);
+        for( i=0; i< InPlayList.CRef_MusicTracks.Length; i++ )
+        {
+            InPlayList.RandomPermutation.AddItem(i);
+        }
+    }
+
+    // Re-shuffle the random permutation on startup, or if we have finished playing each song in the playlist once
+    if( InPlayList.PermutationIndex == -1 || InPlayList.PermutationIndex >= InPlayList.CRef_MusicTracks.Length )
+    {
+        // Go through the positions 0 through n-1, and for each position i swap the element currently there
+        // with an arbitrarily chosen element from positions i through n, inclusive
+        // See: http://en.wikipedia.org/wiki/Random_permutation
+        for( i=0; i<InPlayList.RandomPermutation.length; i++ )
+        {
+            RandVal = Rand(InPlayList.RandomPermutation.length);
+
+            SwapVal = InPlayList.RandomPermutation[i];
+            InPlayList.RandomPermutation[i] = InPlayList.RandomPermutation[RandVal];
+            InPlayList.RandomPermutation[RandVal] = SwapVal;
+        }
+
+        NewPermutationString = "";
+        for( i=0; i<InPlayList.RandomPermutation.length; i++ )
+        {
+            NewPermutationString = NewPermutationString $ InPlayList.RandomPermutation[i] $ ", ";
+        }
+        `logd("[GameMusic] Re-generated radom permutation list for playlist " $ InPlayList.PlaylistName $ " - " $ NewPermutationString);
+
+        // Reset the index so that we start reading from the beginning of the permutation array again
+        InPlayList.PermutationIndex = 0;
+    }
 }
 
 simulated function SetMoraleMusic()
 {
     local string CRef_NewMoralMusicTrack;
-    local float TransitionWaitTimer;
-    local DRPlayerController PC;
+    local int TrackIndex;
+    local ROPlayerController ROPC;
 
-    if (ROPlayerController(GetALocalPlayerController()).GetTeamNum() != TeamIndex)
+    // Don't load the music if it is not for the current team
+    ROPC = ROPlayerController(GetALocalPlayerController());
+    if( ROPC.GetTeamNum() !=  TeamIndex )
     {
         return;
     }
 
-    `dr("",'M');
-
-    NewMoraleMusicTrack.TheSoundCue = none;
-
-    /*
-    if (Morale < 50)
+    if ( OldMorale != Morale )
     {
-        if (TeamIndex == `AXIS_TEAM_INDEX)
-        {
-            CRef_NewMoralMusicTrack = AxisLowMoralePlayList.CRef_MusicTracks[TrackIndex];
-        }
-        else
-        {
-            CRef_NewMoralMusicTrack = AlliesLowMoralePlayList.CRef_MusicTracks[TrackIndex];
-        }
-    }
-    else if (Morale < 100)
-    {
-        if (TeamIndex == `AXIS_TEAM_INDEX)
-        {
-            CRef_NewMoralMusicTrack = AxisNormalMoralePlayList.CRef_MusicTracks[TrackIndex];
-        }
-        else
-        {
-            CRef_NewMoralMusicTrack = AlliesNormalMoralePlayList.CRef_MusicTracks[TrackIndex];
-        }
-    }
-    else if ( Morale < 255 )
-    {
-        if (TeamIndex == `AXIS_TEAM_INDEX)
-        {
-            CRef_NewMoralMusicTrack = AxisHighMoralePlayList.CRef_MusicTracks[TrackIndex];
-        }
-        else
-        {
-            CRef_NewMoralMusicTrack = AlliesHighMoralePlayList.CRef_MusicTracks[TrackIndex];
-        }
-    }
-    */
+        // Clear out the currently playing morale track. This will be populated by the
+        // async loading code once the package containing the new morale music track is loaded
+        NewMoraleMusicTrack.TheSoundCue = none;
 
-    CRef_NewMoralMusicTrack = "SoundCue'DR__PLACEHOLDER_MUS.TEMPCUE'";
-
-    LoadAsyncMoraleMusicTrack(CRef_NewMoralMusicTrack);
-
-    if (OldMorale == 255 || NoTransitionCheck)
-    {
-        NoTransitionCheck = false;
-        UpdateMoraleMusicTrack();
-    }
-    else
-    {
-        TransitionWaitTimer = 7.0;
-
-        foreach WorldInfo.LocalPlayerControllers(class'DRPlayerController', PC)
+        if ( Morale < 50 )
         {
-            if (PC.RoundEnd)
+            if ( TeamIndex == 0 )
             {
-                TransitionWaitTimer = 0.1;
-                break;
+                FixupMusicPlayList(AxisLowMoralePlayList);
+                TrackIndex = AxisLowMoralePlayList.RandomPermutation[AxisLowMoralePlayList.PermutationIndex++];
+                CRef_NewMoralMusicTrack = AxisLowMoralePlayList.CRef_MusicTracks[TrackIndex];
+            }
+            else if ( TeamIndex == 1 )
+            {
+                FixupMusicPlayList(AlliesLowMoralePlayList);
+                TrackIndex = AlliesLowMoralePlayList.RandomPermutation[AlliesLowMoralePlayList.PermutationIndex++];
+                CRef_NewMoralMusicTrack = AlliesLowMoralePlayList.CRef_MusicTracks[TrackIndex];
+            }
+        }
+        else if ( Morale < 100 )
+        {
+            if ( TeamIndex == 0 )
+            {
+                FixupMusicPlayList(AxisNormalMoralePlayList);
+                TrackIndex = AxisNormalMoralePlayList.RandomPermutation[AxisNormalMoralePlayList.PermutationIndex++];
+                CRef_NewMoralMusicTrack = AxisNormalMoralePlayList.CRef_MusicTracks[TrackIndex];
+            }
+            else if ( TeamIndex == 1 )
+            {
+                FixupMusicPlayList(AlliesNormalMoralePlayList);
+                TrackIndex = AlliesNormalMoralePlayList.RandomPermutation[AlliesNormalMoralePlayList.PermutationIndex++];
+                CRef_NewMoralMusicTrack = AlliesNormalMoralePlayList.CRef_MusicTracks[TrackIndex];
+            }
+        }
+        else if ( Morale < 255 )
+        {
+            if ( TeamIndex == 0 )
+            {
+                FixupMusicPlayList(AxisHighMoralePlayList);
+                TrackIndex = AxisHighMoralePlayList.RandomPermutation[AxisHighMoralePlayList.PermutationIndex++];
+                CRef_NewMoralMusicTrack = AxisHighMoralePlayList.CRef_MusicTracks[TrackIndex];
+            }
+            else if ( TeamIndex == 1 )
+            {
+                FixupMusicPlayList(AlliesHighMoralePlayList);
+                TrackIndex = AlliesHighMoralePlayList.RandomPermutation[AlliesHighMoralePlayList.PermutationIndex++];
+                CRef_NewMoralMusicTrack = AlliesHighMoralePlayList.CRef_MusicTracks[TrackIndex];
             }
         }
 
-        if (OldMorale < Morale)
+        // Kick off the asynchronous load of the new morale music track
+        `log("[ContentLoading] Async content loading for " $ CRef_NewMoralMusicTrack $ " started at " $ WorldInfo.TimeSeconds);
+        LoadAsyncMoraleMusicTrack(CRef_NewMoralMusicTrack);
+
+        // Only do the transition if its not the initial setup,
+        // of if the morale changes to low or high, not to neutral
+        if ( OldMorale != 255 /*&& (Morale < 50 || Morale >= 100)*/ ) // Uncomment this to have it only play for morale changes to high or low, but not neutral
         {
-            SetTimer(TransitionWaitTimer, false, 'PlayMoraleTransitionUp');
+            if ( OldMorale < Morale )
+            {
+                // Just using 7 seconds for now so that the transitions don't override the objective caps. Add a var or do something better later
+                SetTimer(7.0, false, 'PlayMoraleTransitionUp');
+            }
+            else
+            {
+                // Just using 7 seconds for now so that the transitions don't override the objective caps. Add a var or do something better later
+                SetTimer(7.0, false, 'PlayMoraleTransitionDown');
+            }
         }
         else
         {
-            SetTimer(TransitionWaitTimer, false, 'PlayMoraleTransitionDown');
+            UpdateMoraleMusicTrack();
         }
     }
 }
 
-simulated function LoadAsyncMoraleMusicTrack(string MusicTrack)
+simulated event LoadAsyncMoraleMusicTrack(string MusicTrack)
 {
     if (MusicTrack == "")
     {
         return;
     }
 
-    `dr(MusicTrack,'M');
+    `log("[ContentLoading] Async content loading for " $ MusicTrack
+        $ " ended at " $ WorldInfo.TimeSeconds,, 'DRAudio');
 
     NewMoraleMusicTrack.TheSoundCue = SoundCue(DynamicLoadObject(MusicTrack, class'SoundCue'));
-
-    if (NewMoraleMusicTrack.TheSoundCue == none)
+    if( NewMoraleMusicTrack.TheSoundCue == none )
     {
-        `dr("Failed to load cue!!!",'M');
+        `warn("[ContentLoading] Could not load SoundCue: " $ MusicTrack
+            $ "Game music will not work correctly",, 'DRAudio');
     }
 }
 
 simulated function PlayMoraleTransitionUp()
 {
-    `dr("",'M');
     PlayTransitionMusicTrack(true);
 }
 
 simulated function PlayMoraleTransitionDown()
 {
-    `dr("",'M');
     PlayTransitionMusicTrack(false);
 }
 
 simulated function PlayTransitionMusicTrack(bool bMoraleUp)
 {
-    if (bMoraleUp)
+    local DRPlayerController DRPC;
+    local float TransitionTime;
+
+    if ( bMoraleUp )
     {
-        if (TeamIndex == `AXIS_TEAM_INDEX)
+        if ( TeamIndex == 0 )
         {
             TransitionMusicTrack = AxisHigherMoraleTransitionTrack;
         }
@@ -169,7 +231,7 @@ simulated function PlayTransitionMusicTrack(bool bMoraleUp)
     }
     else
     {
-        if (TeamIndex == `AXIS_TEAM_INDEX)
+        if ( TeamIndex == 0 )
         {
             TransitionMusicTrack = AxisLowerMoraleTransitionTrack;
         }
@@ -179,37 +241,38 @@ simulated function PlayTransitionMusicTrack(bool bMoraleUp)
         }
     }
 
-    // Update immediately for transition stinger
-    NewMoraleMusicTrack = TransitionMusicTrack;
-    UpdateMoraleMusicTrack();
+    TransitionTime = TransitionMusicTrack.TheSoundCue.GetCueDuration();
 
-    // Update later for post-transition music
-    NoTransitionCheck = true;
-    SetTimer(NewMoraleMusicTrack.TheSoundCue.GetCueDuration(), false, 'SetMoraleMusic');
-}
+    foreach WorldInfo.LocalPlayerControllers(class'DRPlayerController', DRPC)
+    {
+        if (DRPC.GetTeamNum() == TeamIndex)
+        {
+            DRPC.SetNewMoraleMusicTrack(TransitionMusicTrack, True);
+        }
+    }
 
-simulated function NotifyLocalPlayerTeamReceived()
-{
-    NoTransitionCheck = true;
-    SetMoraleMusic();
+    SetTimer(TransitionTime, false, 'UpdateMoraleMusicTrack');
 }
 
 simulated function UpdateMoraleMusicTrack()
 {
-    local DRPlayerController PC;
+    local DRPlayerController DRPC;
 
-    if (NewMoraleMusicTrack.TheSoundCue == none)
+    if( NewMoraleMusicTrack.TheSoundCue == none )
     {
-        // `dr("Waiting for morale track to load. Retry in 1 sec",'M');
+        `log("[GameMusic] Waiting for morale track to load. Retry in 1 sec",, 'DRAudio');
         SetTimer(1.0, true, 'UpdateMoraleMusicTrack');
     }
     else
     {
         ClearTimer('UpdateMoraleMusicTrack');
 
-        foreach WorldInfo.LocalPlayerControllers(class'DRPlayerController', PC)
+        foreach WorldInfo.LocalPlayerControllers(class'DRPlayerController', DRPC)
         {
-            PC.SetNewMoraleMusicTrack(NewMoraleMusicTrack);
+            if( DRPC.GetTeamNum() == TeamIndex )
+            {
+                DRPC.SetNewMoraleMusicTrack(NewMoraleMusicTrack);
+            }
         }
     }
 }
@@ -235,64 +298,83 @@ simulated function class<ROAerialReconPlane> GetAerialReconPlaneClass()
 DefaultProperties
 {
     OldMorale=255
-    NoTransitionCheck=false
+    // NoTransitionCheck=false
 
     NewMoraleMusicTrack=(bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=1.0,FadeInVolumeLevel=1.0,FadeOutTime=0.5,FadeOutVolumeLevel=0.0)
 
-    // Don't forget to update this as more tracks are added
-    TotalTrackSets=1
-    /*
     AxisLowMoralePlayList={(
         PlaylistName=Axis_LowMorale,
-        CRef_MusicTracks=(
-            "SoundCue'WinterWar_AUD_MUS.FIN.F_L_1_Cue'"
-        )
+        PermutationIndex=-1,
+        CRef_MusicTracks=("DR__PLACEHOLDER_MUS.TEMPCUE")
     )}
 
     AxisNormalMoralePlayList={(
         PlaylistName=Axis_NeutralMorale,
-        CRef_MusicTracks=(
-            "SoundCue'WinterWar_AUD_MUS.FIN.F_N_1_Cue'",
-            "SoundCue'WinterWar_AUD_MUS.FIN.F_N_2_Cue'"
-        )
+        PermutationIndex=-1,
+        CRef_MusicTracks=("DR__PLACEHOLDER_MUS.TEMPCUE")
     )}
 
     AxisHighMoralePlayList={(
         PlaylistName=Axis_HighMorale,
-        CRef_MusicTracks=(
-            "SoundCue'WinterWar_AUD_MUS.FIN.F_H_1_Cue'",
-            "SoundCue'WinterWar_AUD_MUS.FIN.F_H_2_Cue'"
-        )
+        PermutationIndex=-1,
+        CRef_MusicTracks=("DR__PLACEHOLDER_MUS.TEMPCUE")
     )}
 
     AlliesLowMoralePlayList={(
         PlaylistName=Allies_LowMorale,
-        CRef_MusicTracks=(
-            "SoundCue'WinterWar_AUD_MUS.SOV.R_L_1_Cue'",
-            "SoundCue'WinterWar_AUD_MUS.SOV.R_L_1_Cue'"
-        )
+        PermutationIndex=-1,
+        CRef_MusicTracks=("DR__PLACEHOLDER_MUS.TEMPCUE")
     )}
 
     AlliesNormalMoralePlayList={(
         PlaylistName=Allies_NeutralMorale,
-        CRef_MusicTracks=(
-            "SoundCue'WinterWar_AUD_MUS.SOV.R_N_1_Cue'",
-            "SoundCue'WinterWar_AUD_MUS.SOV.R_N_1_Cue'"
-        )
+        PermutationIndex=-1,
+        CRef_MusicTracks=("DR__PLACEHOLDER_MUS.TEMPCUE")
     )}
 
     AlliesHighMoralePlayList={(
         PlaylistName=Allies_HighMorale,
-        CRef_MusicTracks=(
-            "SoundCue'WinterWar_AUD_MUS.SOV.R_H_1_Cue'",
-            "SoundCue'WinterWar_AUD_MUS.SOV.R_H_1_Cue'"
-        )
+        PermutationIndex=-1,
+        CRef_MusicTracks=("DR__PLACEHOLDER_MUS.TEMPCUE")
     )}
 
-    AxisHigherMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.FIN.F_Trans_2H_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
-    AxisLowerMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.FIN.F_Trans_2L_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
+    /*
+    AxisHigherMoraleTransitionTrack=(
+        TheSoundCue=SoundCue'Music_Ger.G_Trans_2H_Cue',
+        bAutoPlay=true,
+        bPersistentAcrossLevels=false,
+        FadeInTime=0.1,
+        FadeInVolumeLevel=0.8,
+        FadeOutTime=0.1,
+        FadeOutVolumeLevel=0.0
+    )
+    AxisLowerMoraleTransitionTrack=(
+        TheSoundCue=SoundCue'Music_Ger.G_Trans_2L_Cue',
+        bAutoPlay=true,
+        bPersistentAcrossLevels=false,
+        FadeInTime=0.1,
+        FadeInVolumeLevel=0.8,
+        FadeOutTime=0.1,
+        FadeOutVolumeLevel=0.0
+    )
 
-    AlliesHigherMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.SOV.R_Trans_2H_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
-    AlliesLowerMoraleTransitionTrack=(TheSoundCue=SoundCue'WinterWar_AUD_MUS.SOV.R_Trans_2L_Cue',bAutoPlay=true,bPersistentAcrossLevels=false,FadeInTime=0.1,FadeInVolumeLevel=1.0,FadeOutTime=0.1,FadeOutVolumeLevel=0.0)
-     */
+    AlliesHigherMoraleTransitionTrack=(
+        TheSoundCue=SoundCue'Music_Sov.R_Trans_2H_Cue',
+        bAutoPlay=true,
+        bPersistentAcrossLevels=false,
+        FadeInTime=0.1,
+        FadeInVolumeLevel=0.8,
+        FadeOutTime=0.1,
+        FadeOutVolumeLevel=0.0
+    )
+    AlliesLowerMoraleTransitionTrack=(
+        TheSoundCue=SoundCue'Music_Sov.R_Trans_2L_Cue',
+        bAutoPlay=true,
+        bPersistentAcrossLevels=false,
+        FadeInTime=0.1,
+        FadeInVolumeLevel=0.8,
+        FadeOutTime=0.1,
+        FadeOutVolumeLevel=0.0
+    )
+    */
 }
