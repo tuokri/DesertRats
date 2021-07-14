@@ -18,9 +18,16 @@ DefaultProperties
 
     HeadgearMesh=SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40'
 
+    bSingleHandedSprinting=true
+
     Begin Object Name=ROPawnSkeletalMeshComponent
         AnimSets(11)=AnimSet'DR_CHR.Anim.CHR_Axis_Unique'
     End Object
 
-    bSingleHandedSprinting=true
+    Begin Object Class=DRAudioComponent Name=DialogAudioComp0
+        bStopWhenOwnerDestroyed=true
+        AudioClass=EAC_SFX
+    End Object
+    DialogAudioComp=DialogAudioComp0
+    // TODO: Refactor DRPAWN!
 }

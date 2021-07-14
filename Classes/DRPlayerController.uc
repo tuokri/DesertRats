@@ -134,13 +134,15 @@ function DRAudioComponent GetPooledAudioComponentCustom(SoundCue ASound, Actor S
 // TODO: doesn't work yet!
 simulated function class<DRVoicePack> GetCustomVoicePack(class<ROVoicePack> VoicePack)
 {
-    return class'DRVoicePack'; // TODO: Hashmap?
+    // TODO: Hashmap? Switch-case?
+    // TODO: Hard-coded for now.
+    return SouthTeamVoicePacksCustom[0];
 }
 
 // TODO: doesn't work yet!
 simulated function GetCustomAnnouncerPack(const out ROAnnouncerPack AnnouncerPack, const out DRAnnouncerPack CustomAnnouncerPack)
 {
-
+    // CustomAnnouncerPack =
 }
 
 reliable client event ReceiveLocalizedVoiceCom(Pawn VoicePawn, byte VoiceSeatIndex,
@@ -171,6 +173,7 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
     local ROPawn PawnSpeaker;
     local VehicleCrewProxy ProxySpeaker;
     local class<ROVoicePack> VoicePack;
+    local class<DRVoicePack> CustomVoicePack;
 
     if (`DEBUG_VOICECOMS)
     {
@@ -327,45 +330,74 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
         }
     }
 
+    CustomVoicePack = GetCustomVoicePack(VoicePack);
+
+    if (`DEBUG_VOICECOMS)
+    {
+        `log("CustomVoicePack   =" $ CustomVoicePack,, 'DRAudio');
+        `log("bIsCustomVoiceCom =" $ CustomVoicePack.static.IsCustomVoiceCom(VoiceComIndex),
+            CustomVoicePack != None, 'DRAudio');
+    }
+
     // Determine how we want to play the sound
     if (PawnSpeaker != none)
     {
-        // Make Pawn say the line
-        PawnSpeaker.SpeakLine(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
-            VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher);
+        `log("PlayVoiceCom(): PawnSpeaker=" $ PawnSpeaker, `DEBUG_VOICECOMS, 'DRAudio');
+
+        // Make Pawn say the line.
+        // TODO: STUPID CASTING, FIX DRPAWN.
+        if (PawnSpeaker.GetTeamNum() == `ALLIES_TEAM_INDEX)
+        {
+            DRPawnAllies(PawnSpeaker).SpeakLineCustom(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
+                VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher,,,, CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex));
+        }
+        else
+        {
+            DRPawnAxis(PawnSpeaker).SpeakLineCustom(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
+                VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher,,,, CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex));
+        }
     }
     else if (ProxySpeaker != none)
     {
-        // Make the AI Proxy say the line
+        `log("PlayVoiceCom(): ProxySpeaker=" $ ProxySpeaker, `DEBUG_VOICECOMS, 'DRAudio');
+
+        // Make the AI Proxy say the line.
         ProxySpeaker.SpeakLine(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
             VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher);
     }
     else
     {
-        // TODO: need to replace all voicepacks with DRVoicePacks.
-        PlayVoiceCustom(VoicePack, VoiceComIndex, VoiceLocation);
+        PlayVoiceCustom(VoicePack, VoiceComIndex, VoiceLocation, CustomVoicePack);
     }
 
     return VoicePack;
 }
 
-simulated function PlayVoiceCustom(class<ROVoicePack> VoicePack, int VoiceComIndex, vector VoiceLocation)
+simulated function PlayVoiceCustom(class<ROVoicePack> VoicePack, int VoiceComIndex, vector VoiceLocation,
+    optional class<DRVoicePack> CustomVoicePack)
 {
     local SoundCue TestCue;
     local DRAudioComponent TestComp;
-    local class<DRVoicePack> CustomVoicePack;
+
+    `log("PlayVoiceCustom()", `DEBUG_VOICECOMS, 'DRAudio');
 
     // TODO:
     // SoundCue backport:
     // Play SoundCue here instead, using pooled audio component.
     // Volume control with audio manager.
-    CustomVoicePack = GetCustomVoicePack(VoicePack);
-    if (CustomVoicePack.static.IsCustomVoiceCom(VoiceComIndex))
+
+    if (CustomVoicePack != None && CustomVoicePack.static.IsCustomVoiceCom(VoiceComIndex))
     {
         TestCue = CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex);
         // TODO: Self? SoundClass? Volume?
         TestComp = GetPooledAudioComponentCustom(TestCue, Self, True, True, VoiceLocation);
         TestComp.Play();
+
+        if (`DEBUG_VOICECOMS)
+        {
+            `log("TestCue  =" $ TestCue,, 'DRAudio');
+            `log("TestComp =" $ TestComp,, 'DRAudio');
+        }
     }
     else
     {
@@ -1699,6 +1731,8 @@ function InitialiseCCMs()
     }
 }
 */
+
+/*
 simulated function CreateVoicePacks(byte TeamIndex)
 {
     if (WorldInfo.NetMode != NM_DedicatedServer)
@@ -1706,6 +1740,65 @@ simulated function CreateVoicePacks(byte TeamIndex)
         AnnouncerPacks[`AXIS_TEAM_INDEX] = new(Outer) AllAnnouncerPacks[`AXIS_TEAM_INDEX];
         AnnouncerPacks[`ALLIES_TEAM_INDEX] = new(Outer) AllAnnouncerPacks[`ALLIES_TEAM_INDEX];
     }
+}
+*/
+
+simulated function CreateVoicePacks(byte TeamIndex)
+{
+    local ROMapInfo ROMI;
+    local int NorthNationIndex;
+    local int SouthNationIndex;
+
+    ROMI = ROMapInfo(WorldInfo.GetMapInfo());
+
+    // Allow announcer packs in PIE.
+    if (ROMI != none)
+    {
+        NorthNationIndex = ROMI.GetNorthernNation();
+        SouthNationIndex = ROMI.GetSouthernNation();
+    }
+
+    if( WorldInfo.NetMode != NM_DedicatedServer )
+    {
+        AnnouncerPacks[`AXIS_TEAM_INDEX] = new(Outer) AllAnnouncerPacks[NorthNationIndex];
+        AnnouncerPacks[`ALLIES_TEAM_INDEX] = new(Outer) AllAnnouncerPacks[SouthNationIndex];
+
+        AnnouncerPacks[`AXIS_TEAM_INDEX].InitObjCooldowns();
+        AnnouncerPacks[`ALLIES_TEAM_INDEX].InitObjCooldowns();
+
+        AnnouncerPacksCustom[`AXIS_TEAM_INDEX] = new(Outer) AllAnnouncerPacksCustom[NorthNationIndex];
+        AnnouncerPacksCustom[`ALLIES_TEAM_INDEX] = new(Outer) AllAnnouncerPacksCustom[SouthNationIndex];
+
+        AnnouncerPacksCustom[`AXIS_TEAM_INDEX].InitObjCooldowns();
+        AnnouncerPacksCustom[`ALLIES_TEAM_INDEX].InitObjCooldowns();
+    }
+
+    NorthTeamVoicePacks[0] = AllTeamVoicePacksOne[NorthNationIndex];
+    NorthTeamVoicePacks[1] = AllTeamVoicePacksTwo[NorthNationIndex];
+    NorthTeamVoicePacks[2] = AllTeamVoicePacksThree[NorthNationIndex];
+
+    SouthTeamVoicePacks[0] = AllTeamVoicePacksOne[SouthNationIndex];
+    SouthTeamVoicePacks[1] = AllTeamVoicePacksTwo[SouthNationIndex];
+    SouthTeamVoicePacks[2] = AllTeamVoicePacksThree[SouthNationIndex];
+
+    NorthTeamVoicePacksCustom[0] = AllTeamVoicePacksOneCustom[NorthNationIndex];
+    NorthTeamVoicePacksCustom[1] = AllTeamVoicePacksTwoCustom[NorthNationIndex];
+    NorthTeamVoicePacksCustom[2] = AllTeamVoicePacksThreeCustom[NorthNationIndex];
+
+    SouthTeamVoicePacksCustom[0] = AllTeamVoicePacksOneCustom[SouthNationIndex];
+    SouthTeamVoicePacksCustom[1] = AllTeamVoicePacksTwoCustom[SouthNationIndex];
+    SouthTeamVoicePacksCustom[2] = AllTeamVoicePacksThreeCustom[SouthNationIndex];
+
+    /*
+    // Hardcoded handler for ARVN combat pilots, who are spawned as US chars.
+    // Not worth writing a proper system unless we somehow end up with a second nation requiring someone else's pilots.
+    if( ROMI != none && SouthIndex == SFOR_ARVN && ROMI.TeamHasCombatPilots(`ALLIES_TEAM_INDEX) )
+    {
+        SouthTeamAltVoicePacks[0] = AllTeamVoicePacksOne[1];
+        SouthTeamAltVoicePacks[1] = AllTeamVoicePacksTwo[1];
+        SouthTeamAltVoicePacks[2] = AllTeamVoicePacksThree[1];
+    }
+    */
 }
 
 function RightLeftLean()
@@ -2452,7 +2545,7 @@ simulated function DisplayDebug(HUD HUD, out float out_YL, out float out_YPos)
 
 DefaultProperties
 {
-    TeamSelectSceneTemplate= DRUISceneTeamSelect'DR_UI.UIScene.DRUIScene_TeamSelect'
+    TeamSelectSceneTemplate=DRUISceneTeamSelect'DR_UI.UIScene.DRUIScene_TeamSelect'
     // UnitSelectSceneTemplate=WWUISceneUnitSelect'WinterWar_UI.UIScene.WWUIScene_UnitSelect'
     // CharacterSceneTemplate=WWUISceneCharacter'WinterWar_UI.UIScene.WWUIScene_Character'
     // AfterActionReportSceneTemplate=WWUISceneAfterActionReport'WinterWar_UI.UIScene.WWUIScene_AfterAction'
@@ -2470,9 +2563,15 @@ DefaultProperties
     // NorthTeamVoicePacks[1]=class'WWVoicePack_FIN_2'
     // NorthTeamVoicePacks[2]=class'WWVoicePack_FIN_3'
 
-    // SouthTeamVoicePacks[0]=class'WWVoicePack_RUS_1'
-    // SouthTeamVoicePacks[1]=class'WWVoicePack_RUS_2'
-    // SouthTeamVoicePacks[2]=class'WWVoicePack_RUS_3'
+    // SouthTeamVoicePacks[0]=class'ROVoicePackAusTeam01'
+    // SouthTeamVoicePacks[1]=class'ROVoicePackAusTeam01'
+    // SouthTeamVoicePacks[2]=class'ROVoicePackAusTeam01'
+
+    // SouthTeamVoicePacksCustom[0]=class'DRVoicePackUKTeam01'
+    // SouthTeamVoicePacksCustom[1]=class'DRVoicePackUKTeam01'
+    // SouthTeamVoicePacksCustom[2]=class'DRVoicePackUKTeam01'
+
+    AllTeamVoicePacksOneCustom[1]=class'DRVoicePackUKTeam01'
 
     // AllAnnouncerPacks[`AXIS_TEAM_INDEX]=class'WWVoicePack_FIN_C'
     // AllAnnouncerPacks[`ALLIES_TEAM_INDEX]=class'WWVoicePack_RUS_C'

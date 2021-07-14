@@ -1,6 +1,137 @@
 // 20 meters. Defined in ROGameInfo.
 `define BATTLECHATTER_PAWN_GROUP_RADIUS 1000
 
+// Not the most elegant, but will do for now.
+`define ROUND_WON_FUNCTION \
+function RoundWon(int WinningTeam, byte WinCondition)\n\
+{\n\
+    local int i;\n\
+    local int NumOfPlayers;\n\
+    local string MapName;\n\
+    local string WinningTeamName;\n\
+    local ObjectiveInfo ObjInfo;\n\
+    local BalanceStats BStats;\n\
+    ClearTimer('DelayedCheckReinforcementLockdown');\n\
+    if (bDebugMorale)\n\
+    {\n\
+        `log("RoundWon()");\n\
+    }\n\
+    SetMorale(255, 255);\n\
+    MapName = string(WorldInfo.GetPackageName());\n\
+    WinningTeamName = (WinningTeam == `AXIS_TEAM_INDEX ? "Axis" : "Allies");\n\
+    NumOfPlayers = GetNumPlayers();\n\
+    `log("BALANCE STATS:" @ MapName @ "|" @ MaxPlayers @ " max players |" @ NumOfPlayers\n\
+        @ "players playing" @ "Teams Swapped=" @ bReverseRolesAndSpawns,,'DevBalanceStats');\n\
+    `log("BALANCE STATS: WinningTeam=" $ WinningTeamName @ "Teams Swapped="\n\
+        @ bReverseRolesAndSpawns,, 'DevBalanceStats');\n\
+    `log("BALANCE STATS: TimeRemaining=" $ GameReplicationInfo.RemainingTime $ " seconds which is "\n\
+        $ (GameReplicationInfo.RemainingTime / 60.0) $ " minutes" @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');\n\
+    `log("BALANCE STATS: AxisReinforcements=" $ AxisTeam.ReinforcementsRemaining @ "AlliesReinforcements="\n\
+        $ AlliesTeam.ReinforcementsRemaining @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');\n\
+    BStats.MapName = MapName;\n\
+    BStats.WinningTeamName = WinningTeamName;\n\
+    BStats.MaxPlayers = MaxPlayers;\n\
+    BStats.NumPlayers = NumOfPlayers;\n\
+    BStats.TimeRemainingSeconds = GameReplicationInfo.RemainingTime;\n\
+    BStats.AxisReinforcements = AxisTeam.ReinforcementsRemaining;\n\
+    BStats.AlliesReinforcements = AlliesTeam.ReinforcementsRemaining;\n\
+    BStats.bReverseRolesAndSpawns = bReverseRolesAndSpawns;\n\
+    for (i = 0; i < Objectives.Length; i++)\n\
+    {\n\
+        ObjInfo.ObjIndex = Objectives[i].ObjIndex;\n\
+        ObjInfo.ObjState = Objectives[i].ObjState;\n\
+        ObjInfo.ObjName = Objectives[i].ObjName;\n\
+        BStats.ObjInfos.AddItem(ObjInfo);\n\
+        if (Objectives[i] != none && Objectives[i].bActive)\n\
+        {\n\
+            `log("BALANCE STATS: ActiveObjectives " $ i $ " = " $ Objectives[i].ObjName\n\
+                @ "Status=" $ (Objectives[i].ObjState == `AXIS_TEAM_INDEX ? "Axis" : (\n\
+                    Objectives[i].ObjState == `ALLIES_TEAM_INDEX ? "Allies" : "Neutral")),, 'DevBalanceStats');\n\
+        }\n\
+    }\n\
+    super.RoundWon(WinningTeam, WinCondition);\n\
+    `log("BALANCE STATS: AxisTeamScore=" $ AxisTeam.Score @ "AlliesTeamScore=" $ AlliesTeam.Score,, 'DevBalanceStats');\n\
+    BStats.AxisTeamScore = AxisTeam.Score;\n\
+    BStats.AlliesTeamScore = AlliesTeam.Score;\n\
+    LastTeamObjectivesCaptured[`AXIS_TEAM_INDEX] = TeamObjectivesCaptured[`AXIS_TEAM_INDEX];\n\
+    LastTeamObjectivesCaptured[`ALLIES_TEAM_INDEX] = TeamObjectivesCaptured[`ALLIES_TEAM_INDEX];\n\
+    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`AXIS_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`AXIS_TEAM_INDEX];\n\
+    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`ALLIES_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`ALLIES_TEAM_INDEX];\n\
+    SendBalanceStatsPackage(BStats);\n\
+}\n\
+/*
+function RoundWon(int WinningTeam, byte WinCondition)
+{
+    local int i;
+    local int NumOfPlayers;
+    local string MapName;
+    local string WinningTeamName;
+    local ObjectiveInfo ObjInfo;
+    local BalanceStats BStats;
+
+    ClearTimer('DelayedCheckReinforcementLockdown');
+
+    if (bDebugMorale)
+    {
+        `log("RoundWon()");
+    }
+
+    SetMorale(255, 255);
+
+    MapName = string(WorldInfo.GetPackageName());
+    WinningTeamName = (WinningTeam == `AXIS_TEAM_INDEX ? "Axis" : "Allies");
+    NumOfPlayers = GetNumPlayers();
+
+    `log("BALANCE STATS:" @ MapName @ "|" @ MaxPlayers @ " max players |" @ NumOfPlayers
+        @ "players playing" @ "Teams Swapped=" @ bReverseRolesAndSpawns,,'DevBalanceStats');
+    `log("BALANCE STATS: WinningTeam=" $ WinningTeamName @ "Teams Swapped="
+        @ bReverseRolesAndSpawns,, 'DevBalanceStats');
+    `log("BALANCE STATS: TimeRemaining=" $ GameReplicationInfo.RemainingTime $ " seconds which is "
+        $ (GameReplicationInfo.RemainingTime / 60.0) $ " minutes" @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');
+    `log("BALANCE STATS: AxisReinforcements=" $ AxisTeam.ReinforcementsRemaining @ "AlliesReinforcements="
+        $ AlliesTeam.ReinforcementsRemaining @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');
+
+    BStats.MapName = MapName;
+    BStats.WinningTeamName = WinningTeamName;
+    BStats.MaxPlayers = MaxPlayers;
+    BStats.NumPlayers = NumOfPlayers;
+    BStats.TimeRemainingSeconds = GameReplicationInfo.RemainingTime;
+    BStats.AxisReinforcements = AxisTeam.ReinforcementsRemaining;
+    BStats.AlliesReinforcements = AlliesTeam.ReinforcementsRemaining;
+    BStats.bReverseRolesAndSpawns = bReverseRolesAndSpawns;
+
+    for (i = 0; i < Objectives.Length; i++)
+    {
+        ObjInfo.ObjIndex = Objectives[i].ObjIndex;
+        ObjInfo.ObjState = Objectives[i].ObjState;
+        ObjInfo.ObjName = Objectives[i].ObjName;
+
+        BStats.ObjInfos.AddItem(ObjInfo);
+
+        if (Objectives[i] != none && Objectives[i].bActive)
+        {
+            `log("BALANCE STATS: ActiveObjectives " $ i $ " = " $ Objectives[i].ObjName
+                @ "Status=" $ (Objectives[i].ObjState == `AXIS_TEAM_INDEX ? "Axis" : (
+                    Objectives[i].ObjState == `ALLIES_TEAM_INDEX ? "Allies" : "Neutral")),, 'DevBalanceStats');
+        }
+    }
+
+    super.RoundWon(WinningTeam, WinCondition);
+
+    `log("BALANCE STATS: AxisTeamScore=" $ AxisTeam.Score @ "AlliesTeamScore=" $ AlliesTeam.Score,, 'DevBalanceStats');
+
+    BStats.AxisTeamScore = AxisTeam.Score;
+    BStats.AlliesTeamScore = AlliesTeam.Score;
+
+    LastTeamObjectivesCaptured[`AXIS_TEAM_INDEX] = TeamObjectivesCaptured[`AXIS_TEAM_INDEX];
+    LastTeamObjectivesCaptured[`ALLIES_TEAM_INDEX] = TeamObjectivesCaptured[`ALLIES_TEAM_INDEX];
+    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`AXIS_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`AXIS_TEAM_INDEX];
+    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`ALLIES_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`ALLIES_TEAM_INDEX];
+
+    SendBalanceStatsPackage(BStats);
+}
+*/
+
 var config bool bBalanceStatsAnalyticsEnabled;
 
 var DRBufferedTcpLinkClient BalanceLoggingClient;
@@ -12,6 +143,7 @@ struct ObjectiveInfo
     var string ObjName;
 };
 
+// TODO: ROUIDataProvider_MapInfo.MapID to differentiate between map versions?
 struct BalanceStats
 {
     var string MapName;
@@ -51,6 +183,11 @@ function ConnectBalanceClient()
     if (BalanceLoggingClient == None)
     {
         BalanceLoggingClient = Spawn(class'DRBufferedTcpLinkClient');
+
+        if (BalanceLoggingClient == None)
+        {
+            `log("Failed to spawn DRBufferedTcpLinkClient",, 'DRBalanceLogging');
+        }
     }
 }
 
@@ -504,3 +641,129 @@ function BroadcastDelayedBattleChatterEvent()
 // TODO: --> ServerPlaySound() {ClientHearSound(...)}
 
 // --- END SOUNDCUE BACKPORT ---
+
+simulated function SetMorale(byte AxisMorale, byte AlliesMorale)
+{
+    if (AxisMorale != AxisTeam.Morale)
+    {
+        if (AxisMorale != 255)
+        {
+            LastMoraleChangeTime[`AXIS_TEAM_INDEX] = WorldInfo.TimeSeconds;
+        }
+        else
+        {
+            LastMoraleChangeTime[`AXIS_TEAM_INDEX] = 0;
+        }
+
+        AxisTeam.Morale = AxisMorale;
+
+        if (WorldInfo.NetMode == NM_StandAlone)
+        {
+            AxisTeam.ReplicatedEvent('Morale');
+        }
+    }
+
+    if (AlliesMorale != AlliesTeam.Morale)
+    {
+        if (AlliesMorale != 255)
+        {
+            LastMoraleChangeTime[`ALLIES_TEAM_INDEX] = WorldInfo.TimeSeconds;
+        }
+        else
+        {
+            LastMoraleChangeTime[`ALLIES_TEAM_INDEX] = 0;
+        }
+
+        AlliesTeam.Morale = AlliesMorale;
+
+        if (WorldInfo.NetMode == NM_StandAlone)
+        {
+            AlliesTeam.ReplicatedEvent('Morale');
+        }
+    }
+}
+
+function string GetDefaultBotName(Controller C, byte TeamIndex, byte NameIndex)
+{
+    if (TeamIndex == `AXIS_TEAM_INDEX)
+    {
+        if( ROAIController( C ) != none )
+        {
+            ROAIController( C ).bNameInitialized = true;
+        }
+
+        return class'DRGameInfo'.default.AxisBotNames[NameIndex - 1];
+    }
+    else if (TeamIndex == `ALLIES_TEAM_INDEX)
+    {
+        if (ROAIController( C ) != none)
+        {
+            ROAIController( C ).bNameInitialized = true;
+        }
+
+        return class'DRGameInfo'.default.AlliesBotNames[NameIndex - 1];
+    }
+
+    return string(C.Name);
+}
+
+function Actor SpawnAerialReconPlane(Actor BaseActor, float Duration, ROPlayerController CallingController)
+{
+    local ROTeamInfo Team;
+    local class<ROAerialReconPlane> ReconPlaneClass;
+
+    Team = ROTeamInfo(CallingController.PlayerReplicationInfo.Team);
+    ReconPlaneClass = Team.GetAerialReconPlaneClass();
+
+    if ( Team.AerialReconPlane != none )
+    {
+        DestroyAerialReconPlane(CallingController.GetTeamNum());
+    }
+
+    `dr(""$ ReconPlaneClass, 'CMDA');
+
+    Team.AerialReconPlane = Spawn(ReconPlaneClass, self, , BaseActor.Location, BaseActor.Rotation);
+    Team.AerialReconPlane.SetBase(BaseActor);
+    Team.AerialReconPlane.BaseActor = BaseActor;
+    Team.AerialReconPlane.CallingController = CallingController;
+    Team.AerialReconPlane.AerialReconDuration = Duration;
+    Team.AerialReconPlane.TeamIndex = Team.TeamIndex;
+
+    CallingController.NextAerialReconController = WorldInfo.ControllerList;
+    CallingController.PrevAerialReconController = none;
+
+    return Team.AerialReconPlane;
+}
+
+function ScoreMGResupply(Controller Dropper, Controller Gunner)
+{
+    if( Dropper == Gunner )
+    {
+        return;
+    }
+    else if (ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo) != none &&
+            ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo).RoleInfo != none &&
+            ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo).RoleInfo.ClassIndex != `RI_MACHINE_GUNNER)
+    {
+        AddDelayedKillMessage(ROKMT_Resupplied, GameReplicationInfo.ElapsedTime, Dropper.PlayerReplicationInfo);
+    }
+}
+
+`ifndef(RELEASE)
+function ShowRoundStartScreen(optional bool AdminStart)
+{
+    local ROPlayerController ROPC;
+
+    super.ShowRoundStartScreen(AdminStart);
+
+    foreach WorldInfo.AllControllers(class'ROPlayerController', ROPC)
+    {
+        ROPC.SetCinematicMode(false, false, false, true, false, true);
+        ROPC.ClientHideRoundStartScreen();
+
+        ROPC.bIgnoreMoveInput = 0;
+        ROPC.bIgnoreChangingSeatsInput = 0;
+        ROPC.bIgnoreChangingPositionsInput = 0;
+    }
+}
+`endif

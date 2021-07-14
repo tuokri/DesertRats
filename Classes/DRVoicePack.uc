@@ -12,6 +12,12 @@ var array<DRVoiceCommunication> CustomVoiceComs;
 // Is custom SoundCue voice com defined for this pack in this VoiceComIndex?
 static function bool IsCustomVoiceCom(int VoiceComIndex)
 {
+    if (`DEBUG_VOICECOMS)
+    {
+        `log("IsCustomVoiceCom(): VoiceComIndex =" $ VoiceComIndex,, 'DRAudio');
+        `log("IsCustomVoiceCom(): CustomSound   =" $ default.CustomVoiceComs[VoiceComIndex].CustomSound,, 'DRAudio');
+    }
+
     return (default.CustomVoiceComs[VoiceComIndex].CustomSound != None);
 }
 

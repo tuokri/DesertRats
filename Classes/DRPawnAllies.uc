@@ -17,9 +17,16 @@ DefaultProperties
 
     HeadgearMesh=SkeletalMesh'DR_CHR_UK.Headgear.UKr_Brodie_Straight'
 
+    bSingleHandedSprinting=False
+
     Begin Object Name=ROPawnSkeletalMeshComponent
         AnimSets(11)=AnimSet'DR_CHR.Anim.CHR_Allies_Unique'
     End Object
 
-    bSingleHandedSprinting=False
+    Begin Object Class=DRAudioComponent Name=DialogAudioComp0
+        bStopWhenOwnerDestroyed=true
+        AudioClass=EAC_SFX
+    End Object
+    DialogAudioComp=DialogAudioComp0
+    // TODO: Refactor DRPAWN!
 }

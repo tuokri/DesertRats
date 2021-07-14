@@ -13,9 +13,9 @@ enum EAudioClass
 
 // SFX or Music should always be preferred over Master,
 // but it's here as a fallback option.
-var array<DRAudioComponent> MasterComponents;
-var array<DRAudioComponent> SFXComponents;
-var array<DRAudioComponent> MusicComponents;
+var private array<DRAudioComponent> MasterComponents;
+var private array<DRAudioComponent> SFXComponents;
+var private array<DRAudioComponent> MusicComponents;
 
 var config float MasterVolume;
 var config float SFXVolume;

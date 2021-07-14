@@ -1,4 +1,27 @@
+// --- BEGIN SOUNDCUE BACKPORT ---
+
+var protected DRAudioComponent DialogAudioComp;
+
+struct DelayedSpeakLineParamStructCustom extends DelayedSpeakLineParamStruct
+{
+    var SoundCue CustomAudio;
+};
+
+var protected DelayedSpeakLineParamStructCustom DelayedSpeakLineParamsCustom;
+
+// --- END SOUNDCUE BACKPORT ---
+
 var private bool bLeftVehicleRecently;
+
+simulated event PostBeginPlay()
+{
+    super.PostBeginPlay();
+
+    if (WorldInfo.NetMode == NM_DedicatedServer)
+    {
+        DetachComponent(DialogAudioComp);
+    }
+}
 
 function ClearLeftVehicleFlag()
 {
@@ -298,3 +321,187 @@ function bool IsInCamo()
 {
     return False;
 }
+
+// --- BEGIN SOUNDCUE BACKPORT ---
+
+simulated function bool IsSpeakingCustom()
+{
+    if (DialogAkComp != None)
+    {
+        if (DialogAudioComp == None)
+        {
+            // caution: this is a wwise thread query so watch perf!
+            return DialogAkComp.IsPlaying();
+        }
+        else
+        {
+            return DialogAkComp.IsPlaying() && DialogAudioComp.IsPlaying();
+        }
+    }
+
+    return false;
+}
+
+simulated final function bool SpeakLineCustom(Actor Addressee, AkEvent Audio, String DebugText,
+    float DelaySec, optional ESpeechPriority Priority, optional SpeechInterruptCondition IntCondition,
+    optional bool bNoHeadTrack, optional int BroadcastFilter, optional bool bSuppressSubtitle,
+    optional Soundcue CustomAudio)
+{
+    local bool bInterrupt;
+
+    `log("SpeakLineCustom() CustomAudio = " $ CustomAudio, `DEBUG_VOICECOMS, 'DRAudio');
+
+    // Vanilla handling for vanilla audio.
+    if (CustomAudio == None)
+    {
+        return SpeakLine(Addressee, Audio, DebugText, DelaySec, Priority,
+            IntCondition, bNoHeadTrack, BroadcastFilter, bSuppressSubtitle);
+    }
+
+    switch (IntCondition)
+    {
+        case SIC_Never:
+            bInterrupt = false;
+            break;
+        case SIC_IfHigher:
+            bInterrupt = (Priority > CurrentSpeechPriority) ? true : false;
+            break;
+        case SIC_IfSameOrHigher:
+            bInterrupt = (Priority >= CurrentSpeechPriority) ? true : false;
+            break;
+        case SIC_Always:
+            bInterrupt = true;
+            break;
+    }
+
+    if ( bInterrupt || !IsSpeakingCustom() )
+    {
+        //`log("Speaking Line" @ ( !bSpeaking || bInterrupt ));
+
+        DelayedSpeakLineParamsCustom.Addressee = Addressee;
+        DelayedSpeakLineParamsCustom.CustomAudio = CustomAudio;
+        DelayedSpeakLineParamsCustom.DebugText = DebugText;
+        DelayedSpeakLineParamsCustom.bNoHeadTrack = bNoHeadTrack;
+        DelayedSpeakLineParamsCustom.Priority = Priority;
+        DelayedSpeakLineParamsCustom.BroadcastFilter = ESpeakLineBroadcastFilter(BroadcastFilter);
+        DelayedSpeakLineParamsCustom.bSuppressSubtitle = bSuppressSubtitle;
+        DelayedSpeakLineParamsCustom.DelayTime = DelaySec;
+
+        if (DelaySec > 0.f)
+        {
+//          `log("queuing line");
+            // play later
+            SetTimer(DelaySec, FALSE, 'PlayQueuedSpeakLine');
+        }
+        else
+        {
+//          `log("playing now");
+            // play now!
+            PlayQueuedSpeakLine();
+        }
+
+        bNetDirty = true; // have to force because struct member assignment doesn't do it automatically
+        //NetUpdateTime = WorldInfo.TimeSeconds - 1.0f;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+simulated private function PlayQueuedSpeakLine()
+{
+    local bool bVersusMulti;
+    local PlayerController LocalPC;
+    local bool bLocalPlayersTurretPawn;
+    local bool bAllowSpatialization;
+    local bool bCustomAudio;
+
+    if ( DialogAkComp == None || bPlayedDeath )
+    {
+        return;
+    }
+
+    // Handle current speech, if any.
+    DialogAkComp.StopEvents();
+    DialogAudioComp.Stop();
+
+    bVersusMulti = true;
+
+    if (DelayedSpeakLineParamsCustom.CustomAudio != None)
+    {
+        if (!DialogAudioComp.bAttached)
+        {
+            AttachComponent(DialogAudioComp);
+        }
+
+        bCustomAudio = True;
+
+        `log("PlayQueuedSpeakLine(): bCustomAudio = " $ bCustomAudio, `DEBUG_VOICECOMS, 'DRAudio');
+    }
+
+    if (DelayedSpeakLineParams.Audio != none || bCustomAudio)
+    {
+        if (bVersusMulti)
+        {
+            if (ShouldFilterOutSpeech(DelayedSpeakLineParams.BroadcastFilter))
+            {
+                // `log(self@"Skipping line"@IsLocallyControlled());
+                return;
+            }
+        }
+
+        if (!DialogAkComp.bAttached)
+        {
+            AttachComponent(DialogAkComp);
+        }
+
+        LocalPC = GetALocalPlayerController();
+
+        // Don't spatialize the voice if it is being played from the pawn
+        // attached to the turret our local controller is using!
+        if (DrivenVehicle != none && ROTurret(DrivenVehicle) != None &&
+            DrivenVehicle == LocalPC.Pawn)
+        {
+            bLocalPlayersTurretPawn = true;
+        }
+
+        //DialogAkComp.bAutoDestroy = true;
+        //DialogAkComp.Location = Location;
+        bAllowSpatialization = Controller != LocalPC && !bLocalPlayersTurretPawn && (LocalPC.ViewTarget != self || !LocalPC.UsingFirstPersonCamera());
+        //DialogAkComp.bSuppressSubtitles = DelayedSpeakLineParams.bSuppressSubtitle || ShouldSuppressSubtitlesForQueuedSpeakLine(bVersusMulti);
+        //DialogAkComp.OcclusionCheckInterval = (CurrentlySpeakingLine.bAllowSpatialization ? 0.1 : 0.0);
+        //DialogAkComp.PitchMultiplier = DelayedSpeakLineParams.PitchMultiplier;
+        //DialogAkComp.bAlwaysPlay = DelayedSpeakLineParams.Priority >= Speech_Spawning;
+
+        // @todo: modulate priority based on distance to the player?
+        //DialogAkComp.SubtitlePriority = DelayedSpeakLineParams.Priority * SubtitlePriorityScale;
+
+        // jack priority for scripted lines
+        // TODO: RO, Cooney, need to reimplement priority
+        // CurrentlySpeakingLine.PriorityMultiplier = (DelayedSpeakLineParams.Priority >= Speech_Scripted) ? 5.f : 1.f;
+
+        if (bCustomAudio)
+        {
+            `log("DialogAudioComp =" $ DialogAudioComp, `DEBUG_VOICECOMS, 'DRAudio');
+            `log("CustomAudio     =" $ DelayedSpeakLineParamsCustom.CustomAudio, `DEBUG_VOICECOMS, 'DRAudio');
+
+            DialogAudioComp.SoundCue = DelayedSpeakLineParamsCustom.CustomAudio;
+            DialogAudioComp.bAllowSpatialization = bAllowSpatialization;
+            DialogAudioComp.VolumeMultiplier = 1.0; // TODO: volume control.
+            DialogAudioComp.Play();
+        }
+        else
+        {
+            DialogAkComp.PlayEvent(DelayedSpeakLineParams.Audio, bAllowSpatialization);
+        }
+
+        //`log(GetFuncName()@"played line "$CurrentlySpeakingLine.SoundCue);
+    }
+
+    CurrentSpeechPriority = DelayedSpeakLineParams.Priority;
+
+    ClearTimer('PlayQueuedSpeakLine');      // just in case
+}
+
+// --- END SOUNDCUE BACKPORT ---
