@@ -11,6 +11,7 @@ var array<DRAnnouncerLine> CustomObjectiveComs;
 var array<DRAnnouncerLine> CustomGameModeComs;
 var array<DRAnnouncerLine> CustomMiscComs;
 
+/*
 // TODO: Out parameter to avoid double access because we first
 //       check if it's not null and then later access it again.
 function bool IsCustomVoiceCom(byte Type, byte VoiceComIndex, byte SubIndex)
@@ -34,8 +35,10 @@ function bool IsCustomVoiceCom(byte Type, byte VoiceComIndex, byte SubIndex)
             return False;
     }
 }
+*/
 
-function SoundCue GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte SubIndex, float TimeStamp)
+function GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte SubIndex,
+    float TimeStamp, out SoundCue CustomAnnouncerSound)
 {
     local int ArrayIndex;
 
@@ -45,7 +48,7 @@ function SoundCue GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte Su
             if (TimeStamp > CustomAbilityComs[VoiceComIndex].NextPlayTime)
             {
                 CustomAbilityComs[VoiceComIndex].NextPlayTime = TimeStamp + CustomAbilityComs[VoiceComIndex].MinIntervalBetweenEvents;
-                return CustomAbilityComs[VoiceComIndex].CustomSound;
+                CustomAnnouncerSound = CustomAbilityComs[VoiceComIndex].CustomSound;
             }
             break;
 
@@ -53,7 +56,7 @@ function SoundCue GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte Su
             if (TimeStamp > CustomRadioComs[VoiceComIndex].NextPlayTime)
             {
                 CustomRadioComs[VoiceComIndex].NextPlayTime = TimeStamp + CustomRadioComs[VoiceComIndex].MinIntervalBetweenEvents;
-                return CustomRadioComs[VoiceComIndex].CustomSound;
+                CustomAnnouncerSound = CustomRadioComs[VoiceComIndex].CustomSound;
             }
             break;
 
@@ -61,7 +64,7 @@ function SoundCue GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte Su
             if (TimeStamp > CustomGameModeComs[VoiceComIndex].NextPlayTime)
             {
                 CustomGameModeComs[VoiceComIndex].NextPlayTime = TimeStamp + CustomGameModeComs[VoiceComIndex].MinIntervalBetweenEvents;
-                return CustomGameModeComs[VoiceComIndex].CustomSound;
+                CustomAnnouncerSound = CustomGameModeComs[VoiceComIndex].CustomSound;
             }
             break;
 
@@ -70,7 +73,7 @@ function SoundCue GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte Su
             if (TimeStamp > CustomObjectiveComs[ArrayIndex].NextPlayTime)
             {
                 CustomObjectiveComs[ArrayIndex].NextPlayTime = TimeStamp + CustomObjectiveComs[ArrayIndex].MinIntervalBetweenEvents;
-                return CustomObjectiveComs[ArrayIndex].CustomSound;
+                CustomAnnouncerSound = CustomObjectiveComs[ArrayIndex].CustomSound;
             }
             break;
 
@@ -78,10 +81,10 @@ function SoundCue GetAnnouncerSoundCustom(byte Type, byte VoiceComIndex, byte Su
             if (TimeStamp > CustomMiscComs[VoiceComIndex].NextPlayTime)
             {
                 CustomMiscComs[VoiceComIndex].NextPlayTime = TimeStamp + CustomMiscComs[VoiceComIndex].MinIntervalBetweenEvents;
-                return CustomMiscComs[VoiceComIndex].CustomSound;
+                CustomAnnouncerSound = CustomMiscComs[VoiceComIndex].CustomSound;
             }
             break;
     }
 
-    return none;
+    CustomAnnouncerSound = None;
 }

@@ -1,4 +1,4 @@
-class DRVoicePackUKTeam01 extends DRVoicePack;
+class DRVoicePackUKTeam02 extends DRVoicePack;
 
 DefaultProperties
 {
@@ -310,6 +310,6 @@ DefaultProperties
 
 
 
-    CustomVoiceComs[`VOICECOM_EnemySpottedInfantry]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice1.Play_UK_Soldier_1_InfantrySpotted'")
-    CustomVoiceComs[`VOICECOM_InfantrySpotted]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice1.Play_UK_Soldier_1_InfantrySpotted'")
+    // CustomVoiceComs[`VOICECOM_EnemySpottedInfantry]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice1.Play_UK_Soldier_1_InfantrySpotted'")
+    // CustomVoiceComs[`VOICECOM_InfantrySpotted]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice1.Play_UK_Soldier_1_InfantrySpotted'")
 }
