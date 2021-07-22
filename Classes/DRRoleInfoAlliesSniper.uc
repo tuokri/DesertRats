@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Marksman
     ClassTier=3
-    ClassIndex=`RI_SNIPER
+    ClassIndex=`DRCI_SNIPER
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeap_P14Scoped_Rifle')

@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Engineer
     ClassTier=3
-    ClassIndex=`ROCI_ENGINEER // 4
+    ClassIndex=`DRCI_SAPPER
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeap_SMLE_Rifle'),

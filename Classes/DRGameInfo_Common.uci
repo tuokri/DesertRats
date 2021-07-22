@@ -743,9 +743,34 @@ function ScoreMGResupply(Controller Dropper, Controller Gunner)
     }
     else if (ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo) != none &&
             ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo).RoleInfo != none &&
-            ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo).RoleInfo.ClassIndex != `RI_MACHINE_GUNNER)
+            ROPlayerReplicationInfo(Dropper.PlayerReplicationInfo).RoleInfo.ClassIndex != `DRCI_MACHINEGUNNER)
     {
         AddDelayedKillMessage(ROKMT_Resupplied, GameReplicationInfo.ElapsedTime, Dropper.PlayerReplicationInfo);
+    }
+}
+
+function ScoreRadiomanAssist(Controller ThisRadioman)
+{
+    if(ThisRadioman == None)
+        return;
+
+    if(
+        ROPlayerReplicationInfo(ThisRadioman.PlayerReplicationInfo).RoleInfo != none
+        && ROPlayerReplicationInfo(ThisRadioman.PlayerReplicationInfo).RoleInfo.ClassIndex == `DRCI_RADIOMAN
+        )
+    {
+        AddDelayedKillMessage(ROKMT_RadioManAssist, GameReplicationInfo.ElapsedTime, ThisRadioman.PlayerReplicationInfo);
+    }
+}
+
+function ScoreAmmoCrateResupply(Controller PlaceableAmmoCrateOwner)
+{
+    if(ROPlayerReplicationInfo(PlaceableAmmoCrateOwner.PlayerReplicationInfo) != None
+        && ROPlayerReplicationInfo(PlaceableAmmoCrateOwner.PlayerReplicationInfo).RoleInfo != None
+        && ROPlayerReplicationInfo(PlaceableAmmoCrateOwner.PlayerReplicationInfo).RoleInfo.ClassIndex == `DRCI_SAPPER
+        )
+    {
+        AddDelayedKillMessage(ROKMT_AmmoCrateResupplied, GameReplicationInfo.ElapsedTime, PlaceableAmmoCrateOwner.PlayerReplicationInfo);
     }
 }
 

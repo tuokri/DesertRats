@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Rifleman
     ClassTier=2
-    ClassIndex=`RI_ASSAULT
+    ClassIndex=`DRCI_ASSAULT
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeap_Thompson_SMG',class'DRWeap_Thompson_M1928A1_SMG'),

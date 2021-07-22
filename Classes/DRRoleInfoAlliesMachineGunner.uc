@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_MachineGunner
     ClassTier=2
-    ClassIndex=`RI_MACHINE_GUNNER
+    ClassIndex=`DRCI_MACHINEGUNNER
 
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeap_Lewis_LMG', class'DRWeap_Bren_LMG')

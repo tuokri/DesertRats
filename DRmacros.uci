@@ -11,13 +11,19 @@
 `define DRLogSpawning(msg)
 
 
-`define RI_RIFLEMAN                 0
-`define RI_ASSAULT                  1
-`define RI_MACHINE_GUNNER           2
-`define RI_SNIPER                   3
-`define RI_SAPPER                   4
-`define RI_COMMANDER                5
-`define RI_TANK_CREW                6
+`define DRCI_RIFLEMAN           0
+`define DRCI_ELITE_RIFLEMAN     1
+`define DRCI_ASSAULT            2
+`define DRCI_MACHINEGUNNER      3
+`define DRCI_SNIPER             4
+`define DRCI_SAPPER             5
+`define DRCI_HEAVY              6
+`define DRCI_ANTITANK           7
+`define DRCI_RADIOMAN           8
+`define DRCI_COMMANDER          9
+`define DRCI_TANK_CREW          10
+`define DRCI_TANK_COMMANDER     11
+
 
 `define WI_BINOCS                   0
 `define DRII_THOMPSON_SMG           1

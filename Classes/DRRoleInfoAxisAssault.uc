@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Scout
     ClassTier=2
-    ClassIndex=`RI_ASSAULT
+    ClassIndex=`DRCI_ASSAULT
 
     // TODO: Should MP41 be part of standard loadout?
     Items[RORIGM_Default]={(

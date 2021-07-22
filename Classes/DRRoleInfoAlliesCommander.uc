@@ -4,7 +4,7 @@ DefaultProperties
 {
     RoleType=RORIT_Commander
     ClassTier=4
-    ClassIndex=`ROCI_COMMANDER // 10
+    ClassIndex=`DRCI_COMMANDER
     bIsTeamLeader=true
 
     bAllowPistolsInRealism=true

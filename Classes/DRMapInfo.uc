@@ -286,7 +286,7 @@ static function string GetClassNameByIndex(int TeamIndex, int ClassIndex, option
 {
     local int i;
 
-    if (ClassIndex == `RI_COMMANDER)
+    if (ClassIndex == `DRCI_COMMANDER)
     {
         `drtrace;
         return (TeamIndex == `AXIS_TEAM_INDEX) ? class'DRRoleInfoAxisCommander'.static.GetProfileName(bShortName) : "";// class'DRRoleInfoAlliesCommander'.static.GetProfileName(bShortName);
