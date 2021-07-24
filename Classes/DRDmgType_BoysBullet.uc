@@ -22,7 +22,7 @@ defaultproperties
 	bCanObliterate=false
 	bCanUberGore=false
 	bCanDismember=true
-	BloodSprayTemplate=ParticleSystem'RP_CHAR_Soldier_Two.Emitters.FX_CHAR_Soldier_BloodSpray_Large'
+	BloodSprayTemplate=ParticleSystem'FX_VN_Impacts.BloodNGore.FX_VN_BloodSpray_Clothes_large'
 	bOverrideInstantDeathForStandardDamageMode=true
 	//ActionModeInfantryPawnDamageScale=0.45
 	// "Instant Death" zones
