@@ -52,7 +52,7 @@ simulated function name GetReloadMagAnimName()
 			return ( (bUsingSights || bZoomingOut) && WeaponReloadNonEmptyMagIronAnim != '' ) ? WeaponReloadNonEmptyMagIronAnim : WeaponReloadNonEmptyMagAnim;
 		}
 	}
-	else (NumDryFires >= 1)
+	else if (NumDryFires >= 1)
 	{
 		return WeaponClosedBoltReload;
 
