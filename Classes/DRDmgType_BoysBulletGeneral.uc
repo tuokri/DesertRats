@@ -9,19 +9,19 @@
 //=============================================================================
 
 class DRDmgType_BoysBulletGeneral extends RODmgType_AntiVehicleGeneral
-	abstract;
+    abstract;
 
-defaultproperties
+DefaultProperties
 {
-	WeaponShortName="BOYS AT"
-	KDamageImpulse=1000
-	RadialDamageImpulse=79
-	bCausesFracture=true
-	bLocationalHit=true
-	VehicleDamageScaling=1.0
-	VehicleTreadDamageScale=1.0
-	bCanObliterate=false
-	bCanUberGore=false
-	bCanDismember=true
-	BloodSprayTemplate=ParticleSystem'FX_VN_Impacts.BloodNGore.FX_VN_BloodSpray_Clothes_large'
+    WeaponShortName="BOYS AT"
+    KDamageImpulse=1000
+    RadialDamageImpulse=79
+    bCausesFracture=true
+    bLocationalHit=true
+    VehicleDamageScaling=1.0
+    VehicleTreadDamageScale=1.0
+    bCanObliterate=false
+    bCanUberGore=false
+    bCanDismember=true
+    BloodSprayTemplate=ParticleSystem'FX_VN_Impacts.BloodNGore.FX_VN_BloodSpray_Clothes_large'
 }
