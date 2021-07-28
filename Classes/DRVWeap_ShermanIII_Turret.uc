@@ -1,4 +1,4 @@
-class DRVWeap_ShermanIII_Turret extends ROVWeap_TankTurret
+class DRVWeap_ShermanIII_Turret extends DRVWeap_TankTurret
     abstract
     HideDropDown;
 

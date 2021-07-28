@@ -38,10 +38,6 @@ var repnotify TakeHitInfo DeathHitInfo_ProxyGunner;
 /** Scope material. Caching it here so that it does not get cooked out */
 var MaterialInstanceConstant ScopeLensMIC;
 
-// TODO:
-var DRDestroyedTankTrack DestroyedLeftTrack;
-var DRDestroyedTankTrack DestroyedRightTrack;
-
 replication
 {
     if (bNetDirty)
@@ -81,36 +77,6 @@ simulated event ReplicatedEvent(name VarName)
     {
        super.ReplicatedEvent(VarName);
     }
-}
-
-simulated function DisableLeftTrack()
-{
-    local vector SpawnLoc;
-    local rotator SpawnRot;
-
-    super.DisableLeftTrack();
-
-    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Left', SpawnLoc, SpawnRot);
-
-    Mesh.SetMaterial(1, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
-    DestroyedLeftTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
-
-    `dr("DestroyedLeftTrack = " $ DestroyedLeftTrack);
-}
-
-simulated function DisableRightTrack()
-{
-    local vector SpawnLoc;
-    local rotator SpawnRot;
-
-    super.DisableRightTrack();
-
-    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Right', SpawnLoc, SpawnRot);
-
-    Mesh.SetMaterial(2, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
-    DestroyedRightTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
-
-    `dr("DestroyedRightTrack = " $ DestroyedRightTrack);
 }
 
 simulated event PostBeginPlay()
@@ -324,47 +290,6 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
     }
 
     Super.DamageSeatProxy(SeatProxyIndex, Damage, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
-}
-
-/** Turn the vehicle interior visibility on or off. */
-simulated function SetInteriorVisibility(bool bVisible)
-{
-    // local int i;
-
-    super.SetInteriorVisibility(False);
-
-    /*
-    if ( bVisible && !bGeneratedInteriorMICs )
-    {
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(1)));
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(2)));
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('TurretComponent').GetMaterial(0)));
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('TurretCuppolaComponent').GetMaterial(2)));
-
-        for ( i = 0; i < ReplacedInteriorMICs.Length; i++ )
-        {
-            InteriorMICs[i] = new class'MaterialInstanceConstant';
-            InteriorMICs[i].SetParent(ReplacedInteriorMICs[i]);
-        }
-
-        // Replace MIC for vehicle skeletal mesh
-        ReplaceInteriorMICs(mesh);
-
-        // Replcace MIC for the interior static mesh attachments
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntBodyComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntMainAmmoComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullSide1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntDriverSide1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullMGComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretGunGaseComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretCuppolaComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretDetails1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretBasketComponent'));
-
-        bGeneratedInteriorMICs = true;
-    }
-    */
 }
 
 function int GetLoaderHitZoneIndex()

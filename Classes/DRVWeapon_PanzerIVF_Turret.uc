@@ -1,4 +1,4 @@
-class DRVWeapon_PanzerIVF_Turret extends ROVWeap_TankTurret
+class DRVWeapon_PanzerIVF_Turret extends DRVWeap_TankTurret
 	abstract
 	HideDropDown;
 

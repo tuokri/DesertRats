@@ -15,123 +15,140 @@ DefaultProperties
 
     // -------------------------------- Sounds -----------------------------------------------------------
 
-    /*
     // Engine start sounds
-    Begin Object Class=AudioComponent Name=StartEngineLSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Start_Cabin_L_Cue'
+    Begin Object Class=DRAudioComponent Name=StartEngineLSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Start_Cabin_L_Cue'
+        AudioClass=EAC_SFX
     End Object
-    EngineStartLeftSound=StartEngineLSound
+    EngineStartLeftSoundCustom=StartEngineLSound
 
-    Begin Object Class=AudioComponent Name=StartEngineRSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Start_Cabin_R_Cue'
+    Begin Object Class=DRAudioComponent Name=StartEngineRSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Start_Cabin_R_Cue'
+        AudioClass=EAC_SFX
     End Object
-    EngineStartRightSound=StartEngineRSound
+    EngineStartRightSoundCustom=StartEngineRSound
 
-    Begin Object Class=AudioComponent Name=StartEngineExhaustSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Start_Exhaust_Cue'
+    Begin Object Class=DRAudioComponent Name=StartEngineExhaustSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Start_Exhaust_Cue'
+        AudioClass=EAC_SFX
     End Object
-    EngineStartExhaustSound=StartEngineExhaustSound
+    EngineStartExhaustSoundCustom=StartEngineExhaustSound
 
     // Engine idle sounds
-    Begin Object Class=AudioComponent Name=IdleEngineLeftSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Run_Cabin_L_Cue'
+    Begin Object Class=DRAudioComponent Name=IdleEngineLeftSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Run_Cabin_L_Cue'
+        AudioClass=EAC_SFX
         bShouldRemainActiveIfDropped=TRUE
     End Object
-    EngineIntLeftSound=IdleEngineLeftSound
+    EngineIntLeftSoundCustom=IdleEngineLeftSound
 
-    Begin Object Class=AudioComponent Name=IdleEngineRighSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Run_Cabin_R_Cue'
+    Begin Object Class=DRAudioComponent Name=IdleEngineRighSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Run_Cabin_R_Cue'
+        AudioClass=EAC_SFX
         bShouldRemainActiveIfDropped=TRUE
     End Object
-    EngineIntRightSound=IdleEngineRighSound
+    EngineIntRightSoundCustom=IdleEngineRighSound
 
-    Begin Object Class=AudioComponent Name=IdleEngineExhaustSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Run_Exhaust_Cue'
+    Begin Object Class=DRAudioComponent Name=IdleEngineExhaustSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Run_Exhaust_Cue'
+        AudioClass=EAC_SFX
         bShouldRemainActiveIfDropped=TRUE
     End Object
-    EngineSound=IdleEngineExhaustSound
+    EngineSoundCustom=IdleEngineExhaustSound
 
     // Track sounds
-    Begin Object Class=AudioComponent Name=TrackLSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_L_Cue'
+    Begin Object Class=DRAudioComponent Name=TrackLSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_L_Cue'
+        AudioClass=EAC_SFX
     End Object
-    TrackLeftSound=TrackLSound
+    TrackLeftSoundCustom=TrackLSound
 
-    Begin Object Class=AudioComponent Name=TrackRSound
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_R_Cue'
+    Begin Object Class=DRAudioComponent Name=TrackRSound
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_R_Cue'
+        AudioClass=EAC_SFX
     End Object
-    TrackRightSound=TrackRSound
+    TrackRightSoundCustom=TrackRSound
 
     // Brake sounds
-    Begin Object Class=AudioComponent Name=BrakeLeftSnd
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_Brake_Cue'
+    Begin Object Class=DRAudioComponent Name=BrakeLeftSnd
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_Brake_Cue'
+        AudioClass=EAC_SFX
     End Object
-    BrakeLeftSound=BrakeLeftSnd
+    BrakeLeftSoundCustom=BrakeLeftSnd
 
-    Begin Object Class=AudioComponent Name=BrakeRightSnd
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_Brake_Cue'
+    Begin Object Class=DRAudioComponent Name=BrakeRightSnd
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_Brake_Cue'
+        AudioClass=EAC_SFX
     End Object
-    BrakeRightSound=BrakeRightSnd
+    BrakeRightSoundCustom=BrakeRightSnd
 
-    // Damage sounds
-    EngineIdleDamagedSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Broken_Cue'
-    TrackTakeDamageSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_Brake_Cue'
-    TrackDamagedSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_Broken_Cue'
-    TrackDestroyedSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Treads_Skid_Cue'
+    // Non-damaged idle.
+    EngineIdleSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Run_Exhaust_Cue'
+
+    // Damage sounds.
+    EngineIdleDamagedSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Broken_Cue'
+    TrackTakeDamageSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_Brake_Cue'
+    TrackDamagedSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_Broken_Cue'
+    TrackDestroyedSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Treads_Skid_Cue'
 
     // Destroyed tranmission
-    Begin Object Class=AudioComponent Name=BrokenTransmissionSnd
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Transmission_Broken_Cue'
+    Begin Object Class=DRAudioComponent Name=BrokenTransmissionSnd
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Transmission_Broken_Cue'
+        AudioClass=EAC_SFX
         bStopWhenOwnerDestroyed=TRUE
     End Object
-    BrokenTransmissionSound=BrokenTransmissionSnd
+    BrokenTransmissionSoundCustom=BrokenTransmissionSnd
 
     // Gear shift sounds
-    ShiftUpSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Exhaust_ShiftUp_Cue'
-    ShiftDownSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Movement.Panzer_Movement_Engine_Exhaust_ShiftDown_Cue'
-    ShiftLeverSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Foley.Panzer_Lever_GearShift_Cue'
+    ShiftUpSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Exhaust_ShiftUp_Cue'
+    ShiftDownSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Movement.Panzer_Movement_Engine_Exhaust_ShiftDown_Cue'
+    ShiftLeverSoundCustom=SoundCue'DR_AUD_VH_PanzerIV.Foley.Panzer_Lever_GearShift_Cue'
 
     // Turret sounds
-    Begin Object Class=AudioComponent Name=TurretTraverseComponent
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Turret.Turret_Traverse_Manual_Cue'
+    Begin Object Class=DRAudioComponent Name=TurretTraverseComponent
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Turret.Turret_Traverse_Manual_Cue'
+        AudioClass=EAC_SFX
     End Object
-    TurretTraverseSound=TurretTraverseComponent
+    TurretTraverseSoundCustom=TurretTraverseComponent
     Components.Add(TurretTraverseComponent);
 
-    Begin Object Class=AudioComponent Name=TurretMotorTraverseComponent
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Turret.Turret_Traverse_Electric_Cue'
+    Begin Object Class=DRAudioComponent Name=TurretMotorTraverseComponent
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Turret.Turret_Traverse_Electric_Cue'
+        AudioClass=EAC_SFX
     End Object
-    TurretMotorTraverseSound=TurretMotorTraverseComponent
+    TurretMotorTraverseSoundCustom=TurretMotorTraverseComponent
     Components.Add(TurretMotorTraverseComponent);
 
-    Begin Object Class=AudioComponent Name=TurretElevationComponent
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Turret.Turret_Elevate_Cue'
+    Begin Object Class=DRAudioComponent Name=TurretElevationComponent
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Turret.Turret_Elevate_Cue'
+        AudioClass=EAC_SFX
     End Object
-    TurretElevationSound=TurretElevationComponent
+    TurretElevationSoundCustom=TurretElevationComponent
     Components.Add(TurretElevationComponent);
 
-    ExplosionSound=SoundCue'AUD_EXP_Tanks.A_CUE_Tank_Explode'
+    ExplosionSoundCustom=SoundCue'AUD_EXP_Tanks.A_CUE_Tank_Explode'
 
-    Begin Object Class=AudioComponent name=HullMGSoundComponent
+    Begin Object Class=DRAudioComponent name=HullMGSoundComponent
         bShouldRemainActiveIfDropped=true
         bStopWhenOwnerDestroyed=true
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Weapon.MG_MG34_Fire_Loop_M_Cue'
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Weapon.MG_MG34_Fire_Loop_M_Cue'
+        AudioClass=EAC_SFX
     End Object
     HullMGAmbient=HullMGSoundComponent
     Components.Add(HullMGSoundComponent)
 
-    Begin Object Class=AudioComponent name=CoaxMGSoundComponent
+    Begin Object Class=DRAudioComponent name=CoaxMGSoundComponent
         bShouldRemainActiveIfDropped=true
         bStopWhenOwnerDestroyed=true
-        SoundCue=SoundCue'AUD_Vehicle_Tank_PanzerIV.Weapon.MG_MG34_Fire_Loop_M_Cue'
+        SoundCue=SoundCue'DR_AUD_VH_PanzerIV.Weapon.MG_MG34_Fire_Loop_M_Cue'
+        AudioClass=EAC_SFX
     End Object
     CoaxMGAmbient=CoaxMGSoundComponent
     Components.Add(CoaxMGSoundComponent)
 
-    HullMGStopSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Weapon.MG_MG34_Fire_LoopEnd_M_Cue'
-    CoaxMGStopSound=SoundCue'AUD_Vehicle_Tank_PanzerIV.Weapon.MG_MG34_Fire_LoopEnd_M_Cue'
+    HullMGStopSound=SoundCue'DR_AUD_VH_PanzerIV.Weapon.MG_MG34_Fire_LoopEnd_M_Cue'
+    CoaxMGStopSound=SoundCue'DR_AUD_VH_PanzerIV.Weapon.MG_MG34_Fire_LoopEnd_M_Cue'
 
-    */
     // -------------------------------- Dead -----------------------------------------------------------
 
     DestroyedSkeletalMesh=SkeletalMesh'DR_VH_DAK_PanzerIV_F.Mesh.Ger_PZIV_Destroyed_Master'
@@ -159,7 +176,7 @@ DefaultProperties
     RoleSelectionImage=Texture2D'ui_textures.Textures.ger_tank_pzIVg'
 
     // Driver
-    SeatProxies(0)={(
+    SeatProxies(`PZIV_DRIVER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -170,7 +187,7 @@ DefaultProperties
         PositionIndex=1)}
 
     // Commander
-    SeatProxies(1)={(
+    SeatProxies(`PZIV_COMMANDER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -181,7 +198,7 @@ DefaultProperties
         PositionIndex=1)}
 
     // Hull MG
-    SeatProxies(2)={(
+    SeatProxies(`PZIV_HULLGUNNER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -192,7 +209,7 @@ DefaultProperties
         PositionIndex=2)}
 
     // Loader
-    SeatProxies(3)={(
+    SeatProxies(`PZIV_LOADER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
@@ -203,7 +220,7 @@ DefaultProperties
         PositionIndex=0)}
 
     // Gunner
-    SeatProxies(4)={(
+    SeatProxies(`PZIV_GUNNER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
         HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',

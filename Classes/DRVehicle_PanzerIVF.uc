@@ -38,13 +38,11 @@ var repnotify TakeHitInfo DeathHitInfo_ProxyGunner;
 /** Scope material. Caching it here so that it does not get cooked out */
 // var MaterialInstanceConstant ScopeLensMIC;
 
-var DRDestroyedTankTrack DestroyedLeftTrack;
-var DRDestroyedTankTrack DestroyedRightTrack;
-
 replication
 {
     if (bNetDirty)
-        DeathHitInfo_ProxyDriver, DeathHitInfo_ProxyCommander, DeathHitInfo_ProxyHullMG, DeathHitInfo_ProxyLoader, DeathHitInfo_ProxyGunner, CuppolaCurrentPositionIndex, bDrivingCuppola;
+        DeathHitInfo_ProxyDriver, DeathHitInfo_ProxyCommander, DeathHitInfo_ProxyHullMG,
+        DeathHitInfo_ProxyLoader, DeathHitInfo_ProxyGunner, CuppolaCurrentPositionIndex, bDrivingCuppola;
 }
 
 /**
@@ -93,36 +91,6 @@ simulated event ReplicatedEvent(name VarName)
     {
        super.ReplicatedEvent(VarName);
     }
-}
-
-simulated function DisableLeftTrack()
-{
-    local vector SpawnLoc;
-    local rotator SpawnRot;
-
-    super.DisableLeftTrack();
-
-    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Left', SpawnLoc, SpawnRot);
-
-    Mesh.SetMaterial(1, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
-    DestroyedLeftTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
-
-    `dr("DestroyedLeftTrack = " $ DestroyedLeftTrack);
-}
-
-simulated function DisableRightTrack()
-{
-    local vector SpawnLoc;
-    local rotator SpawnRot;
-
-    super.DisableRightTrack();
-
-    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Right', SpawnLoc, SpawnRot);
-
-    Mesh.SetMaterial(2, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
-    DestroyedRightTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
-
-    `dr("DestroyedRightTrack = " $ DestroyedRightTrack);
 }
 
 simulated event PostBeginPlay()
@@ -292,35 +260,35 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
     // Update the hit info for each seat proxy pertaining to this vehicle
     switch( SeatProxyIndex )
     {
-    case 0:
+    case `PZIV_DRIVER_SPI:
         // Driver
         DeathHitInfo_ProxyDriver.Damage = Damage;
         DeathHitInfo_ProxyDriver.HitLocation = HitLocation;
         DeathHitInfo_ProxyDriver.Momentum = Momentum;
         DeathHitInfo_ProxyDriver.DamageType = DamageType;
         break;
-    case 1:
+    case `PZIV_COMMANDER_SPI:
         // Commander
         DeathHitInfo_ProxyCommander.Damage = Damage;
         DeathHitInfo_ProxyCommander.HitLocation = HitLocation;
         DeathHitInfo_ProxyCommander.Momentum = Momentum;
         DeathHitInfo_ProxyCommander.DamageType = DamageType;
         break;
-    case 2:
+    case `PZIV_HULLGUNNER_SPI:
         // HullMG
         DeathHitInfo_ProxyHullMG.Damage = Damage;
         DeathHitInfo_ProxyHullMG.HitLocation = HitLocation;
         DeathHitInfo_ProxyHullMG.Momentum = Momentum;
         DeathHitInfo_ProxyHullMG.DamageType = DamageType;
         break;
-    case 3:
+    case `PZIV_LOADER_SPI:
         // Loader
         DeathHitInfo_ProxyLoader.Damage = Damage;
         DeathHitInfo_ProxyLoader.HitLocation = HitLocation;
         DeathHitInfo_ProxyLoader.Momentum = Momentum;
         DeathHitInfo_ProxyLoader.DamageType = DamageType;
         break;
-    case 4:
+    case `PZIV_GUNNER_SPI:
         // Gunner
         DeathHitInfo_ProxyGunner.Damage = Damage;
         DeathHitInfo_ProxyGunner.HitLocation = HitLocation;
@@ -331,47 +299,6 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
 
     // Call super!
     Super.DamageSeatProxy(SeatProxyIndex, Damage, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
-}
-
-/** Turn the vehicle interior visibility on or off. */
-simulated function SetInteriorVisibility(bool bVisible)
-{
-    // local int i;
-
-    super.SetInteriorVisibility(False);
-
-    /*
-    if ( bVisible && !bGeneratedInteriorMICs )
-    {
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(1)));
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(2)));
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('TurretComponent').GetMaterial(0)));
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('TurretCuppolaComponent').GetMaterial(2)));
-
-        for ( i = 0; i < ReplacedInteriorMICs.Length; i++ )
-        {
-            InteriorMICs[i] = new class'MaterialInstanceConstant';
-            InteriorMICs[i].SetParent(ReplacedInteriorMICs[i]);
-        }
-
-        // Replace MIC for vehicle skeletal mesh
-        ReplaceInteriorMICs(mesh);
-
-        // Replcace MIC for the interior static mesh attachments
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntBodyComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntMainAmmoComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullSide1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntDriverSide1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullMGComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretGunGaseComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretCuppolaComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretDetails1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretBasketComponent'));
-
-        bGeneratedInteriorMICs = true;
-    }
-    */
 }
 
 simulated function ReplaceInteriorMICs(MeshComponent MeshComp)

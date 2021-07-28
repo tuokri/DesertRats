@@ -3,6 +3,490 @@ class DRVehicleTank extends ROVehicleTank
 
 //? `include(DesertRats\Classes\DRVehicle_Common.uci)
 
+var DRDestroyedTankTrack DestroyedLeftTrack;
+var DRDestroyedTankTrack DestroyedRightTrack;
+
+var byte LeftTrackMaterialIndex;
+var byte RightTrackMaterialIndex;
+
+// --- BEGIN SOUNDCUE BACKPORT ---
+
+var int CachedWheelRadius;
+
+var SoundCue ExplosionSoundCustom;
+
+var(Sounds) editconst const DRAudioComponent EngineSoundCustom;
+var(Sounds) editconst const DRAudioComponent SquealSoundCustom;
+
+// Engine start sounds.
+var DRAudioComponent  EngineStartLeftSoundCustom;
+var DRAudioComponent  EngineStartRightSoundCustom;
+var DRAudioComponent  EngineStartExhaustSoundCustom;
+var DRAudioComponent  EngineStopSoundCustom;
+
+var SoundCue EngineIdleSoundCustom;
+var SoundCue EngineIdleDamagedSoundCustom;
+var SoundCue TrackTakeDamageSoundCustom;
+var SoundCue TrackDamagedSoundCustom;
+var SoundCue TrackDestroyedSoundCustom;
+
+// Engine interior cabin sounds.
+var DRAudioComponent EngineIntLeftSoundCustom;
+var DRAudioComponent EngineIntRightSoundCustom;
+
+// Tread sounds.
+var DRAudioComponent  TrackLeftSoundCustom;
+var DRAudioComponent  TrackRightSoundCustom;
+
+// Tranmission sounds.
+var DRAudioComponent  BrokenTransmissionSoundCustom;
+
+// Brake sounds.
+var DRAudioComponent  BrakeLeftSoundCustom;
+var DRAudioComponent  BrakeRightSoundCustom;
+
+// Gear shift sounds.
+var SoundCue        ShiftUpSoundCustom;
+var SoundCue        ShiftDownSoundCustom;
+var SoundCue        ShiftLeverSoundCustom;
+
+// Turret rotation components.
+var DRAudioComponent  TurretTraverseSoundCustom;
+var DRAudioComponent  TurretMotorTraverseSoundCustom;
+var DRAudioComponent  TurretElevationSoundCustom;
+
+simulated function PostBeginPlay()
+{
+    super.PostBeginPlay();
+
+    // Attach sound cues.
+    if (WorldInfo.NetMode != NM_DedicatedServer)
+    {
+        Mesh.AttachComponentToSocket(EngineStartLeftSoundCustom, CabinL_FXSocket);
+        Mesh.AttachComponentToSocket(EngineStartRightSoundCustom, CabinR_FXSocket);
+        Mesh.AttachComponentToSocket(EngineStartExhaustSoundCustom, Exhaust_FXSocket);
+        Mesh.AttachComponentToSocket(EngineStopSoundCustom, Exhaust_FXSocket);
+        Mesh.AttachComponentToSocket(EngineIntLeftSoundCustom, CabinL_FXSocket);
+        Mesh.AttachComponentToSocket(EngineIntRightSoundCustom, CabinR_FXSocket);
+        Mesh.AttachComponentToSocket(EngineSoundCustom, Exhaust_FXSocket);
+        Mesh.AttachComponentToSocket(TrackLeftSoundCustom, TreadL_FXSocket);
+        Mesh.AttachComponentToSocket(TrackRightSoundCustom, TreadR_FXSocket);
+        Mesh.AttachComponentToSocket(BrakeLeftSoundCustom, TreadL_FXSocket);
+        Mesh.AttachComponentToSocket(BrakeRightSoundCustom, TreadR_FXSocket);
+    }
+
+    CachedWheelRadius = Wheels[0].WheelRadius;
+}
+
+simulated event Tick(float DeltaTime)
+{
+    local float SpeedParamPct;
+    local float LeftTrackSpeed;
+    local float RightTrackSpeed;
+
+    super.Tick(DeltaTime);
+
+    // Only need these effects client side
+    if (WorldInfo.NetMode != NM_DedicatedServer)
+    {
+        // attempted throttle with a broken transmission
+        if (BrokenTransmissionSoundCustom != None && BrokenTransmissionSoundCustom.bAttached)
+        {
+            if (Abs(BrokenTransmissionThrottle - 128) > 32)
+            {
+                if (!BrokenTransmissionSoundCustom.IsPlaying())
+                {
+                    BrokenTransmissionSoundCustom.Play();
+                }
+            }
+            else if (BrokenTransmissionSoundCustom.IsPlaying())
+            {
+                BrokenTransmissionSoundCustom.Stop();
+            }
+        }
+
+        UpdateBrakeSounds();
+    }
+
+    LeftTrackSpeed = (ROVehicleSimTreaded(SimObj).LeftTrackVel * CachedWheelRadius);
+    RightTrackSpeed = (ROVehicleSimTreaded(SimObj).RightTrackVel * CachedWheelRadius);
+
+    SpeedParamPct = Abs(VSize(Velocity)) / MaxSpeed;
+
+    if (EngineSoundCustom != None)
+    {
+        EngineSoundCustom.SetFloatParameter('RPMParam', GetEngineOutput());
+        EngineSoundCustom.SetFloatParameter('SpeedParam', SpeedParamPct);
+    }
+    if (EngineIntLeftSoundCustom != None)
+    {
+        EngineIntLeftSoundCustom.SetFloatParameter('SpeedParam', SpeedParamPct);
+    }
+    if (EngineIntRightSoundCustom != None)
+    {
+        EngineIntRightSoundCustom.SetFloatParameter('SpeedParam', SpeedParamPct);
+    }
+
+    if (TrackLeftSoundCustom != None)
+    {
+        TrackLeftSoundCustom.SetFloatParameter('SpeedParam', TrackSoundParamScale * Abs(LeftTrackSpeed));
+    }
+    if (TrackRightSoundCustom != None)
+    {
+        TrackRightSoundCustom.SetFloatParameter('SpeedParam', TrackSoundParamScale * Abs(RightTrackSpeed));
+    }
+
+    if (ShiftTimeRemaining <= 0.f)
+    {
+        // shift finished
+        if (DelayedOutputGear != OutputGear)
+        {
+            PlayGearShiftAudio();
+        }
+    }
+    else if (DelayedOutputGear != OutputGear)
+    {
+        PlayGearShiftAudio();
+    }
+}
+
+simulated function UpdateBrakeSounds()
+{
+    if (BrakeLeftSoundCustom != None)
+    {
+        if ((OutputBrake > 0.2f) || (OutputSteering > 0.2f))
+        {
+            if (!bSkipLeftBrakeSound)
+            {
+                bSkipLeftBrakeSound = True;
+                BrakeLeftSoundCustom.Play();
+            }
+        }
+        else
+        {
+            bSkipLeftBrakeSound = False;
+            if (BrakeLeftSoundCustom.IsPlaying())
+            {
+                BrakeLeftSoundCustom.Stop();
+            }
+        }
+    }
+
+    if (BrakeRightSoundCustom != None)
+    {
+        if ((OutputBrake > 0.2f) || (OutputSteering < -0.2f))
+        {
+            if (!bSkipRightBrakeSound)
+            {
+                bSkipRightBrakeSound = False;
+                BrakeRightSoundCustom.Play();
+            }
+        }
+        else
+        {
+            bSkipRightBrakeSound = True;
+            if (BrakeRightSoundCustom.IsPlaying())
+            {
+                BrakeRightSoundCustom.Stop();
+            }
+        }
+    }
+}
+
+simulated function float GetEngineOutput()
+{
+    // EvalInterpCurveFloat(EngineRPMCurve, Vehicle.ForwardVel)
+    return ROVehicleSimTreaded(SimObj).EngineRPM / (ROVehicleSimTreaded(SimObj).ChangeUpPoint * 1.1f);
+}
+
+simulated function StopVehicleSounds()
+{
+    Super.StopVehicleSounds();
+
+    if (EngineSoundCustom != None)
+    {
+        EngineSoundCustom.Stop();
+    }
+
+    if (SquealSoundCustom != None)
+    {
+        SquealSoundCustom.Stop();
+    }
+
+    if (TurretTraverseSoundCustom != None)
+    {
+        TurretTraverseSoundCustom.Stop();
+    }
+    if (TurretMotorTraverseSoundCustom != None)
+    {
+        TurretMotorTraverseSoundCustom.Stop();
+    }
+    if (TurretElevationSoundCustom != None)
+    {
+        TurretElevationSoundCustom.Stop();
+    }
+}
+
+simulated function StartEngineSound()
+{
+    if (EngineSoundCustom != none)
+    {
+        // If the engine is damaged, use the damaged sound.
+        if (EngineStatus == ES_RunningDamaged && EngineIdleDamagedSoundCustom != none)
+        {
+            EngineSoundCustom.SoundCue = EngineIdleDamagedSoundCustom;
+            EngineSoundCustom.Play();
+        }
+        else
+        {
+            EngineSoundCustom.SoundCue = EngineIdleSoundCustom;
+            EngineSoundCustom.Play();
+        }
+    }
+
+    super.StartEngineSound();
+
+    if (IsLocalPlayerInThisVehicle())
+    {
+        if (EngineIntLeftSoundCustom != None)
+        {
+            EngineIntLeftSoundCustom.Play();
+        }
+        if (EngineIntRightSoundCustom != None)
+        {
+            EngineIntRightSoundCustom.Play();
+        }
+    }
+    else
+    {
+        // Don't do interior sounds if noone is locally in the vehicle
+        if (EngineIntLeftSoundCustom != None)
+        {
+            EngineIntLeftSoundCustom.Stop();
+        }
+        if (EngineIntRightSoundCustom != None)
+        {
+            EngineIntRightSoundCustom.Stop();
+        }
+    }
+
+    if (TrackLeftSoundCustom != None)
+    {
+        TrackLeftSoundCustom.Play();
+    }
+    if (TrackRightSoundCustom != None)
+    {
+        TrackRightSoundCustom.Play();
+    }
+}
+
+simulated function StartEngineSoundTimed()
+{
+    Super.StartEngineSoundTimed();
+
+    if(EngineStartLeftSoundCustom != None)
+    {
+        EngineStartLeftSoundCustom.Play();
+    }
+    if(EngineStartRightSoundCustom != None)
+    {
+        EngineStartRightSoundCustom.Play();
+    }
+    if(EngineStartExhaustSoundCustom != None)
+    {
+        EngineStartExhaustSoundCustom.Stop(); // If you switch seats rapidly this won't have finished, so force it.
+        EngineStartExhaustSoundCustom.Play();
+    }
+}
+
+simulated function StopEngineSound()
+{
+    if (EngineSoundCustom != None)
+    {
+        EngineSoundCustom.Stop();
+    }
+
+    super.StopEngineSound();
+
+    if (EngineIntLeftSoundCustom != None)
+    {
+        EngineIntLeftSoundCustom.Stop();
+    }
+    if (EngineIntRightSoundCustom != None)
+    {
+        EngineIntRightSoundCustom.Stop();
+    }
+
+    if (TrackLeftSoundCustom != None)
+    {
+        TrackLeftSoundCustom.Stop();
+    }
+    if (TrackRightSoundCustom != None)
+    {
+        TrackRightSoundCustom.Stop();
+    }
+}
+
+simulated function StopEngineSoundTimed()
+{
+    if (EngineStopSoundCustom != none )
+    {
+        EngineStopSoundCustom.Stop();
+        EngineStopSoundCustom.Play();
+    }
+
+    if (EngineStopOffsetSecs > 0.f)
+    {
+        ClearTimer('StartEngineSound');
+        SetTimer(EngineStopOffsetSecs, false, 'StopEngineSound');
+    }
+    else
+    {
+        StopEngineSound();
+    }
+}
+
+simulated function ReplaceLoopingAudioCustom(AudioComponent AudioComp, SoundCue NewSoundCue)
+{
+    if (AudioComp == None || NewSoundCue == None)
+    {
+        return;
+    }
+
+    if (AudioComp.IsPlaying() && AudioComp.SoundCue == NewSoundCue)
+    {
+        return;
+    }
+
+    if (AudioComp.IsPlaying())
+    {
+        AudioComp.Stop();
+        AudioComp.SoundCue = NewSoundCue;
+        AudioComp.Play();
+    }
+}
+
+simulated function OnTurretTraverseStatusChange(bool bTurretMoving, bool bHighSpeed)
+{
+    if (TurretTraverseSoundCustom != None)
+    {
+        if (bTurretMoving && !bHighSpeed)
+        {
+            TurretTraverseSoundCustom.FadeIn(0.1, 1.0);
+        }
+        else if (TurretTraverseSoundCustom.IsPlaying())
+        {
+            if (TurretTraverseSoundCustom.FadeOutStartTime == 0.0)
+            {
+                TurretTraverseSoundCustom.FadeOut(0.2, 0.0);
+            }
+        }
+    }
+
+    if (TurretMotorTraverseSoundCustom != None)
+    {
+        if (bTurretMoving && bHighSpeed)
+        {
+            TurretMotorTraverseSoundCustom.FadeIn(0.1, 1.0);
+        }
+        else if (TurretMotorTraverseSoundCustom.IsPlaying())
+        {
+            if (TurretMotorTraverseSoundCustom.FadeOutStartTime == 0.0)
+            {
+                TurretMotorTraverseSoundCustom.FadeOut(0.2, 0.0);
+            }
+        }
+    }
+}
+
+simulated function OnTurretElevationStatusChange(bool bTurretMoving, bool bHighSpeed)
+{
+    if (TurretElevationSoundCustom != None)
+    {
+        if (bTurretMoving)
+        {
+            TurretElevationSoundCustom.FadeIn(0.1, 1.0);
+        }
+        else if (TurretElevationSoundCustom.IsPlaying())
+        {
+            if (TurretElevationSoundCustom.FadeOutStartTime == 0.0)
+            {
+                TurretElevationSoundCustom.FadeOut(0.2, 0.0);
+            }
+        }
+    }
+}
+
+// TODO: volume control.
+simulated function PlayLocalVehicleSoundCustom(SoundCue InSoundCue, optional name SocketName)
+{
+    local vector SocketLoc;
+
+    if (InSoundCue == None)
+    {
+        return;
+    }
+
+    if (SocketName != '')
+    {
+        if (Mesh != None)
+        {
+            Mesh.GetSocketWorldLocationAndRotation(SocketName, SocketLoc);
+            PlaySoundBase(InSoundCue, true, true, true, SocketLoc);
+            return;
+        }
+    }
+
+    PlaySoundBase(InSoundCue, true, true, true);
+}
+
+simulated function PlayGearShiftAudio()
+{
+    if (TargetOutputGear < DelayedOutputGear)
+    {
+        `log("ShiftDown",, 'DRDEV');
+        PlayLocalVehicleSoundCustom(ShiftDownSoundCustom, Exhaust_FXSocket);
+    }
+    else if (ROVehicleSimTreaded(SimObj) != None
+        && TargetOutputGear != ROVehicleSimTreaded(SimObj).FirstForwardGear)
+    {
+        `log("ShfitUp",, 'DRDEV');
+        PlayLocalVehicleSoundCustom(ShiftUpSoundCustom, Exhaust_FXSocket);
+    }
+}
+
+// --- END SOUNDCUE BACKPORT ---
+
+simulated function DisableLeftTrack()
+{
+    local vector SpawnLoc;
+    local rotator SpawnRot;
+
+    super.DisableLeftTrack();
+
+    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Left', SpawnLoc, SpawnRot);
+
+    Mesh.SetMaterial(LeftTrackMaterialIndex, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
+    DestroyedLeftTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
+
+    `dr("DestroyedLeftTrack = " $ DestroyedLeftTrack);
+}
+
+simulated function DisableRightTrack()
+{
+    local vector SpawnLoc;
+    local rotator SpawnRot;
+
+    super.DisableRightTrack();
+
+    Mesh.GetSocketWorldLocationAndRotation('Destroyed_Track_Spawn_Right', SpawnLoc, SpawnRot);
+
+    Mesh.SetMaterial(RightTrackMaterialIndex, Material'M_VN_Common_Characters.Materials.M_Hair_NoTransp');
+    DestroyedRightTrack = Spawn(class'DRDestroyedTankTrack', self,, SpawnLoc, SpawnRot);
+
+    `dr("DestroyedRightTrack = " $ DestroyedRightTrack);
+}
+
 // TODO: Let's not do this for now.
 simulated function SpawnExternallyVisibleSeatProxies()
 {
@@ -217,19 +701,9 @@ simulated function float GetArmorAngleForShot(name PhysBodyBone, name HitZoneNam
     return HitAngle;
 }
 
-/*
-simulated function WeaponRotationChanged(int SeatIndex)
-{
-    super.WeaponRotationChanged(SeatIndex);
-    `log("WeaponRotationChanged(): SeatIndex=" $ SeatIndex,, 'DRDEV');
-}
-*/
-
 function PossessedBy(Controller C, bool bVehicleTransition)
 {
     super.PossessedBy(C, bVehicleTransition);
-
-    // `log("DRVehicleTank.PossessedBy()",, 'DRDEV');
 
     // Reset camera.
     if (ROPlayerController(C) != None)
@@ -238,85 +712,292 @@ function PossessedBy(Controller C, bool bVehicleTransition)
     }
 }
 
-/*
-simulated function OnTurretTraverseStatusChange(bool bTurretMoving, bool bHighSpeed)
+simulated function ZoneHealthRepaired(int ZoneIndexUpdated)
 {
-    `log(self $ ": OnTurretTraverseStatusChange: bTurretMoving=" $ bTurretMoving
-        $ " bHighSpeed=" $ bHighSpeed);
+    local int Message;
+    local int CannonSeatIndex;
+    //`log(GetFuncName()$" ZoneIndexUpdated = "$ZoneIndexUpdated$" ZoneName = "$VehHitZones[ZoneIndexUpdated].ZoneName$" Health = "$VehHitZones[ZoneIndexUpdated].ZoneHealth);
 
-    if ( TurretTraverseSound != None )
+    Message = -1;
+
+    if( VehHitZones[ZoneIndexUpdated].VehicleHitZoneType == VHT_Engine && VehHitZones[ZoneIndexUpdated].ZoneHealth > 0 )
     {
-        if ( bTurretMoving && !bHighSpeed )
+        if(  VehHitZones[ZoneIndexUpdated].ZoneName == 'ENGINEBLOCK' )
         {
-            TurretTraverseSound.FadeIn(0.1, 1.0);
-        }
-        else if ( TurretTraverseSound.IsPlaying() )
-        {
-            if ( TurretTraverseSound.FadeOutStartTime == 0.0 )
+            ROVehicleSimTreaded(SimObj).bLimitHighGear = false;
+
+            bEngineDamaged = false;
+            Message = ROVDMSG_EngineRepaired;
+            if( !bEngineDestroyed )
             {
-                TurretTraverseSound.FadeOut(0.2, 0.0);
+                ReplaceLoopingAudio(EngineSound, EngineSoundEvent);
+                // SoundCue backport.
+                ReplaceLoopingAudioCustom(EngineSoundCustom, EngineIdleSoundCustom);
+            }
+        }
+        else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'ENGINECORE' )
+        {
+            if ( Role == ROLE_Authority )
+            {
+                ClearScuttle();
+            }
+
+            bEngineDestroyed = false;
+            StartEngineSound();
+            Message = ROVDMSG_EngineRepaired;
+        }
+    }
+    else if( VehHitZones[ZoneIndexUpdated].VehicleHitZoneType == VHT_Mechanicals )
+    {
+        if( VehHitZones[ZoneIndexUpdated].ZoneHealth > 0 )
+        {
+            if(  VehHitZones[ZoneIndexUpdated].ZoneName == 'GEARBOX' )
+            {
+                ROVehicleSimTreaded(SimObj).bLimitHighGear = false;
+
+                bTransmissionDamaged = false;
+                Message = ROVDMSG_TransRepaired;
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'GEARBOXCORE' )
+            {
+                ROVehicleSimTreaded(SimObj).bLimitHighGear = false;
+                DetachBrokenTransmissionSound();
+
+                bTransmissionDestroyed = false;
+                Message = ROVDMSG_TransRepaired;
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'LEFTBRAKES' )
+            {
+                bLeftBrakeDestroyed = false;
+                Message = ROVDMSG_LBrakeRepaired;
+
+                if( VehHitZones[ZoneIndexUpdated].ZoneHealth == default.VehHitZones[ZoneIndexUpdated].ZoneHealth )
+                {
+                    bLeftBrakeDamaged = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'RIGHTBRAKES' )
+            {
+                bRightBrakeDestroyed = false;
+                Message = ROVDMSG_RBrakeRepaired;
+
+                if( VehHitZones[ZoneIndexUpdated].ZoneHealth == default.VehHitZones[ZoneIndexUpdated].ZoneHealth )
+                {
+                    bRightBrakeDamaged = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'MAINCANNONREAR' )
+            {
+                if ( Role == ROLE_Authority )
+                {
+                    ClearScuttle();
+                }
+
+                Message = ROVDMSG_MainGunRepaired;
+                bMainCannonDestroyed = false;
+
+                CannonSeatIndex = Seats.Find('TurretVarPrefix',"Turret");
+
+                // Enable the main gun
+                if( CannonSeatIndex >= 0 && Seats[CannonSeatIndex].Gun != none )
+                {
+                    Seats[CannonSeatIndex].Gun.bPrimaryFireDisabled = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'COAXIALMG' )
+            {
+                Message = ROVDMSG_CoaxMGRepaired;
+                bCoaxMGDestroyed = false;
+
+                CannonSeatIndex = Seats.Find('TurretVarPrefix',"Turret");
+
+                // Enable the coax MG
+                if( CannonSeatIndex >= 0 && Seats[CannonSeatIndex].Gun != none )
+                {
+                    Seats[CannonSeatIndex].Gun.bAlternateFireDisabled = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'TRAVERSEMOTOR' )
+            {
+                Message = ROVDMSG_TraverseRepaired;
+                bTraverseMoterDestroyed = false;
+
+                CannonSeatIndex = Seats.Find('TurretVarPrefix',"Turret");
+
+                // PCGamer TODO: Don't hard code this stuff!!! Hacked in for now - Ramm
+                if( CannonSeatIndex >= 0 )
+                {
+                    Seats[CannonSeatIndex].TurretControllers[1].RepairMotor();
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'TURRETRINGONE' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'TURRETRINGTWO' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'TURRETRINGTHREE' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'TURRETRINGFOUR' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'TURRETRINGFIVE' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'TURRETRINGSIX' )
+            {
+                if ( Role == ROLE_Authority )
+                {
+                    ClearScuttle();
+                }
+
+                Message = ROVDMSG_TurretRingRepaired;
+                bTurretRingDisabled = false;
+
+                CannonSeatIndex = Seats.Find('TurretVarPrefix',"Turret");
+
+                // Disable turret rotation
+                if( CannonSeatIndex >= 0 && Seats[CannonSeatIndex].Gun != none )
+                {
+                    Seats[CannonSeatIndex].Gun.bRotationDisabled = false;
+                }
             }
         }
     }
-
-    if (TurretMotorTraverseSound != None)
+    else if( VehHitZones[ZoneIndexUpdated].VehicleHitZoneType == VHT_Track )
     {
-        if ( bTurretMoving && bHighSpeed )
+        if( VehHitZones[ZoneIndexUpdated].ZoneHealth > 0 )
         {
-            TurretMotorTraverseSound.FadeIn(0.1, 1.0);
-        }
-        else if ( TurretMotorTraverseSound.IsPlaying() )
-        {
-            if ( TurretMotorTraverseSound.FadeOutStartTime == 0.0 )
+            if( VehHitZones[ZoneIndexUpdated].ZoneName == 'LEFTTRACKONE' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'LEFTTRACKTWO' )
             {
-                TurretMotorTraverseSound.FadeOut(0.2, 0.0);
+                Message = ROVDMSG_LTrackRepaired;
+                bLeftTrackDestroyed = false;
+
+                if( VehHitZones[ZoneIndexUpdated].ZoneHealth == default.VehHitZones[ZoneIndexUpdated].ZoneHealth )
+                {
+                    ReplaceLoopingAudio(TrackLeftSound, TrackLeftSoundEvent);
+                    bLeftTrackDamaged = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'RIGHTTRACKONE' ||
+                VehHitZones[ZoneIndexUpdated].ZoneName == 'RIGHTTRACKTWO' )
+            {
+                Message = ROVDMSG_RTrackRepaired;
+                bRightTrackDestroyed = false;
+
+                if( VehHitZones[ZoneIndexUpdated].ZoneHealth == default.VehHitZones[ZoneIndexUpdated].ZoneHealth )
+                {
+                    ReplaceLoopingAudio(TrackRightSound, TrackRightSoundEvent);
+                    bRightTrackDamaged = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'LEFTTURNINGWHEEL' )
+            {
+                Message = ROVDMSG_LSteerWheelRepaired;
+                bLeftSteerWheelDestroyed = false;
+
+                if( VehHitZones[ZoneIndexUpdated].ZoneHealth == default.VehHitZones[ZoneIndexUpdated].ZoneHealth )
+                {
+                    bLeftSteerWheelDamaged = false;
+                }
+            }
+            else if( VehHitZones[ZoneIndexUpdated].ZoneName == 'RIGHTTURNINGWHEEL' )
+            {
+                Message = ROVDMSG_RSteerWheelRepaired;
+                bRightSteerWheelDestroyed = false;
+
+                if( VehHitZones[ZoneIndexUpdated].ZoneHealth == default.VehHitZones[ZoneIndexUpdated].ZoneHealth )
+                {
+                    bRightSteerWheelDamaged = false;
+                }
             }
         }
     }
-}
-*/
-
-/*
-simulated function OnTurretElevationStatusChange(bool bTurretMoving, bool bHighSpeed)
-{
-    `log(self $ ": OnTurretElevationStatusChange: bTurretMoving=" $ bTurretMoving
-        $ " bHighSpeed=" $ bHighSpeed);
-
-    if ( TurretElevationSound != None )
+    else if( VehHitZones[ZoneIndexUpdated].VehicleHitZoneType == VHT_Ammo )
     {
-        if ( bTurretMoving )
+        if ( VehHitZones[ZoneIndexUpdated].VisibleFrom <= 7 )
         {
-            TurretElevationSound.FadeIn(0.1, 1.0);
+             bLeftAmmoDestroyed = false;
+             Message = ROVDMSG_AmmoStorageRepaired;
         }
-        else if ( TurretElevationSound.IsPlaying() )
+        else
         {
-            if ( TurretElevationSound.FadeOutStartTime == 0.0 )
-            {
-                TurretElevationSound.FadeOut(0.2, 0.0);
-            }
+             bRightAmmoDestroyed = false;
+             Message = ROVDMSG_AmmoStorageRepaired;
+        }
+    }
+    else if( VehHitZones[ZoneIndexUpdated].VehicleHitZoneType == VHT_Fuel )
+    {
+        if ( VehHitZones[ZoneIndexUpdated].VisibleFrom < 8 )
+        {
+             bLeftFuelTankDestroyed = false;
+             Message = ROVDMSG_FuelTankRepaired;
+        }
+        else if ( VehHitZones[ZoneIndexUpdated].VisibleFrom < 15 )
+        {
+             bRightFuelTankDestroyed = false;
+             Message = ROVDMSG_FuelTankRepaired;
+        }
+        else
+        {
+             bCenterFuelTankDestroyed = false;
+             Message = ROVDMSG_FuelTankRepaired;
+        }
+    }
+
+    // Send the players in the tank damage messages
+    if( Message >= 0 && Role == ROLE_Authority )
+    {
+        DamageMessageQueue[DamageMessageQueue.Length] = Message;
+
+        if( !IsTimerActive('ProcessDamageMessageQueue') )
+        {
+            SetTimer(0.1, false, 'ProcessDamageMessageQueue');
         }
     }
 }
-*/
-
-/*
-simulated event Tick(float DeltaTime)
-{
-    super.Tick(DeltaTime);
-
-    `log("Seats[GetGunnerSeatIndex()].TurretControllers[0].DesiredBoneRotation="
-        $ Seats[GetGunnerSeatIndex()].TurretControllers[0].DesiredBoneRotation,,'DRDEV');
-    `log("Seats[GetGunnerSeatIndex()].TurretControllers[1].DesiredBoneRotation="
-        $ Seats[GetGunnerSeatIndex()].TurretControllers[1].DesiredBoneRotation,,'DRDEV');
-
-    `log("Seats[GetGunnerSeatIndex()].TurretControllers[0].DeltaRotation="
-        $ Seats[GetGunnerSeatIndex()].TurretControllers[0].DeltaRotation,,'DRDEV');
-    `log("Seats[GetGunnerSeatIndex()].TurretControllers[1].DeltaRotation="
-        $ Seats[GetGunnerSeatIndex()].TurretControllers[1].DeltaRotation,,'DRDEV');
-}
-*/
 
 simulated function bool CanEnterVehicle(Pawn P)
 {
     return !bDeadVehicle && super.CanEnterVehicle(P);
+}
+
+/** Turn the vehicle interior visibility on or off. */
+simulated function SetInteriorVisibility(bool bVisible)
+{
+    // local int i;
+
+    super.SetInteriorVisibility(False);
+
+    /*
+    if ( bVisible && !bGeneratedInteriorMICs )
+    {
+        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(1)));
+        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntDriverSide1Component').GetMaterial(2)));
+        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('TurretComponent').GetMaterial(0)));
+        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('TurretCuppolaComponent').GetMaterial(2)));
+
+        for ( i = 0; i < ReplacedInteriorMICs.Length; i++ )
+        {
+            InteriorMICs[i] = new class'MaterialInstanceConstant';
+            InteriorMICs[i].SetParent(ReplacedInteriorMICs[i]);
+        }
+
+        // Replace MIC for vehicle skeletal mesh
+        ReplaceInteriorMICs(mesh);
+
+        // Replcace MIC for the interior static mesh attachments
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntBodyComponent'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntMainAmmoComponent'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullSide1Component'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntDriverSide1Component'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullMGComponent'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretComponent'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretGunGaseComponent'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretCuppolaComponent'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretDetails1Component'));
+        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretBasketComponent'));
+
+        bGeneratedInteriorMICs = true;
+    }
+    */
+}
+
+DefaultProperties
+{
+    LeftTrackMaterialIndex=1
+    RightTrackMaterialIndex=2
+    CachedWheelRadius=15
 }

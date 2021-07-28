@@ -2,8 +2,7 @@ class DRVWeapon_PanzerIVF_Turret_Content extends DRVWeapon_PanzerIVF_Turret;
 
 DefaultProperties
 {
-    // TODO:
-    // WeaponFireSnd(0)=SoundCue'AUD_Vehicle_Tank_PanzerIV.Weapon.Cannon_Fire_Cue'
+    WeaponFireSndCustom(0)=(SoundCueCustom=SoundCue'DR_AUD_VH_PanzerIV.Weapon.Cannon_Fire_Cue')
 
     // HUD
     BarTexture=Texture2D'ui_textures.Textures.button_128grey'

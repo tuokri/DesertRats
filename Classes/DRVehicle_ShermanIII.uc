@@ -308,45 +308,6 @@ function DamageSeatProxy(int SeatProxyIndex, int Damage, Controller InstigatedBy
     Super.DamageSeatProxy(SeatProxyIndex, Damage, InstigatedBy, HitLocation, Momentum, DamageType, DamageCauser);
 }
 
-/** Turn the vehicle interior visibility on or off. */
-simulated function SetInteriorVisibility(bool bVisible)
-{
-    // local int i;
-
-    super.SetInteriorVisibility(False);
-
-    /*
-    if ( bVisible && !bGeneratedInteriorMICs )
-    {
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntBodyComponent').GetMaterial(3))); // Tile
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntBodyComponent').GetMaterial(2))); // Cuppola
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntBodyComponent').GetMaterial(1))); // Turret
-        ReplacedInteriorMICs.AddItem(MaterialInstanceConstant(GetVehicleMeshAttachment('IntBodyComponent').GetMaterial(0))); // Driver
-
-        for ( i = 0; i < ReplacedInteriorMICs.Length; i++ )
-        {
-            InteriorMICs[i] = new class'MaterialInstanceConstant';
-            InteriorMICs[i].SetParent(ReplacedInteriorMICs[i]);
-        }
-
-        // Replace MIC for vehicle skeletal mesh
-        ReplaceInteriorMICs(mesh);
-
-        // Replcace MIC for the interior static mesh attachments
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntBodyComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntMainAmmoComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('IntHullMGComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretGunGaseComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretCuppolaComponent'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretDetails1Component'));
-        ReplaceInteriorMICs(GetVehicleMeshAttachment('TurretBasketComponent'));
-
-        bGeneratedInteriorMICs = true;
-    }
-    */
-}
-
 simulated function ReplaceInteriorMICs(MeshComponent MeshComp)
 {
     local MaterialInterface MeshMaterial;

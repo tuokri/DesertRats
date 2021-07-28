@@ -1,4 +1,4 @@
-class DRVWeap_CrusaderMkIII_Turret extends ROVWeap_TankTurret
+class DRVWeap_CrusaderMkIII_Turret extends DRVWeap_TankTurret
     abstract
     HideDropDown;
 

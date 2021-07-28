@@ -54,6 +54,12 @@
 `define CRUSADER_COMMANDER_SPI      1
 `define CRUSADER_GUNNER_SPI         2
 
+`define PZIV_DRIVER_SPI             0
+`define PZIV_COMMANDER_SPI          1
+`define PZIV_HULLGUNNER_SPI         2
+`define PZIV_LOADER_SPI             3
+`define PZIV_GUNNER_SPI             4
+
 
 // TODO:
 `define BALANCE_STATS_HOST          "localhost"
