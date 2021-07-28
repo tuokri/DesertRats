@@ -12,6 +12,11 @@ var(Animations) name 	WeaponDryFireSightedAnim;
 
 var(Animations) name    WeaponClosedBoltReload;
 
+simulated function EndDryFiring()
+{
+	bDryFiring = false;
+}
+
 // Plays dry firing animation and returns the length of the animation played
 simulated function float PlayDryFireAnimation()
 {
@@ -75,13 +80,6 @@ simulated function bool AttemptAutoReload(byte FireModeNum)
 {
 	local ROPlayerController ROPC;
 
-	if(FireModeNum == ALTERNATE_FIREMODE)
-	{
-		return super.AttemptAutoReload(FireModeNum);
-	}
-
-	// from ROWeapon::AttempAutoReload(byte FireModeNum)
-
 	if( IsInState('Reloading') || IsInState('SwitchingAmmo') || IsInState('SwitchingSpecialOpMode') )
 	{
 		return false;
@@ -128,6 +126,10 @@ simulated function bool AttemptAutoReload(byte FireModeNum)
 		// If we can autoreload, do an autoreload
 		if( bCanAutoReload && ROPC.bAutoReloading && (NumDryFires > 1 || MaxAmmoCount == 1) )
 		{
+			if(FireModeNum == ALTERNATE_FIREMODE)
+			{
+				return super.AttemptAutoReload(FireModeNum);
+			}
 			DoReload();
 			return true;
 		}
@@ -153,6 +155,9 @@ DefaultProperties
 	WeaponDryFireSightedAnim=Thompson_shootLAST // TODO: REPLACE ME
 
 	WeaponClosedBoltReload=Thompson_reloadempty
+	WeaponFireLastAnim=Thompson_shoot
+
+	BoltControllerNames[0]=BoltSlide_M1A1
 
 	InvIndex=`DRII_THOMPSON_SMG
 
