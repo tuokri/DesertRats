@@ -106,10 +106,26 @@ static function array<PlayerHeadInfo> GetHeadArray(byte TeamIndex, byte ArmyInde
 {
 	if (TeamIndex == `AXIS_TEAM_INDEX)
 	{
+		if (bPilot > 0)
+		{
+			return default.DAK_TankCrew_Headgear;
+		}
+		else if( bPilot == `DRCI_COMMANDER )
+		{
+			return default.DAK_Commander_Headgear;
+		}
 		return default.DAK_Heads;
 	}
 	else
 	{
+		if (bPilot > 0)
+		{
+			return default.UK_TankCrew_Headgear;
+		}
+		else if( bPilot == `DRCI_COMMANDER )
+		{
+			return default.UK_Commander_Headgear;
+		}
 		return default.UK_Heads;
 	}
 }
