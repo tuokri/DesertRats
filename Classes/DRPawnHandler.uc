@@ -58,7 +58,7 @@ static function array<TunicInfo> GetTunicArray(byte TeamIndex, byte ArmyIndex, o
 		{
 			return default.DAK_TankCrew_Tunics;
 		}
-		else if (bPilot == DRCI_COMMANDER )
+		else if (bPilot == `DRCI_COMMANDER )
 		{
 			return default.DAK_Commander_Tunics;
 		}
@@ -72,7 +72,7 @@ static function array<TunicInfo> GetTunicArray(byte TeamIndex, byte ArmyIndex, o
 		{
 			return default.UK_TankCrew_Tunics;
 		}
-		else if (bPilot == DRCI_COMMANDER )
+		else if (bPilot == `DRCI_COMMANDER )
 		{
 			return default.UK_Commander_Tunics;
 		}
