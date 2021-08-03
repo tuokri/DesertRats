@@ -2,49 +2,52 @@ class DRHUDWidgetObjectiveOverview extends ROHUDWidgetObjectiveOverview;
 
 DefaultProperties
 {
-    ObjectiveNeutralIcon                       = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral'
-    ObjectiveNeutralUncontestedBorder          = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral'
-    ObjectiveStatusNorthAttackingNeutral       = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_GER_Taking_Progress'
-    ObjectiveStatusSouthAttackingNeutral       = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_UK_Taking_Progress'
-    ObjectiveStatusNorthAttackingNeutralBorder = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_Taking'
-    ObjectiveStatusSouthAttackingNeutralBorder = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_Taking'
+    ObjectiveNeutralIcon                        = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_Neutral'
+    ObjectiveNeutralUncontestedBorder           = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_Neutral'
+    ObjectiveStatusNorthAttackingNeutral        = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_Neutral_red'
+    ObjectiveStatusSouthAttackingNeutral        = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_Neutral_border_glow_red_GM'
+    ObjectiveStatusNorthAttackingNeutralBorder  = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_Neutral_blue'
+    ObjectiveStatusSouthAttackingNeutralBorder  = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_Neutral_border_glow_blue_GM'
+    ObjectiveStatusNorthSatchelAttackingNeutral = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_Neutral_border_glow_red_GM'
+    ObjectiveStatusSouthSatchelAttackingNeutral = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_Neutral_border_glow_blue_GM'
+    ObjectiveNeutralUncontestedBorder           = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_Neutral_border_GM'
 
-    NeutralUpperEdgeMargin=0.22, // 28px
-    NeutralLowerEdgeMargin=0.22, // 28px
+    NeutralUpperEdgeMargin=0.05
+    NeutralLowerEdgeMargin=0.05
 
     // Deutsches Afrikakorps.
     NorthIcons(0)={(
-        UpperEdgeMargin=0.22, // 28px
-        LowerEdgeMargin=0.22, // 28px
-        ObjIconRed                  = Texture2D'DR_UI.Objective.64x64.Objective_64_GER',
-        ObjIconBlue                 = Texture2D'DR_UI.Objective.64x64.Objective_64_GER_Losing_Progress',
-        ObjBorder                   = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral',
-        CappingObjBorderRed         = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_Taking',
-        CappingObjBorderBlue        = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_Taking',
+        UpperEdgeMargin=0.05,
+        LowerEdgeMargin=0.05,
+        ObjIconRed               = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_red',
+        ObjIconBlue              = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_blue',
+        ObjBorder                = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_DAK_border_GM',
+        CappingObjBorderRed      = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_DAK_border_glow_red_GM',
+        CappingObjBorderBlue     = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_DAK_border_glow_blue_GM',
 
-        // HomeObjIconRed           = Texture2D'DR_UI.Objective.64x64.Objective_64_GERHQ',
-        // HomeObjIconBlue          = Texture2D'DR_UI.Objective.64x64.Objective_64_GERHQ_Losing_Progress',
-        // HomeObjEnemyHeldIconRed  = Texture2D'DR_UI.Objective.64x64.Objective_64_UKHQ_Losing_Progress',
-        // HomeObjEnemyHeldIconBlue = Texture2D'DR_UI.Objective.64x64.Objective_64_UKHQ',
-        // HomeObjNeutralRed        = Texture2D'DR_UI.Objective.64x64.Objective_64_GERHQ_Neutral',
-        // HomeObjNeutralBlue       = Texture2D'DR_UI.Objective.64x64.Objective_64_GERHQ_Neutral'
+        HomeObjIconRed           = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_home_red_red',
+        HomeObjIconBlue          = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_home_blue_blue',
+        HomeObjEnemyHeldIconRed  = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_home_blue_red',
+        HomeObjEnemyHeldIconBlue = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_home_red_blue',
+        HomeObjNeutralRed        = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_home_red_white',
+        HomeObjNeutralBlue       = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_DAK_home_blue_white',
     )}
 
     // 8th Army.
     SouthIcons(0)={(
-        UpperEdgeMargin=0.22, // 28px
-        LowerEdgeMargin=0.22, // 28px
-        ObjIconRed                  = Texture2D'DR_UI.Objective.64x64.Objective_64_UK_Losing_Progress',
-        ObjIconBlue                 = Texture2D'DR_UI.Objective.64x64.Objective_64_UK',
-        ObjBorder                   = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral',
-        CappingObjBorderRed         = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_Taking',
-        CappingObjBorderBlue        = Texture2D'DR_UI.Objective.64x64.Objective_64_Neutral_Taking',
+        UpperEdgeMargin=0.05,
+        LowerEdgeMargin=0.05,
+        ObjIconRed               = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_red',
+        ObjIconBlue              = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_blue',
+        ObjBorder                = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_UK_border_GM',
+        CappingObjBorderRed      = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_UK_border_glow_red_GM',
+        CappingObjBorderBlue     = Texture2D'DR_UI.ObjectiveNew.GameMode.ui_hud_obj_UK_border_glow_blue_GM',
 
-        // HomeObjIconRed           = Texture2D'DR_UI.Objective.64x64.Objective_64_UKHQ_Losing',
-        // HomeObjIconBlue          = Texture2D'DR_UI.Objective.64x64.Objective_64_UKHQ',
-        // HomeObjEnemyHeldIconRed  = Texture2D'DR_UI.Objective.64x64.Objective_64_GERHQ',
-        // HomeObjEnemyHeldIconBlue = Texture2D'DR_UI.Objective.64x64.Objective_64_GERHQ_Losing_Progress',
-        // HomeObjNeutralRed        = Texture2D'DR_UI.Objective.64x64.Objective_64_UKHQ_Neutral',
-        // HomeObjNeutralBlue       = Texture2D'DR_UI.Objective.64x64.Objective_64_UKHQ_Neutral'
+        HomeObjIconRed           = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_home_red_red',
+        HomeObjIconBlue          = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_home_blue_blue',
+        HomeObjEnemyHeldIconRed  = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_home_blue_red',
+        HomeObjEnemyHeldIconBlue = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_home_red_blue',
+        HomeObjNeutralRed        = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_home_red_white',
+        HomeObjNeutralBlue       = Texture2D'DR_UI.ObjectiveNew.OverheadMap.ui_overheadmap_icons_UK_home_blue_white',
     )}
 }
