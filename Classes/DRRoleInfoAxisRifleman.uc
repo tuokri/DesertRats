@@ -9,7 +9,7 @@ DefaultProperties
     Items[RORIGM_Default]={(
         PrimaryWeapons=(class'DRWeap_Kar98_Rifle'),
 
-        OtherItems=(class'DRWeap_M24_Grenade')
+        OtherItems=(class'DRWeap_M24_Grenade',class'DRWeap_M39_Grenade')
     )}
 
     ClassIcon=Texture2D'DR_UI.RoleIcons.Small_Class_Icon_Rifleman'
