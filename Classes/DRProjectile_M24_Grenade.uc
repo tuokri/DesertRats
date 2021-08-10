@@ -1,7 +1,5 @@
 class DRProjectile_M24_Grenade extends ROStickGrenadeProjectile;
 
-// `include(ROVoiceComs.uci)
-
 DefaultProperties
 {
     TossZ=180

@@ -1,7 +1,5 @@
 class DRProjectile_Mills_Grenade extends ROEggGrenadeProjectile;
 
-// `include(RSVoiceComs.uci)
-
 DefaultProperties
 {
     TossZ=300
