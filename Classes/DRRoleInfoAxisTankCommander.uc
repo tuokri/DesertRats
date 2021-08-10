@@ -8,4 +8,7 @@ DefaultProperties
 
     bCanBeTankCrew=True
     bIsTankCommander=True
+
+    ClassIcon=Texture2D'DR_UI.RoleIcons.Small_Class_Icon_Crew'
+    ClassIconLarge=Texture2D'DR_UI.RoleIcons.Class_Icon_Large_Crew'
 }

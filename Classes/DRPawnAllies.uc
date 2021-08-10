@@ -1,11 +1,12 @@
-class DRPawnAllies extends ROSouthPawn;
+class DRPawnAllies extends DRPawn;
 
-`include(DesertRats\Classes\DRPawn_Common.uci)
+simulated event byte ScriptGetTeamNum()
+{
+    return `ALLIES_TEAM_INDEX;
+}
 
 DefaultProperties
 {
-    `DRPCommonDP
-
     TunicMesh=SkeletalMesh'DR_CHR_UK.Mesh.UK_Tunic_RolledSocks'
 
     FieldgearMesh=SkeletalMesh'DR_CHR_UK.Gear.UK_Gear_Rifleman'
@@ -22,11 +23,4 @@ DefaultProperties
     Begin Object Name=ROPawnSkeletalMeshComponent
         AnimSets(11)=AnimSet'DR_CHR.Anim.CHR_Allies_Unique'
     End Object
-
-    Begin Object Class=DRAudioComponent Name=DialogAudioComp0
-        bStopWhenOwnerDestroyed=true
-        AudioClass=EAC_SFX
-    End Object
-    DialogAudioComp=DialogAudioComp0
-    // TODO: Refactor DRPAWN!
 }

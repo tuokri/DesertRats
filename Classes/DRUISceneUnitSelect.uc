@@ -1,5 +1,10 @@
 class DRUISceneUnitSelect extends ROUISceneUnitSelect;
 
+function bool ShouldPlayTutorialVideo()
+{
+    return false;
+}
+
 DefaultProperties
 {
     NorthBackgroundImages.Empty

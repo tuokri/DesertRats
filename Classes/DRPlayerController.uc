@@ -355,17 +355,8 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
         `log("PlayVoiceCom(): PawnSpeaker=" $ PawnSpeaker, `DEBUG_VOICECOMS, 'DRAudio');
 
         // Make Pawn say the line.
-        // TODO: STUPID CASTING, FIX DRPAWN.
-        if (PawnSpeaker.GetTeamNum() == `ALLIES_TEAM_INDEX)
-        {
-            DRPawnAllies(PawnSpeaker).SpeakLineCustom(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
-                VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher,,,, CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex));
-        }
-        else
-        {
-            DRPawnAxis(PawnSpeaker).SpeakLineCustom(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
-                VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher,,,, CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex));
-        }
+        DRPawn(PawnSpeaker).SpeakLineCustom(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
+            VoicePack.static.GetVoiceComPriority(VoiceComIndex), SIC_IfSameOrHigher,,,, CustomVoicePack.static.GetVoiceComSoundCustom(VoiceComIndex));
     }
     else if (ProxySpeaker != none)
     {
@@ -787,253 +778,6 @@ simulated function PlayAxisLossThemeStinger()
 }
 
 // --- END MORALE MUSIC ---
-
-/*
-function StartMusicFix()
-{
-    // Sometimes the music just cuts off entirely for an unknown reason.
-    // Clients can restart it with the RestartMusic command, but
-    // since people won't know how to do that, let's just try this.
-
-    SetTimer(30.0, true, 'RestartMusic');
-}
-
-function float UserVolumeSetting()
-{
-    local AudioDevice Audio;
-    Audio = class'Engine'.static.GetAudioDevice();
-
-    if (Audio == none)
-    {
-        return 0.2;
-    }
-
-    return Audio.AkMusicVolume;
-}
-
-function CheckForVolumeChanges()
-{
-    if (WorldInfo.MusicComp != none)
-    {
-        // Don't change the volume if it's currently ducked
-        if (WorldInfo.MusicComp.VolumeMultiplier != UserVolumeSetting() && !Ducking)
-        {
-            `dr("Volume does not match user settings, updating now",'M');
-
-            // If the VolumeMultiplier is 0 we have to call PlayMusic so it can do FadeIn
-            if (WorldInfo.MusicComp.VolumeMultiplier <= 0)
-            {
-                WorldInfo.CurrentMusicTrack.FadeInVolumeLevel = UserVolumeSetting();
-                PlayMusic();
-            }
-
-            WorldInfo.MusicComp.VolumeMultiplier = UserVolumeSetting();
-        }
-    }
-
-    if (StingerComp != none)
-    {
-        StingerComp.VolumeMultiplier = UserVolumeSetting();
-    }
-}
-
-function DelayClearMusicComp()
-{
-    WorldInfo.MusicComp = none;
-}
-
-function UpdateCurrentMoraleMusicTrack()
-{
-    `dr("",'M');
-
-    if (WorldInfo.MusicComp != none)
-    {
-        UpdateMoraleMusicTrack(WorldInfo.CurrentMusicTrack);
-    }
-}
-
-function UpdateMoraleMusicTrack(MusicTrackStruct NewMusicTrack)
-{
-    local AudioComponent AC;
-
-    if (MatchEnd)
-    {
-        `dr("Match over, clearing",'M');
-        Ducking = true;
-        WorldInfo.MusicComp.FadeOut(0.9, 0.0);
-        SetTimer(1.0, false, 'DelayClearMusicComp');
-        return;
-    }
-
-    `dr(""$ NewMusicTrack.TheSoundCue,'M');
-
-    if (WorldInfo.MusicComp == none)
-    {
-        AC = GetPooledAudioComponent(NewMusicTrack.TheSoundCue, none, false, false);
-
-        AC.bIsMusic = true;
-        AC.bUseOwnerLocation = true;
-        AC.PitchMultiplier = 1.0;
-        AC.VolumeMultiplier = 1.0;
-        AC.bWasOccluded = false;
-        AC.OcclusionCheckInterval = 0.f;
-
-        WorldInfo.MusicComp = AC;
-    }
-    // This is run AFTER we close the Round End screen and about to spawn in a new round
-    else if (RoundEnd)
-    {
-        `dr("Round over, restarting",'M');
-
-        // We don't need this atm since the round winning MoraleTransitionUp cue stops the background music
-        // WorldInfo.MusicComp.FadeOut(0.9, 0.0);
-        // SetTimer(1.0, false, 'DelayClearMusicComp');
-    }
-    else
-    {
-        Ducking = true;
-        WorldInfo.MusicComp.FadeOut(0.9, 0.0);
-    }
-
-    RoundEnd = false;
-
-    if (WorldInfo.CurrentMusicTrack != NewMusicTrack)
-    {
-        `dr("Setting new track",'M');
-        WorldInfo.CurrentMusicTrack = NewMusicTrack;
-    }
-
-    SetTimer(1.0, false, 'PlayMusic');
-}
-
-function PlayMusic()
-{
-    `dr("",'M');
-
-    Ducking = false;
-    WorldInfo.MusicComp.VolumeMultiplier = UserVolumeSetting();
-    WorldInfo.MusicComp.SoundCue = WorldInfo.CurrentMusicTrack.TheSoundCue;
-    WorldInfo.MusicComp.FadeIn(0.0, WorldInfo.CurrentMusicTrack.FadeInVolumeLevel);
-}
-
-// If for some reason the music bugs out the client can restart it with this command
-exec function RestartMusic()
-{
-    if (WorldInfo.MusicComp == none || Ducking || RoundEnd || MatchEnd || UserVolumeSetting() < 0.01)
-    {
-        `dr("Not Running",'M');
-        return;
-    }
-
-    if (WorldInfo.MusicComp.SoundCue == none || WorldInfo.MusicComp.VolumeMultiplier < UserVolumeSetting())
-    {
-        `dr("Performing Music Fix",'M');
-
-        WorldInfo.MusicComp.VolumeMultiplier = UserVolumeSetting();
-        WorldInfo.MusicComp.SoundCue = WorldInfo.CurrentMusicTrack.TheSoundCue;
-        WorldInfo.MusicComp.FadeIn(0.0, WorldInfo.CurrentMusicTrack.FadeInVolumeLevel);
-    }
-    else
-    {
-        `dr("Not Performing",'M');
-    }
-}
-*/
-
-/*
-function DelayedMatchWon()
-{
-    MatchEnd = true;
-    UpdateCurrentMoraleMusicTrack();
-
-    if (CurrentAfterActionReportScene != none)
-    {
-        LocalPlayer(Player).ViewportClient.UIController.SceneClient.CloseScene(CurrentAfterActionReportScene);
-        CurrentAfterActionReportScene = none;
-    }
-
-    if (StoredMatchWinInfo.WinningTeam == `AXIS_TEAM_INDEX)
-    {
-        PlayStinger(AxisWinTheme);
-        SetTimer(AxisWinTheme.GetCueDuration(),, 'ClearWaitingForVictoryMusicToEnd');
-    }
-    else if (StoredMatchWinInfo.WinningTeam == `ALLIES_TEAM_INDEX)
-    {
-        PlayStinger(AlliesWinTheme);
-        SetTimer(AlliesWinTheme.GetCueDuration(),, 'ClearWaitingForVictoryMusicToEnd');
-    }
-
-    ShowMatchWinScreen(StoredMatchWinInfo.WinningTeam, StoredMatchWinInfo.WinCondition, StoredMatchWinInfo.bUseCapturesForTieBreaking,
-                        StoredMatchWinInfo.NorthTeamPointsTotal, StoredMatchWinInfo.SouthTeamPointsTotal, StoredMatchWinInfo.NorthRemainingReinforcements,
-                        StoredMatchWinInfo.SouthRemainingReinforcements, StoredMatchWinInfo.NorthTotalObjectivesCaptured,
-                        StoredMatchWinInfo.SouthTotalObjectivesCaptured, StoredMatchWinInfo.RoundTime, StoredMatchWinInfo.NorthFastestWinTime,
-                        StoredMatchWinInfo.SouthFastestWinTime, StoredMatchWinInfo.NorthRoundScore, StoredMatchWinInfo.SouthRoundScore,
-                        StoredMatchWinInfo.NorthTotalTime, StoredMatchWinInfo.SouthTotalTime, StoredMatchWinInfo.NorthReachedObjectiveIndex,
-                        StoredMatchWinInfo.SouthReachedObjectiveIndex, StoredMatchWinInfo.NorthEnemiesKilled, StoredMatchWinInfo.SouthEnemiesKilled,
-                        StoredMatchWinInfo.NorthEnemiesRemaining, StoredMatchWinInfo.SouthEnemiesRemaining );
-}
-*/
-
-/*
-reliable client function ClientCloseTeamWinScreen()
-{
-    `dr("",'M');
-
-    super.ClientCloseTeamWinScreen();
-
-    RoundEnd = true;
-}
-
-reliable client function SetNewMoraleMusicTrack(MusicTrackStruct NewMusicTrack, optional float WaitTime)
-{
-    NewMusicTrack.FadeInVolumeLevel = UserVolumeSetting();
-
-    UpdateMoraleMusicTrack(NewMusicTrack);
-}
-
-simulated function UpdateMusicVolume(float NewVolume, optional float TransitionTime)
-{
-    if (WorldInfo.MusicComp != none && WorldInfo.CurrentMusicTrack.TheSoundCue != none)
-    {
-        if (TransitionTime <= 0)
-        {
-            TransitionTime = 0.001;
-        }
-
-        `dr("Adjusting volume to" @ NewVolume,'M');
-
-        WorldInfo.MusicComp.AdjustVolume(TransitionTime, NewVolume);
-    }
-}
-
-reliable client function DuckMoraleMusic(float StartDuckFadeLength, float DuckVolumeModifier, float DuckDuration)
-{
-    local float UsedDuration, MusicVolume;
-
-    `dr("",'M');
-
-    Ducking = true;
-
-    UsedDuration = FMax(DuckDuration (DuckDuration - 0.5), 0.01);
-
-    MusicVolume = UserVolumeSetting() * DuckVolumeModifier;
-
-    UpdateMusicVolume(MusicVolume, StartDuckFadeLength);
-
-    ClearTimer('ClearMoraleMusicDuck');
-
-    SetTimer(UsedDuration, false, 'ClearMoraleMusicDuck');
-}
-
-simulated function ClearMoraleMusicDuck()
-{
-    `dr("",'M');
-
-    Ducking = false;
-
-    UpdateMusicVolume(UserVolumeSetting(), 0.5);
-}
-*/
 
 /*
 function HitThisCommon(ROTriggerRadio ROTR, optional ROVehicle ROV = none, optional int SeatIndex = -1)
@@ -1719,11 +1463,11 @@ function PlayAnnouncerSound(byte VoxType, byte Team, byte VOXIndex, optional byt
 // TODO:
 // function TriggerHint(int HintID, optional bool bTriggerDead) {}
 
-/*
 function InitialiseCCMs()
 {
     local ROCharacterPreviewActor ROCPA, CPABoth;
     local ROCharCustMannequin TempCCM;
+    // local bool bMainMenu;
 
     if( WorldInfo.NetMode == NM_DedicatedServer )
         return;
@@ -1736,6 +1480,9 @@ function InitialiseCCMs()
             ROCCC.ROPCRef = self;
     }
 
+    // bMainMenu = WorldInfo.GRI.GameClass.static.GetGameType() == ROGT_Default;
+
+    // Iterate through all the worlds character customization mannequins (should be 2!).
     foreach WorldInfo.DynamicActors(class'ROCharacterPreviewActor', ROCPA)
     {
         if( ROCPA.OwningTeam == EOT_Both )
@@ -1748,36 +1495,32 @@ function InitialiseCCMs()
         }
     }
 
-    if( AllCCMs[0] == none || AllCCMs[1] == none )
+    // If any actors were missing, create a default one.
+    if (AllCCMs[0] == none || AllCCMs[1] == none)
     {
         if( CPABoth != none )
+        {
             TempCCM = Spawn(class'DRCharCustMannequin', self,, CPABoth.Location, CPABoth.Rotation);
+        }
         else
         {
             TempCCM = Spawn(class'DRCharCustMannequin', self, , vect(0,0,100));
+            `warn("Couldn't find an ROCharacterPreviewActor, the level designer has not added one to the map! Creating a default one"@TempCCM);
         }
 
         TempCCM.SetOwningTeam(EOT_Both);
 
         if( AllCCMs[0] == none )
+        {
             AllCCMs[0] = TempCCM;
+        }
 
         if( AllCCMs[1] == none )
+        {
             AllCCMs[1] = TempCCM;
+        }
     }
 }
-*/
-
-/*
-simulated function CreateVoicePacks(byte TeamIndex)
-{
-    if (WorldInfo.NetMode != NM_DedicatedServer)
-    {
-        AnnouncerPacks[`AXIS_TEAM_INDEX] = new(Outer) AllAnnouncerPacks[`AXIS_TEAM_INDEX];
-        AnnouncerPacks[`ALLIES_TEAM_INDEX] = new(Outer) AllAnnouncerPacks[`ALLIES_TEAM_INDEX];
-    }
-}
-*/
 
 simulated function CreateVoicePacks(byte TeamIndex)
 {
@@ -2583,7 +2326,7 @@ DefaultProperties
 {
     TeamSelectSceneTemplate=DRUISceneTeamSelect'DR_UI.UIScene.DRUIScene_TeamSelect'
     // UnitSelectSceneTemplate=WWUISceneUnitSelect'WinterWar_UI.UIScene.WWUIScene_UnitSelect'
-    // CharacterSceneTemplate=WWUISceneCharacter'WinterWar_UI.UIScene.WWUIScene_Character'
+    CharacterSceneTemplate=DRUISceneCharacter'DR_UI.UIScene.DRUIScene_Character'
     // AfterActionReportSceneTemplate=WWUISceneAfterActionReport'WinterWar_UI.UIScene.WWUIScene_AfterAction'
     StoreSceneTemplate=None
 

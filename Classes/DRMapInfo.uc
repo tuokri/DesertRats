@@ -1,5 +1,5 @@
 class DRMapInfo extends ROMapInfo
-    HideCategories(SinglePlayer,Modding,Skirmish,Supremacy);
+    HideCategories(SinglePlayer,Modding,Skirmish);
 
 var(CommanderNorth) int DiveBomberHeightOffset <Tooltip=Dive bomber spawn location height offset.>;
 
@@ -369,15 +369,29 @@ DefaultProperties
 
     NorthernRoles.Empty
     NorthernRoles(0)=(RoleInfoClass=class'DRRoleInfoAxisRifleman',Count=255)
+    // NorthernRoles(X)=(RoleInfoClass=class'DRRoleInfoAxisEliteRifleman',Count=2)
     NorthernRoles(1)=(RoleInfoClass=class'DRRoleInfoAxisAssault',Count=2)
-    NorthernRoles(2)=(RoleInfoClass=class'DRRoleInfoAxisSapper',Count=2)
-    NorthernRoles(3)=(RoleInfoClass=class'DRRoleInfoAxisMachineGunner',Count=2)
-    NorthernRoles(4)=(RoleInfoClass=class'DRRoleInfoAxisSniper',Count=1)
+    NorthernRoles(2)=(RoleInfoClass=class'DRRoleInfoAxisMachineGunner',Count=2)
+    NorthernRoles(3)=(RoleInfoClass=class'DRRoleInfoAxisSniper',Count=1)
+    NorthernRoles(4)=(RoleInfoClass=class'DRRoleInfoAxisSapper',Count=2)
+    // NorthernRoles(X)=(RoleInfoClass=class'DRRoleInfoAxisHeavy',Count=2)
+    // NorthernRoles(X)=(RoleInfoClass=class'DRRoleInfoAxisAntiTank',Count=2)
+    NorthernRoles(5)=(RoleInfoClass=class'DRRoleInfoAxisRadioman',Count=2)
+    NorthernRoles(6)=(RoleInfoClass=class'DRRoleInfoAxisCommander',Count=2)
+    NorthernRoles(7)=(RoleInfoClass=class'DRRoleInfoAxisTankCrew',Count=2)
+    NorthernRoles(8)=(RoleInfoClass=class'DRRoleInfoAxisTankCommander',Count=1)
 
     SouthernRoles.Empty
     SouthernRoles(0)=(RoleInfoClass=class'DRRoleInfoAlliesRifleman',Count=255)
+    // SouthernRoles(X)=(RoleInfoClass=class'DRRoleInfoAlliesEliteRifleman',Count=2)
     SouthernRoles(1)=(RoleInfoClass=class'DRRoleInfoAlliesAssault',Count=2)
-    SouthernRoles(2)=(RoleInfoClass=class'DRRoleInfoAlliesSapper',Count=2)
-    SouthernRoles(3)=(RoleInfoClass=class'DRRoleInfoAlliesMachineGunner',Count=2)
-    SouthernRoles(4)=(RoleInfoClass=class'DRRoleInfoAlliesSniper',Count=1)
+    SouthernRoles(2)=(RoleInfoClass=class'DRRoleInfoAlliesMachineGunner',Count=2)
+    SouthernRoles(3)=(RoleInfoClass=class'DRRoleInfoAlliesSniper',Count=1)
+    SouthernRoles(4)=(RoleInfoClass=class'DRRoleInfoAlliesSapper',Count=2)
+    // SouthernRoles(X)=(RoleInfoClass=class'DRRoleInfoAlliesHeavy',Count=2)
+    // SouthernRoles(X)=(RoleInfoClass=class'DRRoleInfoAlliesAntiTank',Count=2)
+    SouthernRoles(5)=(RoleInfoClass=class'DRRoleInfoAlliesRadioman',Count=2)
+    SouthernRoles(6)=(RoleInfoClass=class'DRRoleInfoAlliesCommander',Count=2)
+    SouthernRoles(7)=(RoleInfoClass=class'DRRoleInfoAlliesTankCrew',Count=2)
+    SouthernRoles(8)=(RoleInfoClass=class'DRRoleInfoAlliesTankCommander',Count=1)
 }

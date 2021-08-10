@@ -1,4 +1,4 @@
-`define BUILDVER "0.6"
+`define BUILDVER "0.7"
 
 // `define RELEASE
 
@@ -24,14 +24,13 @@
 `define DRCI_TANK_CREW          10
 `define DRCI_TANK_COMMANDER     11
 
-
-`define WI_BINOCS                   0
+`define DRII_BINOCS                 0
 `define DRII_THOMPSON_SMG           1
 `define DRII_MP40_SMG               2
-`define WI_WEBLEY                   3
+`define DRII_WEBLEY_REVOLVER        3
 `define DRII_KAR98_RIFLE            4
 `define DRII_SMLE_RIFLE             5
-`define WI_LUGER                    6
+`define DRII_LUGER_PISTOL           6
 `define DRII_MP41_SMG               7
 `define DRII_C96_PISTOL             8
 `define DRII_M24_GRENADE            9
@@ -45,9 +44,10 @@
 `define DRII_DYNAMITE               34
 `define DRII_TNT                    35
 `define DRII_MILLS_GRENADE          36
+`define DRII_M39_Grenade            37
 
-`define DRII_MG34_TRIPOD            37
-`define DRII_VICKERS_HMG            38
+`define DRII_MG34_TRIPOD            38
+`define DRII_VICKERS_HMG            39
 
 // Seat proxy indices.
 `define CRUSADER_DRIVER_SPI         0
@@ -67,12 +67,6 @@
 `define TCP_BUFFER_SIZE             2048            // Ring buffer size for outbound data.
 `define MAX_RESOLVE_RETRIES         5               // Max number of URL resolve retries.
 
-
-// Pawn common macros.
-`define DRPCommonDP \
-    PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full' \n\
-    bCanCamouflage=False                               \n\
-
 // GameInfo common macros.
 `define DRGICommonDP \
     PlayerControllerClass=          class'DRPlayerController'           \n\
@@ -80,9 +74,9 @@
     HUDType=                        class'DRHUD'                        \n\
     TeamInfoClass=                  class'DRTeamInfo'                   \n\
     PawnHandlerClass=               class'DRPawnHandler'                \n\
-    // AIPawnClass=                 class'DRPawn'                       \n\
-    // DefaultPawnClass=            class'DRPawn'                       \n\
-    // PlayerReplicationInfoClass=  class'DRPlayerReplicationInfo'      \n\
+    AIPawnClass=                    class'DRPawn'                       \n\
+    DefaultPawnClass=               class'DRPawn'                       \n\
+    PlayerReplicationInfoClass=  class'DRPlayerReplicationInfo'         \n\
 
 
 /*

@@ -1,11 +1,12 @@
-class DRPawnAxis extends RONorthPawn;
+class DRPawnAxis extends DRPawn;
 
-`include(DesertRats\Classes\DRPawn_Common.uci)
+simulated event byte ScriptGetTeamNum()
+{
+    return `AXIS_TEAM_INDEX;
+}
 
 DefaultProperties
 {
-    `DRPCommonDP
-
     TunicMesh=SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Tunic_Long_Shirt'
 
     FieldgearMesh=SkeletalMesh'DR_CHR_DAK.Gear.DAK_Gear_Rifleman'
@@ -18,16 +19,9 @@ DefaultProperties
 
     HeadgearMesh=SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40'
 
-    bSingleHandedSprinting=true
+    bSingleHandedSprinting=True
 
     Begin Object Name=ROPawnSkeletalMeshComponent
         AnimSets(11)=AnimSet'DR_CHR.Anim.CHR_Axis_Unique'
     End Object
-
-    Begin Object Class=DRAudioComponent Name=DialogAudioComp0
-        bStopWhenOwnerDestroyed=true
-        AudioClass=EAC_SFX
-    End Object
-    DialogAudioComp=DialogAudioComp0
-    // TODO: Refactor DRPAWN!
 }
