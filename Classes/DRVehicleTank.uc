@@ -995,6 +995,15 @@ simulated function SetInteriorVisibility(bool bVisible)
     */
 }
 
+function HandleMomentum (vector Momentum, Vector HitLocation,
+    class<DamageType> DamageType, optional TraceHitInfo HitInfo)
+{
+    if (class<RODmgType_SmallArmsBullet>(DamageType) != none)
+    {
+        AddVelocity( Momentum, HitLocation, DamageType, HitInfo );
+    }
+}
+
 DefaultProperties
 {
     LeftTrackMaterialIndex=1

@@ -1,6 +1,15 @@
 class DRVehicleTransport extends ROVehicleTransport
     abstract;
 
+function HandleMomentum (vector Momentum, Vector HitLocation,
+    class<DamageType> DamageType, optional TraceHitInfo HitInfo)
+{
+    if (class<RODmgType_SmallArmsBullet>(DamageType) != none)
+    {
+        AddVelocity( Momentum, HitLocation, DamageType, HitInfo );
+    }
+}
+
 simulated function SpawnOrReplaceSeatProxy(int SeatIndex, ROPawn ROP, optional bool bInternalVisibility)
 {
     local int i;//,j;
@@ -124,14 +133,9 @@ function bool DriverLeave(bool bForceLeave)
         // Preserve momentum.
         CachedDriver.Velocity = Velocity;
 
-        // TODO: Stupid casting, maybe we should have a common base pawn class after all...
-        if (DRPawnAxis(CachedDriver) != None)
+        if (DRPawn(CachedDriver) != None)
         {
-            DRPawnAxis(CachedDriver).SetLeftVehicleFlag();
-        }
-        else if (DRPawnAllies(CachedDriver) != None)
-        {
-            DRPawnAllies(CachedDriver).SetLeftVehicleFlag();
+            DRPawn(CachedDriver).SetLeftVehicleFlag();
         }
     }
 
