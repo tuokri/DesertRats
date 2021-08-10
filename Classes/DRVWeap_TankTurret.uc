@@ -53,6 +53,9 @@ simulated function PlayPooledSoundCustom(SoundCue ASound, Actor SourceActor,
 
 simulated function PlayFiringSound(byte FireModeNum)
 {
+    local SoundCue FiringCue;
+    local DRPlayerController DRPC;
+
     `log(string(self) $ "." $ "PlayFiringSound()",, 'DRDEV');
 
     super.PlayFiringSound(FireModeNum);
@@ -65,8 +68,21 @@ simulated function PlayFiringSound(byte FireModeNum)
             PlayPooledSoundCustom(WeaponFireSndCustom[FireModeNum].SoundCueCustom,
                 self, false, true, Location);
             */
+            FiringCue = WeaponFireSndCustom[FireModeNum].SoundCueCustom;
 
-            WeaponPlayFireSound(WeaponFireSndCustom[FireModeNum].SoundCueCustom, None);
+            if (WorldInfo.NetMode != NM_DedicatedServer)
+            {
+                DRPC = DRPlayerController(ROGameEngine(class'Engine'.static.GetEngine()).GetLocalPlayerController());
+                if (DRPC != None)
+                {
+                    if (DRPC.AudioManager != None)
+                    {
+                        FiringCue.VolumeMultiplier *= DRPC.AudioManager.GetAdjustedAudioClassVolume(EAC_SFX);
+                    }
+                }
+            }
+
+            WeaponPlayFireSound(FiringCue, None);
         }
     }
 }
