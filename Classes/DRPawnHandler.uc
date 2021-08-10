@@ -377,25 +377,24 @@ static function array<TunicInfo> GetTunicArray(byte TeamIndex, byte ArmyIndex, o
 {
     if (TeamIndex == `AXIS_TEAM_INDEX)
     {
-        if (bPilot > 0)
+        if (bPilot == `BPILOT_TANKCREW)
         {
             return default.DAK_TankCrew_Tunics;
         }
-        else if (bPilot == `DRCI_COMMANDER )
+        else if (bPilot == `BPILOT_COMMANDER)
         {
             return default.DAK_Commander_Tunics;
         }
 
         return default.DAK_Tunics;
-
     }
     else
     {
-        if (bPilot > 0)
+        if (bPilot == `BPILOT_TANKCREW)
         {
             return default.UK_TankCrew_Tunics;
         }
-        else if (bPilot == `DRCI_COMMANDER )
+        else if (bPilot == `BPILOT_COMMANDER)
         {
             return default.UK_Commander_Tunics;
         }
@@ -408,7 +407,6 @@ static function SkeletalMesh GetFieldgearMesh(int Team, int ArmyIndex, int Tunic
 {
     if( Team == `AXIS_TEAM_INDEX )
     {
-
         return default.DAK_FieldgearByRole[ClassIndex].FieldgearByTunicType[0];
     }
     else
@@ -429,30 +427,10 @@ static function array<PlayerHeadInfo> GetHeadArray(byte TeamIndex, byte ArmyInde
 {
     if (TeamIndex == `AXIS_TEAM_INDEX)
     {
-        /* Doesn't compile - fluudah.
-        if (bPilot > 0)
-        {
-            return default.DAK_TankCrew_Headgear;
-        }
-        else if( bPilot == `DRCI_COMMANDER )
-        {
-            return default.DAK_Commander_Headgear;
-        }
-        */
         return default.DAK_Heads;
     }
     else
     {
-        /* Doesn't compile - fluudah.
-        if (bPilot > 0)
-        {
-            return default.UK_TankCrew_Headgear;
-        }
-        else if( bPilot == `DRCI_COMMANDER )
-        {
-            return default.UK_Commander_Headgear;
-        }
-        */
         return default.UK_Heads;
     }
 }
@@ -461,17 +439,26 @@ static function array<HeadgearInfo> GetHeadgearArray(byte TeamIndex, byte ArmyIn
 {
     if (TeamIndex == `AXIS_TEAM_INDEX)
     {
-        if (bPilot > 0)
+        if (bPilot == `BPILOT_TANKCREW)
         {
             return default.DAK_TankCrew_Headgear;
         }
+        else if (bPilot == `BPILOT_COMMANDER)
+        {
+            return default.DAK_Commander_Headgear;
+        }
+
         return default.DAK_Headgear;
     }
     else
     {
-        if (bPilot > 0)
+        if (bPilot == `BPILOT_TANKCREW)
         {
             return default.UK_TankCrew_Headgear;
+        }
+        else if (bPilot == `BPILOT_COMMANDER)
+        {
+            return default.UK_Commander_Headgear;
         }
 
         return default.UK_Headgear;

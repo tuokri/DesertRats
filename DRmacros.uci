@@ -61,6 +61,11 @@
 `define PZIV_GUNNER_SPI             4
 
 
+// Customization "hacks" for bPilot byte value.
+`define BPILOT_TANKCREW     1
+`define BPILOT_COMMANDER    2
+
+
 // TODO:
 `define BALANCE_STATS_HOST          "localhost"
 `define BALANCE_STATS_PORT          10906
@@ -76,7 +81,7 @@
     PawnHandlerClass=               class'DRPawnHandler'                \n\
     AIPawnClass=                    class'DRPawn'                       \n\
     DefaultPawnClass=               class'DRPawn'                       \n\
-    PlayerReplicationInfoClass=  class'DRPlayerReplicationInfo'         \n\
+    PlayerReplicationInfoClass=     class'DRPlayerReplicationInfo'      \n\
 
 
 /*

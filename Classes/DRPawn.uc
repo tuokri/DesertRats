@@ -96,20 +96,28 @@ simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlay
             TeamNum = `ALLIES_TEAM_INDEX;
     }
 
-    if( DRMI != none )
+    if (DRMI != none)
     {
-        if( TeamNum == `AXIS_TEAM_INDEX )
+        if (TeamNum == `AXIS_TEAM_INDEX)
+        {
             ArmyIndex = DRMI.NorthernForce;
+        }
         else
+        {
             ArmyIndex = DRMI.SouthernForce;
+        }
     }
 
-    if( bIsPilot )
+    if (ROPRI.RoleInfo != None)
     {
-        if( ArmyIndex == SFOR_ARVN && ROPRI.RoleInfo != none && !ROPRI.RoleInfo.bIsTransportPilot )
-            bPilot = 2;
-        else
-            bPilot = 1;
+        if (ROPRI.RoleInfo.bCanBeTankCrew)
+        {
+            bPilot = `BPILOT_TANKCREW;
+        }
+        else if (ROPRI.RoleInfo.bIsTeamLeader)
+        {
+            bPilot = `BPILOT_COMMANDER;
+        }
     }
 
     if( !bViaReplication && IsHumanControlled() )
@@ -117,10 +125,12 @@ simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlay
     //  if(  )
             PawnHandlerClass.static.GetCharConfig(TeamNum, ArmyIndex, bPilot, ClassIndex, HonorLevel, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, HeadgearMatID, FaceItemID, FacialHairID, TattooID, ROPRI);
 
+            /*
             // Hardcoded for ARVN, until such time as we ever have any other factions that require alternate nationality pilots
             if( ArmyIndex == SFOR_ARVN && bPilot == 2 )
                 ROPRI.bUsesAltVoicePacks = true;
             else
+            */
                 ROPRI.bUsesAltVoicePacks = false;
     //  else
     //      PawnHandlerClass.static.GetCharConfig(TeamNum, ArmyIndex, bPilot, HonorLevel, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, FaceItemID, FacialHairID, TattooID, ROPRI, true);
@@ -431,26 +441,28 @@ simulated function CreatePawnMesh()
         HonourPct *= 0.5;
     }
 
+    HonourPct = 0;
+
     if( PawnHandlerClass != none )
     {
-        // TODO:
+        // TODO: dynamic dirt.
         // Apply a wear level to our head and tunic as appropriate for our current honour level
-        // BodyMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicGrimeParam, HonourPct);
-        // BodyMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicMudParam, HonourPct * 5.0);
-        // HeadAndArmsMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadGrimeParam, HonourPct);
-        // HeadAndArmsMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadMudParam, HonourPct * 5.0);
+        BodyMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicGrimeParam, HonourPct);
+        BodyMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicMudParam, HonourPct * 5.0);
+        HeadAndArmsMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadGrimeParam, HonourPct);
+        HeadAndArmsMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadMudParam, HonourPct * 5.0);
 
-        // if( GearMIC != none && GearMat != none )
-        // {
-        //     GearMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicGrimeParam, HonourPct);
-        //     GearMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicMudParam, HonourPct * 5.0);
-        // }
+        if( GearMIC != none && GearMat != none )
+        {
+            GearMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicGrimeParam, HonourPct);
+            GearMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicMudParam, HonourPct * 5.0);
+        }
 
-        // if( HeadgearMIC != none )
-        // {
-        //     HeadgearMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadGrimeParam, HonourPct);
-        //     HeadgearMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadMudParam, HonourPct * 5.0);
-        // }
+        if( HeadgearMIC != none )
+        {
+            HeadgearMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadGrimeParam, HonourPct);
+            HeadgearMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadMudParam, HonourPct * 5.0);
+        }
     }
 
     if ( bOverrideLighting )

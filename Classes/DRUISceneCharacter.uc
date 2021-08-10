@@ -257,10 +257,10 @@ function PopulateCopyRoleList()
 
     ArmyIndexRaw = ArmyComboBox.ComboList.GetCurrentItem() - FirstSouthIndex * TeamIndex;
 
+    /*
     // Pilot selected?
-    if( bPilot )
+    if (bPilot)
     {
-        /*
         // ARVN Combat pilots and Transport pilots are completely different, so never let them copy between each other
         if( ArmyIndexRaw != SFOR_ARVN && ClassIndex != `ROCI_COMBATPILOT )
         {
@@ -275,12 +275,10 @@ function PopulateCopyRoleList()
             ROCharCustStringsDataStore.AddStr('ROCharCustCopyRoleType',
                 class'DRGameStatsRead'.static.GetClassNameByIndex(TeamIndex, `ROCI_TRANSPORTPILOT));
         }
-        */
-    }
-    // Infantry classes
     else
     {
-        for(i=0; i < `DRCI_TANK_CREW; i++)
+    */
+        for(i=0; i <= `DRCI_TANK_COMMANDER; i++)
         {
             ClassName = class'DRGameStatsRead'.static.GetClassNameByIndex(TeamIndex, i);
             if( ClassName != "Error!" && i != ClassIndex )
@@ -289,7 +287,7 @@ function PopulateCopyRoleList()
                 ROCharCustStringsDataStore.AddStr('ROCharCustCopyRoleType', ClassName);
             }
         }
-    }
+    // }
 
     ArrayLength = CopyRoleListIndexArray.length;
 
