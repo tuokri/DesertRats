@@ -8,5 +8,5 @@ DefaultProperties
 {
 	WeaponContentClass(0)="DesertRats.DRWeap_Binoculars_Content"
 
-	InvIndex=`WI_BINOCS
+	InvIndex=`DRII_BINOCS
 }

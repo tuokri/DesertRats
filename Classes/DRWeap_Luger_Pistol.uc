@@ -96,7 +96,7 @@ defaultproperties
 
 	TeamIndex=`AXIS_TEAM_INDEX
 
-	InvIndex=`WI_LUGER
+	InvIndex=`DRII_LUGER_PISTOL
 
 	Category=ROIC_Secondary
 	Weight=0.90

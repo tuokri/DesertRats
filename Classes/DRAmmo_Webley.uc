@@ -1,11 +1,11 @@
 class DRAmmo_Webley extends ROAmmunition
-	abstract;
+    abstract;
 
 DefaultProperties
 {
-	CompatibleWeaponClasses(0)=class'DRWeap_Webley_Revolver'
+    CompatibleWeaponClasses(0)=class'DRWeap_Webley_Revolver'
 
-	InitialAmount=6
-	Weight=0.1
-	ClipsPerSlot=6
+    InitialAmount=6
+    Weight=0.1
+    ClipsPerSlot=6
 }
