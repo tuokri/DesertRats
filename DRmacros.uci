@@ -1,6 +1,6 @@
 `define BUILDVER "0.7"
 
-// `define RELEASE
+`define RELEASE
 
 `define DEBUG_VOICECOMS True
 
@@ -67,7 +67,7 @@
 
 
 // TODO:
-`define BALANCE_STATS_HOST          "localhost"
+`define BALANCE_STATS_HOST          "drstats.herokuapp.com"
 `define BALANCE_STATS_PORT          10906
 `define TCP_BUFFER_SIZE             2048            // Ring buffer size for outbound data.
 `define MAX_RESOLVE_RETRIES         5               // Max number of URL resolve retries.

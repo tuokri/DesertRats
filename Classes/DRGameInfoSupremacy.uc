@@ -13,4 +13,6 @@ DefaultProperties
 
     SquadSpawnMethod[0]=ROSSM_SquadLeader
     SquadSpawnMethod[1]=ROSSM_SquadLeader
+
+    bBalanceStatsAnalyticsEnabled=True
 }

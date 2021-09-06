@@ -1,7 +1,20 @@
 class DRMapInfo extends ROMapInfo
-    HideCategories(SinglePlayer,Modding,Skirmish);
+    HideCategories(SinglePlayer,Modding,Skirmish,SouthernForce,NorthernForce);
 
 var(CommanderNorth) int DiveBomberHeightOffset <Tooltip=Dive bomber spawn location height offset.>;
+
+enum EAxisForces
+{
+    AXISFORCE_DAK,
+};
+
+enum EAlliedForces
+{
+    ALLIEDFORCE_UK,
+};
+
+var() EAxisForces AxisForce;
+var() EAlliedForces AlliedForce;
 
 /*
 var(WinterWar) AirSupportLevel  FinnishAirSupportLevel      <ToolTip=What type of Air Support is allowed on the map.>;
@@ -180,8 +193,18 @@ function class<ROArtilleryShell> GetShellClassWW(int Team, int ArtilleryType)
     return class'ROArtilleryShell';
 }
 */
+
+// TODO: check if we need this.
+function OverrideForces()
+{
+    NorthernForce = 0;
+    SouthernForce = 0;
+}
+
 function InitRolesForGametype(class<GameInfo> GameTypeClass, int MaxPlayers, bool bReverseRoles)
 {
+    OverrideForces();
+
     if (bInitializedRoles)
     {
         return;
@@ -196,6 +219,8 @@ function PreLoadSharedContentForGameType()
     local RORoleInfoClasses SouthPawnContentClasses;
     local ROGameReplicationInfo ROGRI;
     // local int i;
+
+    OverrideForces();
 
     ROGRI = ROGameReplicationInfo(class'WorldInfo'.static.GetWorldInfo().GRI);
 
@@ -276,10 +301,14 @@ function int GetNumArmiesForTeam(byte TeamIndex)
 
 function string GetArmyNameForTeam(byte TeamIndex, bool bGetShortName, optional byte ArmyIndex = 255)
 {
-    if( TeamIndex == `AXIS_TEAM_INDEX )
+    if (TeamIndex == `AXIS_TEAM_INDEX)
+    {
         return bGetShortName ? NorthernArmyShortNames[0] : NorthernArmyNames[0];
+    }
     else
+    {
         return bGetShortName ? SouthernArmyShortNames[0] : SouthernArmyNames[0];
+    }
 }
 
 static function string GetClassNameByIndex(int TeamIndex, int ClassIndex, optional bool bShortName)
@@ -357,6 +386,9 @@ DefaultProperties
     SovietArtilleryStats(0)=(BatterySize=8,SalvoAmount=4,StrikeDelay=8,SalvoInterval=7.0,StrikePattern=1800,ShellClass=class'ROArtilleryShell')
     SovietArtilleryStats(1)=(BatterySize=2,SalvoAmount=8,StrikeDelay=10,SalvoInterval=15.0,StrikePattern=400,ShellClass=class'WW203mmArtilleryShell')
     */
+
+    // SouthernForce=ALLIEDFORCE_UK;
+    // NorthernForce=AXISFORCE_DAK;
 
     DiveBomberHeightOffset=0
 

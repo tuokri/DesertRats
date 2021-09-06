@@ -1718,9 +1718,52 @@ reliable protected server function ServerLeanLeft(bool leanstate)
     }
 }
 
+reliable client function ChangedTeams(byte TeamIndex, bool bShowRoleSelection,
+    optional class<GameInfo> GameTypeClass, optional bool bTeamBalancing, optional bool bShowLobby)
+{
+    super.ChangedTeams(TeamIndex, bShowRoleSelection, GameTypeClass, bTeamBalancing, bShowLobby);
+
+    DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
+}
+
+simulated function OnTeamSelectSceneClosed()
+{
+    super.OnTeamSelectSceneClosed();
+
+    DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
+}
+
+simulated function RoleInfoUpdated()
+{
+    super.RoleInfoUpdated();
+
+    DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
+}
+
+simulated function PlayerCountsUpdated(byte TeamIndex, byte NumPlayers)
+{
+    super.PlayerCountsUpdated(TeamIndex, NumPlayers);
+
+    DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+simulated exec function SpawnBirdDog()
+{
+    local class<ROVehicle> VehicleClass;
+    local ROVehicle Vehicle;
+
+    VehicleClass = class<ROVehicle> (DynamicLoadObject("DesertRats.DRAircraft_O1BirdDog_Content", class'Class'));
+
+    Vehicle = Spawn(VehicleClass, , , Pawn.Location + Vect(0, 0, 1000));
+    // Vehicle.Mesh.AddImpulse(vect(10, 10, 10), Vehicle.Location);
+    Vehicle.Velocity = vector(rotator(Velocity)) * 250;
+
+    Vehicle.DriverEnter(Pawn);
+}
 
 exec function DumpScriptTrace()
 {

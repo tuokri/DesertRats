@@ -5,6 +5,13 @@ function bool ShouldPlayTutorialVideo()
     return false;
 }
 
+function ConfirmRoleSelection()
+{
+    super.ConfirmRoleSelection();
+
+    DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
+}
+
 DefaultProperties
 {
     NorthBackgroundImages.Empty

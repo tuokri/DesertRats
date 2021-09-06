@@ -176,6 +176,13 @@ function UpdateMannequin(byte TeamIndex, byte ArmyIndex, bool bPilot, int ClassI
     mesh.SetRotation(InitialRot);
 }
 
+function PlayIdleAnim()
+{
+    super.PlayIdleAnim();
+
+    `log("DRCharCustMannequin.PlayIdleAnim()",, 'DRDEV');
+}
+
 DefaultProperties
 {
     PawnHandlerClass=class'DRPawnHandler'

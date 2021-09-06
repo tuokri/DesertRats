@@ -1,3 +1,5 @@
+const SEP = "?";
+
 // 20 meters. Defined in ROGameInfo.
 `define BATTLECHATTER_PAWN_GROUP_RADIUS 1000
 
@@ -59,6 +61,7 @@ function RoundWon(int WinningTeam, byte WinCondition)\n\
     ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`ALLIES_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`ALLIES_TEAM_INDEX];\n\
     SendBalanceStatsPackage(BStats);\n\
 }\n\
+
 /*
 function RoundWon(int WinningTeam, byte WinCondition)
 {
@@ -132,14 +135,15 @@ function RoundWon(int WinningTeam, byte WinCondition)
 }
 */
 
-var config bool bBalanceStatsAnalyticsEnabled;
+// TODO: Config.
+var /*config*/ bool bBalanceStatsAnalyticsEnabled;
 
 var DRBufferedTcpLinkClient BalanceLoggingClient;
 
 struct ObjectiveInfo
 {
-    var int ObjIndex;
-    var int ObjState;
+    var byte ObjIndex;
+    var byte ObjState;
     var string ObjName;
 };
 
@@ -148,12 +152,12 @@ struct BalanceStats
 {
     var string MapName;
     var string WinningTeamName;
-    var int MaxPlayers;
-    var int NumPlayers;
+    var byte MaxPlayers;
+    var byte NumPlayers;
+    var bool bReverseRolesAndSpawns;
     var int TimeRemainingSeconds;
     var int AxisReinforcements;
     var int AlliesReinforcements;
-    var bool bReverseRolesAndSpawns;
     var int AxisTeamScore;
     var int AlliesTeamScore;
     var array<ObjectiveInfo> ObjInfos;
@@ -161,8 +165,12 @@ struct BalanceStats
 
 final function SendBalanceStatsPackage(const out BalanceStats BStats)
 {
+    `ifndef(RELEASE)
+    if (True)
+    `else
     // Only for dedicated servers.
     if (Role == ROLE_Authority && WorldInfo.NetMode == NM_DedicatedServer)
+    `endif
     {
         if (bBalanceStatsAnalyticsEnabled)
         {
@@ -175,7 +183,74 @@ final function SendBalanceStatsPackage(const out BalanceStats BStats)
 // TODO: define package structure.
 final function string MakeBalanceStatsPackage(const out BalanceStats BStats)
 {
-    return "";
+    local string Package;
+    local ObjectiveInfo ObjInfo;
+
+    // MapName?WinningTeamName?MaxPlayers?NumPlayers?TimeRemainingSeconds
+    // ?AxisReinf?AlliesReinf?bReverse?AxisScore?AlliesScore?
+
+    // Team name -> byte index (0 or 1)
+
+    // Basic score:
+    // DRTE-ElAlamein?164090?500?455?25?1111?8888?<info1>?<info2>
+    // Obj stats:
+    // <00?GenericObjectiveName>?<11?ObjASDasd>
+
+    // Full package:
+    // DRTE-ElAlamein?164640?500?455?25?1111?8888?<00?Obj1>?<11?Obj2>
+
+    // DRTE-Test     ?0?01?01?0?1562?5?6?1?1?<00?Field >?<10?Another Field>
+
+    Package $= BStats.MapName $ SEP;
+
+    if (BStats.WinningTeamName == "Axis")
+    {
+        Package $= `AXIS_TEAM_INDEX;
+    }
+    else
+    {
+        Package $= `ALLIES_TEAM_INDEX;
+    }
+
+    if (BStats.MaxPlayers < 10)
+    {
+        Package $= "0" $ BStats.MaxPlayers;
+    }
+    else if (BStats.MaxPlayers > 99)
+    {
+        Package $= "99";
+    }
+    else
+    {
+        Package $= BStats.MaxPlayers;
+    }
+
+    if (BStats.NumPlayers < 10)
+    {
+        Package $= "0" $ BStats.NumPlayers;
+    }
+    else if (BStats.NumPlayers > 99)
+    {
+        Package $= "99";
+    }
+    else
+    {
+        Package $= BStats.NumPlayers;
+    }
+
+    Package $= SEP $ byte(BStats.bReverseRolesAndSpawns);
+    Package $= SEP $ BStats.TimeRemainingSeconds;
+    Package $= SEP $ BStats.AxisReinforcements;
+    Package $= SEP $ BStats.AlliesReinforcements;
+    Package $= SEP $ BStats.AxisTeamScore;
+    Package $= SEP $ BStats.AlliesTeamScore;
+
+    ForEach BStats.ObjInfos(ObjInfo)
+    {
+        Package $= SEP $ "<" $ ObjInfo.ObjIndex $ ObjInfo.ObjState $ SEP $ ObjInfo.ObjName $ ">";
+    }
+
+    return Package;
 }
 
 function ConnectBalanceClient()
@@ -772,6 +847,13 @@ function ScoreAmmoCrateResupply(Controller PlaceableAmmoCrateOwner)
     {
         AddDelayedKillMessage(ROKMT_AmmoCrateResupplied, GameReplicationInfo.ElapsedTime, PlaceableAmmoCrateOwner.PlayerReplicationInfo);
     }
+}
+
+event InitGame(string Options, out string ErrorMessage)
+{
+    super.InitGame(Options, ErrorMessage);
+
+    DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
 }
 
 `ifndef(RELEASE)

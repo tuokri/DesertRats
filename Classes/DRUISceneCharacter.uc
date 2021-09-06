@@ -38,12 +38,12 @@ function InitPlayerConfig()
                 // Attempt to populate our ArmyIndex variable
                 if( DRMI != none && TeamIndexActual == `ALLIES_TEAM_INDEX )
                 {
-                    ArmyIndexActual = DRMI.SouthernForce;
+                    ArmyIndexActual = DRMI.AlliedForce;
                 }
                 else if( DRMI != none && TeamIndexActual == `AXIS_TEAM_INDEX )
                 {
                     // Else, load my preconfigured values (if they exist) for me since I'm an Axis player.
-                    ArmyIndexActual = DRMI.NorthernForce;
+                    ArmyIndexActual = DRMI.AxisForce;
                 }
                 else
                 {
@@ -209,6 +209,8 @@ function PopulateArmyList()
         else
             ArmyComboBox.SetSelection(TeamIndexActual * FirstSouthIndex + ArmyIndexActual);
         */
+
+        ArmyComboBox.SetSelection(TeamIndexActual * FirstSouthIndex + ArmyIndexActual);
     }
 }
 
