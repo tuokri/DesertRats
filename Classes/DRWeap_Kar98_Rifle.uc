@@ -78,7 +78,7 @@ DefaultProperties
 
     WeaponContentClass(0)="DesertRats.DRWeap_Kar98_Rifle_Content"
 
-    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_K98_UPGD3'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Kar'
 
     WeaponClassType=ROWCT_Rifle
     TeamIndex=`AXIS_TEAM_INDEX

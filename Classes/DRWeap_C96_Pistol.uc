@@ -5,7 +5,7 @@ class DRWeap_C96_Pistol extends ROProjectileWeapon
 
 DefaultProperties
 {
-    //? RoleSelectionImage(0)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD1'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_C96'
     //? RoleSelectionImage(1)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD2'
     //? RoleSelectionImage(2)=Texture2D'ROP_UI_Textures.WeaponTex.Ger_C96_UPGD3'
     WeaponContentClass(0)="DesertRats.DRWeap_C96_Pistol_Content"

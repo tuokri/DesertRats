@@ -40,7 +40,7 @@ DefaultProperties
     TeamIndex=`AXIS_TEAM_INDEX
     InvIndex=`DRII_BERETTA_M1934_PISTOL
 
-    RoleSelectionImage(0)=Texture2D'VN_UI_Textures.WeaponTex.VN_Weap_MakarovPM_Pistol'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Beretta34'
 
     PlayerViewOffset=(X=6.0,Y=4.5,Z=-2.75)
     ZoomInRotation=(Pitch=-910,Yaw=0,Roll=2910)

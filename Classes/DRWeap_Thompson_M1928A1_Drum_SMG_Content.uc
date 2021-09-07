@@ -145,5 +145,5 @@ DefaultProperties
     MeleePullbackAnim=M1928A1_Pullback
     MeleeHoldAnim=M1928A1_Pullback_Hold
 
-     //TODO: SET UP BOLT CONTROLLER
+    //TODO: SET UP BOLT CONTROLLER
 }

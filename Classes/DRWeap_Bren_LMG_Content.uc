@@ -8,7 +8,7 @@ DefaultProperties
     Begin Object Name=FirstPersonMesh
         DepthPriorityGroup=SDPG_Foreground
         SkeletalMesh=SkeletalMesh'DR_WP_UK_BREN.Mesh.GB_BrenMk2_UPGD1'
-        PhysicsAsset=None
+        PhysicsAsset=PhysicsAsset'DR_WP_UK_BREN.Phy.GB_BrenMk2_UPGD1_BOUNDS_Physics'
         AnimSets(0)=AnimSet'DR_WP_UK_BREN.Animation.WP_BrenMk2hands'
         Animations=AnimTree'DR_WP_UK_BREN.Animation.GB_BrenLMGBipod_Tree'
         Scale=1.0
