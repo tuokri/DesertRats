@@ -1,5 +1,8 @@
 class DRUISceneCharacter extends ROUISceneCharacter;
 
+var bool bIsCommander;
+// var bool bIsCommanderActual;
+
 event PostInitialize()
 {
     super.PostInitialize();
@@ -57,8 +60,11 @@ function InitPlayerConfig()
         if(ROPRI != none && ROPRI.RoleInfo != none)
         {
             ClassIndexActual = ROPRI.RoleInfo.ClassIndex;
-            bPilotActual = ROPRI.RoleInfo.bIsPilot;
+            // bPilotActual = ROPRI.RoleInfo.bIsPilot;
+            bPilotActual = ROPRI.RoleInfo.bCanBeTankCrew;
             bCombatPilotActual = bPilotActual && !ROPRI.RoleInfo.bIsTransportPilot;
+
+            // bIsCommanderActual = ROPRI.RoleInfo.bIsTeamLeader;
         }
         else
         {
@@ -309,6 +315,7 @@ function RoleComboUpdated()
     ArmyIndexRaw = ArmyComboBox.ComboList.GetCurrentItem() - FirstSouthIndex * TeamIndex;
 
     bPilot = ClassIndex > `DRCI_COMMANDER;
+    bIsCommander = ClassIndex == `DRCI_COMMANDER;
 
     /*
     // Bit of a hack here for dealing with ARVN combat pilots seeing as they are different, special and a pita
