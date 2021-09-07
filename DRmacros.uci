@@ -1,6 +1,6 @@
 `define BUILDVER "0.7"
 
-`define RELEASE
+// `define RELEASE
 
 `define DEBUG_VOICECOMS True
 
@@ -40,6 +40,7 @@
 `define DRII_KAR98_SCOPED_RIFLE     13
 `define DRII_THOMPSON_M1928A1_SMG   14
 `define DRII_BERETTA_M1934_PISTOL   15
+`define DRII_ENFIELDNO2_REVOLVER    16
 
 `define DRII_DYNAMITE               34
 `define DRII_TNT                    35
@@ -66,9 +67,8 @@
 `define BPILOT_COMMANDER    2
 
 
-// TODO:
 `define BALANCE_STATS_HOST          "drstats.herokuapp.com"
-`define BALANCE_STATS_PORT          10906
+`define BALANCE_STATS_PORT          80
 `define TCP_BUFFER_SIZE             2048            // Ring buffer size for outbound data.
 `define MAX_RESOLVE_RETRIES         5               // Max number of URL resolve retries.
 
