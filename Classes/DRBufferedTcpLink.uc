@@ -210,7 +210,7 @@ final function DoBufferQueueIO()
             // BytesSent = SendText(OutputQueue);
             SendText(OutputQueue);
             OutputBufferHead = NewHead; // (OutputBufferHead + BytesSent) % `TCP_BUFFER_SIZE;
-            // `log("Sent " $ BytesSent $ " bytes >>" $ OutputQueue $ "<<");
+            // `log("Sent " $ BytesSent $ " bytes: \n" $ OutputQueue);
         }
     }
 

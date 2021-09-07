@@ -8,7 +8,8 @@ var bool bRetryOnClosed;
 // When Open() call fails, it will block and spam the log
 // with errors. Timers in this class will also not work
 // while the call to Open() is blocking.
-var DRGameInfo OwnerGame;
+// var Object OwnerGame;
+var bool bIsRetrying;
 
 final function ResolveServer()
 {
@@ -58,6 +59,8 @@ event Opened()
 {
     `log("connection opened",, self.name);
     bAcceptNewData = True;
+    bIsRetrying = False;
+    // DRGameInfo(OwnerGame).ClearCancelOpenLinkTimer();
 }
 
 event Closed()
@@ -71,12 +74,14 @@ event Closed()
     {
         `log("connection closed",, self.name);
         bAcceptNewData = False;
+        bIsRetrying = False;
     }
 }
 
 function bool Close()
 {
     bRetryOnClosed = False;
+    bIsRetrying = False;
     return super.Close();
 }
 
@@ -102,7 +107,8 @@ final function Retry()
     }
     Retries++;
     SetTimer(5.0, False, 'ResolveServer');
-    OwnerGame.SetCancelOpenLinkTimer(7.0);
+    // DRGameInfo(OwnerGame).SetCancelOpenLinkTimer(7.0);
+    bIsRetrying = True;
 }
 
 DefaultProperties

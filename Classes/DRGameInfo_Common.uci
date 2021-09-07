@@ -1,5 +1,7 @@
 const SEP = "?";
 
+var private string CRLF;
+
 // 20 meters. Defined in ROGameInfo.
 `define BATTLECHATTER_PAWN_GROUP_RADIUS 1000
 
@@ -174,16 +176,28 @@ final function SendBalanceStatsPackage(const out BalanceStats BStats)
     {
         if (bBalanceStatsAnalyticsEnabled)
         {
+            `log("Attempting to send balance stats package",, 'DRBalanceLogging');
             ConnectBalanceClient();
             BalanceLoggingClient.SendBufferedData(MakeBalanceStatsPackage(BStats));
+            SetTimer(10.0, False, 'DisconnectBalanceClient');
         }
     }
 }
 
-// TODO: define package structure.
+final function DisconnectBalanceClient()
+{
+    if (BalanceLoggingClient != None)
+    {
+        BalanceLoggingClient.Close();
+        BalanceLoggingClient = None;
+    }
+}
+
 final function string MakeBalanceStatsPackage(const out BalanceStats BStats)
 {
     local string Package;
+    local string Body;
+    local string SanitizedObjName;
     local ObjectiveInfo ObjInfo;
 
     // MapName?WinningTeamName?MaxPlayers?NumPlayers?TimeRemainingSeconds
@@ -201,54 +215,65 @@ final function string MakeBalanceStatsPackage(const out BalanceStats BStats)
 
     // DRTE-Test     ?0?01?01?0?1562?5?6?1?1?<00?Field >?<10?Another Field>
 
-    Package $= BStats.MapName $ SEP;
+    Body $= BStats.MapName $ SEP;
 
     if (BStats.WinningTeamName == "Axis")
     {
-        Package $= `AXIS_TEAM_INDEX;
+        Body $= `AXIS_TEAM_INDEX;
     }
     else
     {
-        Package $= `ALLIES_TEAM_INDEX;
+        Body $= `ALLIES_TEAM_INDEX;
     }
 
     if (BStats.MaxPlayers < 10)
     {
-        Package $= "0" $ BStats.MaxPlayers;
+        Body $= "0" $ BStats.MaxPlayers;
     }
     else if (BStats.MaxPlayers > 99)
     {
-        Package $= "99";
+        Body $= "99";
     }
     else
     {
-        Package $= BStats.MaxPlayers;
+        Body $= BStats.MaxPlayers;
     }
 
     if (BStats.NumPlayers < 10)
     {
-        Package $= "0" $ BStats.NumPlayers;
+        Body $= "0" $ BStats.NumPlayers;
     }
     else if (BStats.NumPlayers > 99)
     {
-        Package $= "99";
+        Body $= "99";
     }
     else
     {
-        Package $= BStats.NumPlayers;
+        Body $= BStats.NumPlayers;
     }
 
-    Package $= SEP $ byte(BStats.bReverseRolesAndSpawns);
-    Package $= SEP $ BStats.TimeRemainingSeconds;
-    Package $= SEP $ BStats.AxisReinforcements;
-    Package $= SEP $ BStats.AlliesReinforcements;
-    Package $= SEP $ BStats.AxisTeamScore;
-    Package $= SEP $ BStats.AlliesTeamScore;
+    Body $= byte(BStats.bReverseRolesAndSpawns);
+
+    Body $= SEP $ BStats.TimeRemainingSeconds;
+    Body $= SEP $ BStats.AxisReinforcements;
+    Body $= SEP $ BStats.AlliesReinforcements;
+    Body $= SEP $ BStats.AxisTeamScore;
+    Body $= SEP $ BStats.AlliesTeamScore;
 
     ForEach BStats.ObjInfos(ObjInfo)
     {
-        Package $= SEP $ "<" $ ObjInfo.ObjIndex $ ObjInfo.ObjState $ SEP $ ObjInfo.ObjName $ ">";
+        SanitizedObjName = Repl(ObjInfo.ObjName, "?", "_");
+        Body $= SEP $ "<" $ ObjInfo.ObjIndex $ ObjInfo.ObjState $ SEP $ SanitizedObjName $ ">";
     }
+
+    Package $= "POST /stats HTTP/1.1" $ CRLF;
+    Package $= "Host: " $ `BALANCE_STATS_HOST $ CRLF;
+    Package $= "User-Agent: DesertRatsDedicatedServer/" $ `BUILDVER $ CRLF;
+    Package $= "Accept: */*" $ CRLF;
+    Package $= "Connection: close" $ CRLF;
+    Package $= "Content-Length: " $ Len(Body) $ CRLF;
+    Package $= "Content-Type: text/plain; charset=latin-1" $ CRLF;
+    Package $= CRLF $ Body $ CRLF $ CRLF;
 
     return Package;
 }
@@ -263,6 +288,12 @@ function ConnectBalanceClient()
         {
             `log("Failed to spawn DRBufferedTcpLinkClient",, 'DRBalanceLogging');
         }
+        else
+        {
+            // BalanceLoggingClient.OwnerGame = self;
+            SetCancelOpenLinkTimer(10.0);
+            SetTimer(1.0, True, 'CheckLinkRetryStatus');
+        }
     }
 }
 
@@ -272,6 +303,21 @@ final function SetCancelOpenLinkTimer(float Time)
     SetTimer(Time, False, 'CancelOpenLink');
 }
 
+final function CheckLinkRetryStatus()
+{
+    if (BalanceLoggingClient != None)
+    {
+        if (BalanceLoggingClient.bIsRetrying && !IsTimerActive('CancelOpenLink'))
+        {
+            SetCancelOpenLinkTimer(5.0);
+        }
+        else if (!BalanceLoggingClient.bIsRetrying)
+        {
+            ClearTimer('CancelOpenLink');
+        }
+    }
+}
+
 final function CancelOpenLink()
 {
     if (BalanceLoggingClient != None && !BalanceLoggingClient.IsConnected())
@@ -279,6 +325,13 @@ final function CancelOpenLink()
         `log("cancelling link connection attempt",, BalanceLoggingClient.name);
         BalanceLoggingClient.Close();
     }
+}
+
+function PreBeginPlay()
+{
+    CRLF = Chr(13) $ Chr(10);
+
+    super.PreBeginPlay();
 }
 
 static event class<GameInfo> SetGameType(string MapName, string Options, string Portal)
