@@ -1,7 +1,7 @@
 class DRWeap_EnfieldNo2_Revolver extends ROWeap_M1917_Pistol
     abstract;
 
-`include(DesertRats\Classes\DRWeaponPickupMessagesOverride.uci)
+// `include(DesertRats\Classes\DRWeaponPickupMessagesOverride.uci)
 
 DefaultProperties
 {
@@ -9,62 +9,71 @@ DefaultProperties
 
     RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_EnfieldNo2'
 
+    PlayerViewOffset=(X=6.0,Y=4.5,Z=-2.75)
+    ZoomInRotation=(Pitch=-910,Yaw=0,Roll=2910)
+    ShoulderedPosition=(X=5.0,Y=2.0,Z=-2.0)
+    IronSightPosition=(X=0,Y=0,Z=0.2)
+
+    SightRanges[0]=(SightRange=0,SightPitch=0,SightPositionOffset=0.6,AddedPitch=250)
+
     TeamIndex=`ALLIES_TEAM_INDEX
 
     InvIndex=`DRII_ENFIELDNO2_REVOLVER
 
-    WeaponEquipAnim=M1917_pullout
-    WeaponPutDownAnim=M1917_Putaway
+    WeaponFireTypes(1)=EWFT_None
 
-    WeaponUpAnim=M1917_pullout//M1917_Up
-    WeaponDownAnim=M1917_Putaway//M1917_Down
-    WeaponDownSightedAnim=M1917_Putaway//M1917_Down
+    WeaponEquipAnim=SelectTo
+    WeaponPutDownAnim=SelectOut
 
-    WeaponFireAnim(0)=M1917_shoot
-    WeaponFireAnim(1)=M1917_Single_shoot
-    WeaponFireLastAnim=M1917_shoot
+    WeaponUpAnim=SelectTo//M1917_Up
+    WeaponDownAnim=SelectOut//M1917_Down
+    WeaponDownSightedAnim=SelectOut//M1917_Down
 
-    WeaponFireShoulderedAnim(0)=M1917_shoot
-    WeaponFireShoulderedAnim(1)=M1917_Single_shoot
-    WeaponFireLastShoulderedAnim=M1917_shoot
+    WeaponFireAnim(0)=FireDouble
+    WeaponFireAnim(1)=FireDouble
+    WeaponFireLastAnim=FireDouble
 
-    WeaponFireSightedAnim(0)=M1917_shoot
-    WeaponFireSightedAnim(1)=M1917_Single_shoot
-    WeaponFireLastSightedAnim=M1917_shoot
+    WeaponFireShoulderedAnim(0)=FireDouble
+    WeaponFireShoulderedAnim(1)=FireDouble
+    WeaponFireLastShoulderedAnim=FireDouble
 
-    WeaponFireLastSingleAnim=M1917_Single_shoot
-    WeaponFireLastSightedSingleAnim=M1917_Single_shoot
+    WeaponFireSightedAnim(0)=FireDouble
+    WeaponFireSightedAnim(1)=FireDouble
+    WeaponFireLastSightedAnim=FireDouble
 
-    WeaponIdleAnims(0)=M1917_shoulder_idle
-    WeaponIdleAnims(1)=M1917_shoulder_idle
-    WeaponIdleShoulderedAnims(0)=M1917_shoulder_idle
-    WeaponIdleShoulderedAnims(1)=M1917_shoulder_idle
+    WeaponFireLastSingleAnim=FireDouble
+    WeaponFireLastSightedSingleAnim=FireDouble
 
-    WeaponIdleSightedAnims(0)=M1917_iron_idle
-    WeaponIdleSightedAnims(1)=M1917_iron_idle
+    WeaponIdleAnims(0)=Idle
+    WeaponIdleAnims(1)=Idle
+    WeaponIdleShoulderedAnims(0)=Idle
+    WeaponIdleShoulderedAnims(1)=Idle
 
-    WeaponCrawlingAnims(0)=M1917_CrawlF
-    WeaponCrawlStartAnim=M1917_Crawl_into
-    WeaponCrawlEndAnim=M1917_Crawl_out
+    WeaponIdleSightedAnims(0)=Idle
+    WeaponIdleSightedAnims(1)=Idle
 
-    WeaponReloadStripperAnim=M1917_reload_uncocked
-    ReloadStripperDoubleAnim=M1917_reload_uncocked
-    WeaponAltReloadStripperAnim=M1917_reload
-    WeaponAltReloadStripperIronAnim=M1917_reload
+    WeaponCrawlingAnims(0)=ProneLoop
+    WeaponCrawlStartAnim=ProneInitial
+    WeaponCrawlEndAnim=ProneEnd
 
-    WeaponReloadEmptyMagIronAnim=M1917_reload_uncocked
-    WeaponReloadNonEmptyMagIronAnim=M1917_reload_uncocked
+    WeaponReloadStripperAnim=Reload
+    ReloadStripperDoubleAnim=Reload
+    WeaponAltReloadStripperAnim=Reload
+    WeaponAltReloadStripperIronAnim=Reload
+
+    WeaponReloadEmptyMagIronAnim=Reload
+    WeaponReloadNonEmptyMagIronAnim=Reload
 
     WeaponAmmoCheckAnim=M1917_ammocheck
     WeaponAmmoCheckIronAnim=M1917_ammocheck
     WeaponAltAmmoCheckAnim=M1917_Ammocheck//_uncocked
     WeaponAltAmmoCheckIronAnim=M1917_Ammocheck//_uncocked
 
-    WeaponSprintStartAnim=M1917_sprint_into
-    WeaponSprintLoopAnim=M1917_Sprint
-    WeaponSprintEndAnim=M1917_sprint_out
+    WeaponSprintStartAnim=RunInitial
+    WeaponSprintLoopAnim=RunLoop
+    WeaponSprintEndAnim=RunEnd
 
-    WeaponMantleOverAnim=M1917_Mantle
+    WeaponMantleOverAnim=Vault
 
     WeaponSwitchToAltFireModeAnim=M1917_Manual_Hammer
     WeaponSightedSwitchToAltFireModeAnim=M1917_Manual_Hammer
@@ -72,14 +81,14 @@ DefaultProperties
     WeaponSpotEnemyAnim=M1917_SpotEnemy
     WeaponSpotEnemySightedAnim=M1917_SpotEnemy_ironsight
 
-    WeaponMeleeAnims(0)=M1917_Bash
+    WeaponMeleeAnims(0)=Melee
 
-    MeleePullbackAnim=M1917_Pullback
-    MeleeHoldAnim=M1917_Pullback_Hold
-    WeaponMeleeHardAnim=M1917_BashHard
+    MeleePullbackAnim=ChargeBegin
+    MeleeHoldAnim=ChargeLoop
+    WeaponMeleeHardAnim=ChargeEnd
 
-    WeaponDryFireAnim=M1917_DryFire
-    WeaponDryFireSightedAnim=M1917_DryFire
+    WeaponDryFireAnim=FireDouble
+    WeaponDryFireSightedAnim=FireDouble
 
     bUsesIronSightAnims=false
     bUsesIronsightMeleeAnim=false
@@ -110,8 +119,15 @@ DefaultProperties
     PerformReloadPct=0.73f
 
     BoltControllerNames.Empty
-    BoltControllerNames[0]=Hammer_M1917
-//  BoltControllerNames[1]=Cylinder_M1917
+    BoltControllerNames[0]=EnfieldNo2_Hammer
+    BoltControllerNames[1]=EnfieldNo2_Cylinder
+
+    RoundBoneNames(0)=Enfield_Bullet1
+    RoundBoneNames(1)=Enfield_Bullet2
+    RoundBoneNames(2)=Enfield_Bullet3
+    RoundBoneNames(3)=Enfield_Bullet4
+    RoundBoneNames(4)=Enfield_Bullet5
+    RoundBoneNames(5)=Enfield_Bullet6
 
     SightRanges.Empty
 }

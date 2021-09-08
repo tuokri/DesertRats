@@ -9,7 +9,7 @@ DefaultProperties
         SkeletalMesh=SkeletalMesh'DR_WP_UK_EnfieldNo2.Mesh.UK_EnfieldNo2'
         PhysicsAsset=PhysicsAsset'DR_WP_UK_EnfieldNo2.Phys.UK_EnfieldNo2_Physics_Bounds'
         AnimSets(0)=AnimSet'DR_WP_UK_EnfieldNo2.Anim.UK_EnfieldNo2_Anims'
-        AnimTreeTemplate=AnimTree'DR_WP_UK_WEBLEY.Anim.UK_Webley_AnimTree'
+        AnimTreeTemplate=AnimTree'DR_WP_UK_EnfieldNo2.Anim.UK_EnfieldNo2_AnimTree'
         Scale=1.0
         FOV=70
     End Object
