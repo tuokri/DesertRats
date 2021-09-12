@@ -41,6 +41,7 @@
 `define DRII_THOMPSON_M1928A1_SMG   14
 `define DRII_BERETTA_M1934_PISTOL   15
 `define DRII_ENFIELDNO2_REVOLVER    16
+`define DRII_BOYS_AT                17
 
 `define DRII_DYNAMITE               34
 `define DRII_TNT                    35
