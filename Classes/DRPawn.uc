@@ -794,6 +794,33 @@ simulated private function PlayQueuedSpeakLine()
 
 // --- END SOUNDCUE BACKPORT ---
 
+function HighlightKickableProjectile(Actor Highlightable)
+{
+    if (Highlightable == None)
+    {
+        return;
+    }
+
+    if (ROThrowableExplosiveProjectile(Highlightable) != None)
+    {
+        HighlightPickupHandler(ROThrowableExplosiveProjectile(Highlightable).ThrowableMesh);
+    }
+}
+
+// TODO: Check if this actually works. Depends on the door material?
+function HighlightUsableDoor(Actor Highlightable)
+{
+    if (Highlightable == None)
+    {
+        return;
+    }
+
+    if (DRDoorActor(Highlightable) != None)
+    {
+        HighlightStaticPickupHandler(DRDoorActor(Highlightable).StaticMeshComponent);
+    }
+}
+
 DefaultProperties
 {
     PawnMesh_SV=SkeletalMesh'DR_CHR.Mesh.CharRef_Full'

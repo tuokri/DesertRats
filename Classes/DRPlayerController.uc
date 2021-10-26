@@ -1747,6 +1747,247 @@ simulated function PlayerCountsUpdated(byte TeamIndex, byte NumPlayers)
     DRGameEngine(class'Engine'.static.GetEngine()).UpdateRichPresence();
 }
 
+simulated function CheckKickableProjectile(Projectile Proj)
+{
+    `log("CheckKickableProjectile(): AccelerationSquared = " $ VSizeSq(Proj.Acceleration),, 'DRDEV');
+
+    // TODO: Check distance to projectile.
+    if (VSizeSq(Proj.Acceleration) < 25.0)
+    {
+        ReceiveLocalizedMessage(class'DRLocalMessageKickableProjectile',, PlayerReplicationInfo);
+    }
+}
+
+// TODO: Parametrize kicking (kickforce / mass).
+simulated function KickProjectile(Projectile Proj, vector KickVel)
+{
+    `log(self @ "KickProjectile(): Proj = " $ Proj $ ", KickVel = " $ KickVel ,, 'DRDEV');
+    Proj.Velocity += KickVel;
+    Proj.Speed = VSize(KickVel);
+}
+
+simulated function CheckUsableDoor(DRDoorActor Door)
+{
+    if (VSize(Door.Location - Location) <= Door.MaxUsableDistance)
+    {
+        // TODO: Local message class for doors.
+        // ReceiveLocalizedMessage(class'DRLocalMessageKickableProjectile',, PlayerReplicationInfo);
+    }
+}
+
+unreliable protected server function ServerUse()
+{
+    local int i;
+    local InterpActor MatineeActor;
+    local bool bUsedAnActor;
+    local ROPawn ROP;
+    local ROVehicle ROV;
+    local ROVehicleHelicopter ROVH;
+    local ROTurret ROTur;
+    local ROVehicleEntryActor ROVEA;
+    local ROTurretEntryActor ROTEA;
+
+    // If we're not Aiming At an Actor, we're done
+    if ( Pawn == none )
+    {
+        `log("No Pawn");
+        return;
+    }
+
+    // if we're in a Vehicle
+    if ( Vehicle(Pawn) != none )
+    {
+        if ( ROTurret(Pawn) != none && ROTurret(Pawn).bCanBePickedUp )
+        {
+            ROTurret(Pawn).UsedBy(ROTurret(Pawn).Driver);
+            return;
+        }
+
+        Vehicle(Pawn).DriverLeave(false);
+        if ( ROPawn(Pawn) != none )
+        {
+            ROPawn(Pawn).DoSpecialMove(SM_DismountTurret);
+            ROPawn(Pawn).ClientDoSpecialMove(SM_DismountTurret);
+        }
+        return;
+    }
+
+    // Trace to find the Actor we're Aiming At, if any
+    FindActorAimedAt();
+
+    if ( ActorAimedAt != none && VSizeSq(ActorAimedAt.Location - Pawn.Location) < MaxUsableDistance * MaxUsableDistance )
+    {
+        ROVEA = ROVehicleEntryActor(ActorAimedAt);
+        ROP = ROPawn(Pawn);
+
+        if(ROVEA != none)
+        {
+            ROV = ROVehicle(ActorAimedAt.Owner);
+            ROVH = ROVehicleHelicopter(ActorAimedAt.Owner);
+
+            ROTEA = ROTurretEntryActor(ActorAimedAt);
+            if ( ROTEA != none )
+            {
+                ROTur = ROTurret(ActorAimedAt.Owner);
+            }
+        }
+        else
+        {
+            ROV = ROVehicle(ActorAimedAt);
+            ROVH = ROVehicleHelicopter(ActorAimedAt);
+        }
+
+        // React based on the type of Actor we're Aimed At
+        if ( ROTEA != none && ROTur != none && ROTur.Driver == None )
+        {
+            if ( !Pawn.bIsProning && IsFacingSameDirectionAsTurret(ROTur) )
+            {
+                // Should not allow in spawn protection - check VolumeEnterCountSpawnProt
+                if ( ROP != none && !ROP.IsProneTransitioning() && !ROP.IsDoingSpecialMove(SM_MountTurretInstant) && ( ROP.VolumeEnterCountSpawnProt < 1 || ROP.bImmuneToSpawnProtection ) )
+                {
+                    bUsedAnActor = true;
+
+                    ROP.Turret = ROTurret(ActorAimedAt.Owner);
+                    ROP.ServerMountTurret();
+
+                    // This is for being able to pickup the turret while off it
+                    // if ( ROTur.bCanBePickedUp )
+                    // {
+                    //  ROTur.UsedBy(Pawn);
+                    // }
+                    // else
+                    // {
+                    //  ROP.Turret = ROTurret(ActorAimedAt.Owner);
+                    //  ROP.ServerMountTurret();
+                    // }
+                }
+            }
+        }
+        else if ( ROVEA != none )
+        {
+            if( ROVH != none && ROVH.bInfantryCanUse )
+            {
+                // Attempt to Enter the Vehicle
+                if( ROVEA.SeatIndex == 255 && ROVH.TryToDrive(Pawn) )
+                {
+                    bUsedAnActor = true;
+                }
+                // If this is an EA for a specific seat, check that seat's availability
+                else if( ROVEA.SeatIndex != 255 && ROVH.SeatAvailable( ROVEA.SeatIndex ) && ROVH.TryToDriveSeat(Pawn, ROVEA.SeatIndex) )
+                {
+                    bUsedAnActor = true;
+                }
+                // Otherwise if this was for the driver's seat but we couldn't enter, maybe the pilot's dead, so try the copilot seat
+                else if ( ROVEA.SeatIndex == 0 && ROVH.SeatAvailable( ROVH.SeatIndexCopilot ) && ROVH.TryToDriveSeat(Pawn, ROVH.SeatIndexCopilot) )
+                {
+                    bUsedAnActor = true;
+                }
+            }
+            else if ( ROV != none && ROV.bInfantryCanUse && ROV.SeatAvailable( ROVEA.SeatIndex ) )
+            {
+                // Attempt to Enter the Vehicle
+                if( ROV.TryToDriveSeat(Pawn, ROVEA.SeatIndex) )
+                {
+                    bUsedAnActor = true;
+                }
+            }
+
+            if( bUsedAnActor )
+            {
+                ClientStartExitVehicleFadeOut();
+                SetTimer(0.25, false, 'ClientStartExitVehicleFadeIn');
+            }
+        }
+        else if ( ROV != none && ROV.bUseRootLocForEntry && ROV.bInfantryCanUse )
+        {
+            // Attempt to Enter the Vehicle
+            if( ROV.TryToDrive(Pawn) )
+            {
+                bUsedAnActor = true;
+                ClientStartExitVehicleFadeOut();
+                SetTimer(0.25, false, 'ClientStartExitVehicleFadeIn');
+            }
+        }
+        else if ( InterpActor(ActorAimedAt) != none )
+        {
+            MatineeActor = InterpActor(ActorAimedAt);
+
+            for ( i = 0; i < MatineeActor.GeneratedEvents.Length; i++ )
+            {
+                if ( ROSeqEvent_DirectionalUsed(MatineeActor.GeneratedEvents[i]) != none )
+                {
+                    bUsedAnActor = true;
+                    ROSeqEvent_DirectionalUsed(MatineeActor.GeneratedEvents[i]).OnUsed(MatineeActor, self);
+                }
+            }
+        }
+        else if ( RODroppedPickup(ActorAimedAt) != none)
+        {
+            // Tell the server this is a weapon swap. This needs to be here because we need to set the flag BEFORE SwitchWeapon/ClientSwitchWeapon to resolve CLBIT-2951.
+            if ( ROInventoryManager(Pawn.InvManager).IsPickupCausingWeaponSwap(RODroppedPickup(ActorAimedAt).InventoryClass, ActorAimedAt) )
+                ROInventoryManager(Pawn.InvManager).SetSwappingDueToPickup();
+
+            UsePickup( RODroppedPickup(ActorAimedAt).InventoryClass);
+        }
+        else if ( ROPickupFactory(ActorAimedAt) != none)
+        {
+            // Tell the server this is a weapon swap. This needs to be here because we need to set the flag BEFORE SwitchWeapon/ClientSwitchWeapon to resolve CLBIT-2951.
+            if ( ROInventoryManager(Pawn.InvManager).IsPickupCausingWeaponSwap(ROPickupFactory(ActorAimedAt).InventoryType, ActorAimedAt) )
+                ROInventoryManager(Pawn.InvManager).SetSwappingDueToPickup();
+
+            UsePickup( ROPickupFactory(ActorAimedAt).InventoryType);
+        }
+        else if ( RORemoteExplosiveProjectile(ActorAimedAt) != none || ROPlantedTrap(ActorAimedAt) != none || TripwireTrapStake(ActorAimedAt) != none )
+        {
+            ActorAimedAt.UsedBy(Pawn);
+            bUsedAnActor = true;
+        }
+        /*else if(ROTriggerMusicRadio(ActorAimedAt) != none)
+        {
+            ActorAimedAt.UsedBy(Pawn);
+            bUsedAnActor = true;
+        }*/
+        else if( ROPlaceableSpawn(ActorAimedAt) != none )
+        {
+            ActorAimedAt.UsedBy(Pawn);
+            bUsedAnActor = true;
+        }
+        // Desert Rats projectile kicking.
+        else if (ROProjectile(ActorAimedAt) != None)
+        {
+            ActorAimedAt.UsedBy(Pawn);
+            bUsedAnActor = True;
+        }
+        // Desert Rats door opening.
+        else if (DRDoorActor(ActorAimedAt) != None)
+        {
+            ActorAimedAt.UsedBy(Pawn);
+            bUsedAnActor = True;
+        }
+    }
+
+    if ( CurrentTripwireTrapToDisarm != none )
+    {
+        CurrentTripwireTrapToDisarm.UsedBy(Pawn);
+    }
+
+    // We didn't find any actor we wanted to use, attempt other actions
+    if( !bUsedAnActor )
+    {
+        // Within a Ladder Volume and facing it
+        /*if ( IsLookingAtLadder() )
+        {
+            // aladenberger 1/4/2011 - Deprecated, see ClimbLadder & EndClimbLadder
+            //ROPawn(Pawn).MountLadder(AtTopOfLadder());
+        }
+        else
+        {
+            // aladenberger 8/3/2011 - Moved to ServerAttemptMantle()
+            //AttemptMantle();
+        }*/
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 `ifndef(RELEASE)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1763,11 +2004,6 @@ simulated exec function SpawnBirdDog()
     Vehicle.Velocity = vector(rotator(Velocity)) * 250;
 
     Vehicle.DriverEnter(Pawn);
-}
-
-exec function DumpScriptTrace()
-{
-    ScriptTrace();
 }
 
 exec function BlowupVehicles(optional bool bHitAmmo = false, optional int DeadVehicleType = 999)
@@ -1792,112 +2028,6 @@ private reliable server function ServerBlowUpVehicles(optional bool bHitAmmo = f
             ROV.DeadVehicleType = DeadVehicleType;
         }
     }
-}
-
-private reliable server function DoAddBotsDR(int Num, optional int NewTeam = -1, optional bool bNoForceAdd)
-{
-    local ROAIController ROBot;
-    local byte ChosenTeam;
-    local byte SuggestedTeam;
-    local ROPlayerReplicationInfo ROPRI;
-    local ROGameInfo ROGI;
-
-    ROGI = ROGameInfo(WorldInfo.Game);
-
-    // do not add bots during server travel
-    if( ROGI.bLevelChange )
-    {
-        return;
-    }
-
-    while (Num > 0 && ROGI.NumBots + ROGI.NumPlayers < ROGI.MaxPlayers)
-    {
-        // Create a new Controller for this Bot
-        ROBot = ROGI.Spawn(ROGI.AIControllerClass);
-
-        // Assign the bot a Player ID
-        ROBot.PlayerReplicationInfo.PlayerID = ROGI.CurrentID++;
-
-        // Suggest a team to put the AI on
-        if ( ROGI.bBalanceTeams || NewTeam == -1 )
-        {
-            if ( ROGI.GameReplicationInfo.Teams[`AXIS_TEAM_INDEX].Size - ROGI.GameReplicationInfo.Teams[`ALLIES_TEAM_INDEX].Size <= 0
-                && ROGI.BotCapableNorthernRolesAvailable() )
-            {
-                SuggestedTeam = `AXIS_TEAM_INDEX;
-            }
-            else if( ROGI.BotCapableSouthernRolesAvailable() )
-            {
-                SuggestedTeam = `ALLIES_TEAM_INDEX;
-            }
-            // If there are no roles available on either team, don't allow this to go any further
-            else
-            {
-                ROBot.Destroy();
-                return;
-            }
-        }
-        else if (ROGI.BotCapableNorthernRolesAvailable() || ROGI.BotCapableSouthernRolesAvailable())
-        {
-            SuggestedTeam = NewTeam;
-        }
-        else
-        {
-            ROBot.Destroy();
-            return;
-        }
-
-        // Put the new Bot on the Team that needs it
-        ChosenTeam = ROGI.PickTeam(SuggestedTeam, ROBot);
-        // Set the bot name based on team
-        ROGI.ChangeName(ROBot, ROGI.GetDefaultBotName(ROBot, ChosenTeam, ROTeamInfo(ROGI.GameReplicationInfo.Teams[ChosenTeam]).NumBots + 1), false);
-
-        ROGI.JoinTeam(ROBot, ChosenTeam);
-
-        ROBot.SetTeam(ROBot.PlayerReplicationInfo.Team.TeamIndex);
-
-        // Have the bot choose its role
-        if( !ROBot.ChooseRole() )
-        {
-            ROBot.Destroy();
-            continue;
-        }
-
-        ROBot.ChooseSquad();
-
-        // GRIP BEGIN
-        // Remove. Debugging purpose only.
-        ROPRI = ROPlayerReplicationInfo(ROBot.PlayerReplicationInfo);
-        if( ROPRI.RoleInfo.bIsTankCommander )
-        {
-            ROGI.ChangeName(ROBot, ROPRI.GetHumanReadableName()$" (TankAI)", false);
-        }
-        // GRIP END
-
-        if ( ROTeamInfo(ROBot.PlayerReplicationInfo.Team) != none && ROTeamInfo(ROBot.PlayerReplicationInfo.Team).ReinforcementsRemaining > 0 )
-        {
-            // Spawn a Pawn for the new Bot Controller
-            ROGI.RestartPlayer(ROBot);
-        }
-
-        if ( ROGI.bInRoundStartScreen )
-        {
-            ROBot.AISuspended();
-        }
-
-        // Note that we've added another Bot
-        if( !bNoForceAdd )
-            ROGI.DesiredPlayerCount++;
-
-        ROGI.NumBots++;
-        Num--;
-        ROGI.UpdateGameSettingsCounts();
-    }
-}
-
-exec function AddBotsDR(int Num, optional int NewTeam = -1, optional bool bNoForceAdd)
-{
-    DoAddBotsDR(Num, NewTeam, bNoForceAdd);
 }
 
 exec function SetSFXVolume(float NewVolume)
