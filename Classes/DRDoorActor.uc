@@ -102,9 +102,9 @@ simulated function ToggleDoor()
 
     // Update this here in case AddedYaw/AddedRoll/AddedPitch gets changed after spawning this door.
     FinishedRot = BaseRot;
-    FinishedRot.Pitch += AddedPitch;
-    FinishedRot.Roll += AddedRoll;
-    FinishedRot.Yaw += AddedYaw;
+    FinishedRot.Pitch += (AddedPitch * DegToUnrRot);
+    FinishedRot.Roll += (AddedRoll * DegToUnrRot);
+    FinishedRot.Yaw += (AddedYaw * DegToUnrRot);
 }
 
 function bool UsedBy(Pawn User)
@@ -132,8 +132,7 @@ function bool UsedBy(Pawn User)
 
 DefaultProperties
 {
-    // 90 * DegToUnrRot ~= 16384.
-    AddedYaw=16384
+    AddedYaw=90
     AddedRoll=0
     AddedPitch=0
     RotationSpeed=10
