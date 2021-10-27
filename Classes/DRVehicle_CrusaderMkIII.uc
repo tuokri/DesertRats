@@ -344,13 +344,6 @@ simulated function ReplaceExteriorMICs(MeshComponent MeshComp)
     }
 }
 
-/** Leave blood splats on a specific area in a vehicle
- * @param InSeatIndex The seat around which we should leave blood splats
- */
-simulated function LeaveBloodSplats(int InSeatIndex)
-{
-}
-
 simulated function int GetHullMGSeatIndex()
 {
     // Mk III has no hull MG.

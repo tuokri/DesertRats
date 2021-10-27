@@ -113,12 +113,12 @@ simulated event Tick(float DeltaTime)
 {
     super.Tick(DeltaTime);
 
-    if (CachedTurretControl != None && (Role < ROLE_Authority || WorldInfo.NetMode == NM_Standalone))
+    if (WorldInfo.NetMode != NM_DedicatedServer && CachedTurretControl != None)
     {
         // Simulated linkage between periscope and gun that the Sherman has IRL.
         // Update gunner periscope sight pitch to match gun base pitch.
         // Only update if changed by more than 5 units for "jitter protection".
-        if (Abs(GunnerCameraSocket.RelativeRotation.Pitch - CachedTurretControl.BoneRotation.Pitch) >= 5)
+        if (Abs(GunnerCameraSocket.RelativeRotation.Pitch - CachedTurretControl.BoneRotation.Pitch) > 5)
         {
             GunnerCameraSocket.RelativeRotation.Pitch = CachedTurretControl.BoneRotation.Pitch;
         }
@@ -170,6 +170,10 @@ simulated event PostBeginPlay()
 
     GunnerCameraSocket = Mesh.GetSocketByName(GunnerCameraSocketName);
     CachedTurretControl = ROSkelControl_TurretConstrained(Mesh.FindSkelControl('Turret_Gun'));
+
+    // For debugging instability issues.
+    Mesh.AddImpulse(vect(10, 10, 10));
+    // Mesh.WakeRigidBody();
 }
 
 /**
@@ -202,9 +206,7 @@ simulated function StopVehicleSounds()
  */
 simulated function RequestPosition(byte SeatIndex, byte DesiredIndex, optional bool bViaInteraction)
 {
-
-
-        // NO!
+    // NO!
     if( SeatIndex == 1 && DesiredIndex != 1 )
     {
         return;
@@ -213,7 +215,6 @@ simulated function RequestPosition(byte SeatIndex, byte DesiredIndex, optional b
     {
         super.RequestPosition(SeatIndex, DesiredIndex, bViaInteraction);
     }
-
 }
 
 simulated function VehicleWeaponFireEffects(vector HitLocation, int SeatIndex)
@@ -349,31 +350,6 @@ simulated function ReplaceExteriorMICs(MeshComponent MeshComp)
                 }
             }
         }
-    }
-}
-
-/** Leave blood splats on a specific area in a vehicle
- * @param InSeatIndex The seat around which we should leave blood splats
- */
-simulated function LeaveBloodSplats(int InSeatIndex)
-{
-    local int MICIndex;
-
-    if( InSeatIndex < Seats.Length )
-    {
-        // The following mapping is done based on the way the InteriorMICs array is set up
-        // 0 = Walls, 1 = Cuppola, 2 = Turret, 3 = Driver/HullMG
-        switch( InSeatIndex )
-        {
-        case 0 : MICIndex = 3; break;
-        case 1 : MICIndex = 1; break;
-        case 2 : MICIndex = 2; break;
-        case 3 : MICIndex = 3; break;
-        case 4 : MICIndex = 2; break;
-        }
-
-        InteriorMICs[0].SetScalarParameterValue(Seats[InSeatIndex].VehicleBloodMICParameterName, 1.0); // Tile
-        InteriorMICs[MICIndex].SetScalarParameterValue(Seats[InSeatIndex].VehicleBloodMICParameterName, 1.0);
     }
 }
 
@@ -1374,6 +1350,8 @@ DefaultProperties
     Team=`ALLIES_TEAM_INDEX
     Health=600
     MaxSpeed=680 // ~42 km/h
+
+    COMOffset=(X=10,Y=0,Z=-20)
 
     Begin Object Name=CollisionCylinder
         CollisionHeight=60.0

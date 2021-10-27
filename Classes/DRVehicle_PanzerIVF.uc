@@ -345,31 +345,6 @@ simulated function ReplaceExteriorMICs(MeshComponent MeshComp)
     }
 }
 
-/** Leave blood splats on a specific area in a vehicle
- * @param InSeatIndex The seat around which we should leave blood splats
- */
-simulated function LeaveBloodSplats(int InSeatIndex)
-{
-    local int MICIndex;
-
-    if( InSeatIndex < Seats.Length )
-    {
-        // The following mapping is done based on the way the InteriorMICs array is set up
-        // 0 = Walls, 1 = Driver/HullMG, 2 = Turret, 3 = Cuppola
-        switch( InSeatIndex )
-        {
-        case 0 : MICIndex = 1; break;
-        case 1 : MICIndex = 3; break;
-        case 2 : MICIndex = 2; break;
-        case 3 : MICIndex = 1; break;
-        case 4 : MICIndex = 2; break;
-        }
-
-        InteriorMICs[0].SetScalarParameterValue(Seats[InSeatIndex].VehicleBloodMICParameterName, 1.0);
-        InteriorMICs[MICIndex].SetScalarParameterValue(Seats[InSeatIndex].VehicleBloodMICParameterName, 1.0);
-    }
-}
-
 simulated function ZoneHealthDamaged(int ZoneIndexUpdated, optional Controller DamageInstigator)
 {
     local float ZoneHealthPercentage;

@@ -76,6 +76,8 @@ simulated function PostBeginPlay()
     }
 
     CachedWheelRadius = Wheels[0].WheelRadius;
+
+    AudioInit();
 }
 
 simulated event Tick(float DeltaTime)
@@ -284,8 +286,19 @@ simulated function StartEngineSoundTimed()
 {
     Super.StartEngineSoundTimed();
 
+    `log("StartEngineSoundTimed()",, 'DRDEV');
+
     if(EngineStartLeftSoundCustom != None)
     {
+        `log("StartEngineSoundTimed() EngineStartLeftSoundCustom                           = "
+            $ EngineStartLeftSoundCustom,, 'DRDEV');
+        `log("StartEngineSoundTimed() EngineStartLeftSoundCustom.VolumeMultiplier          = "
+            $ EngineStartLeftSoundCustom.VolumeMultiplier,, 'DRDEV');
+        `log("StartEngineSoundTimed() EngineStartLeftSoundCustom.SoundCue                  = "
+            $ EngineStartLeftSoundCustom.SoundCue,, 'DRDEV');
+        `log("StartEngineSoundTimed() EngineStartLeftSoundCustom.SoundCue.VolumeMultiplier = "
+            $ EngineStartLeftSoundCustom.SoundCue.VolumeMultiplier,, 'DRDEV');
+
         EngineStartLeftSoundCustom.Play();
     }
     if(EngineStartRightSoundCustom != None)
@@ -297,6 +310,10 @@ simulated function StartEngineSoundTimed()
         EngineStartExhaustSoundCustom.Stop(); // If you switch seats rapidly this won't have finished, so force it.
         EngineStartExhaustSoundCustom.Play();
     }
+}
+
+simulated function LeaveBloodSplats(int InSeatIndex)
+{
 }
 
 simulated function StopEngineSound()
@@ -452,6 +469,27 @@ simulated function PlayGearShiftAudio()
     {
         `log("ShfitUp",, 'DRDEV');
         PlayLocalVehicleSoundCustom(ShiftUpSoundCustom, Exhaust_FXSocket);
+    }
+}
+
+// TODO: remove duplicates. (Macro?)
+simulated function AudioInit()
+{
+    local DRAudioComponent DRAC;
+    local DRPlayerController DRPC;
+
+    if (WorldInfo.NetMode != NM_DedicatedServer)
+    {
+        ForEach LocalPlayerControllers(class'DRPlayerController', DRPC)
+        {
+            if (DRPC.AudioManager != None)
+            {
+                ForEach ComponentList(class'DRAudioComponent', DRAC)
+                {
+                    DRPC.AudioManager.RegisterAudioComponent(DRAC);
+                }
+            }
+        }
     }
 }
 
