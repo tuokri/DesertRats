@@ -1768,11 +1768,7 @@ simulated function KickProjectile(Projectile Proj, vector KickVel)
 
 simulated function CheckUsableDoor(DRDoorActor Door)
 {
-    if (VSize(Door.Location - Location) <= Door.MaxUsableDistance)
-    {
-        // TODO: Local message class for doors.
-        // ReceiveLocalizedMessage(class'DRLocalMessageKickableProjectile',, PlayerReplicationInfo);
-    }
+    ReceiveLocalizedMessage(class'DRLocalMessageOpenableDoor',, PlayerReplicationInfo);
 }
 
 unreliable protected server function ServerUse()
