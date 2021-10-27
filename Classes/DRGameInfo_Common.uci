@@ -6,6 +6,7 @@ var private string CRLF;
 `define BATTLECHATTER_PAWN_GROUP_RADIUS 1000
 
 // Not the most elegant, but will do for now.
+// TODO: ADD WIN CONDITION! (From Super).
 `define ROUND_WON_FUNCTION \
 function RoundWon(int WinningTeam, byte WinCondition)\n\
 {\n\
@@ -22,6 +23,7 @@ function RoundWon(int WinningTeam, byte WinCondition)\n\
     }\n\
     SetMorale(255, 255);\n\
     MapName = string(WorldInfo.GetPackageName());\n\
+    BStats.MapVersion = DRMapInfo(WorldInfo.GetMapInfo()).LevelVersion;\n\
     WinningTeamName = (WinningTeam == `AXIS_TEAM_INDEX ? "Axis" : "Allies");\n\
     NumOfPlayers = GetNumPlayers();\n\
     `log("BALANCE STATS:" @ MapName @ "|" @ MaxPlayers @ " max players |" @ NumOfPlayers\n\
@@ -61,81 +63,9 @@ function RoundWon(int WinningTeam, byte WinCondition)\n\
     LastTeamObjectivesCaptured[`ALLIES_TEAM_INDEX] = TeamObjectivesCaptured[`ALLIES_TEAM_INDEX];\n\
     ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`AXIS_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`AXIS_TEAM_INDEX];\n\
     ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`ALLIES_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`ALLIES_TEAM_INDEX];\n\
+    BStats.WinCondition = WinCondition;\n\
     SendBalanceStatsPackage(BStats);\n\
 }\n\
-
-/*
-function RoundWon(int WinningTeam, byte WinCondition)
-{
-    local int i;
-    local int NumOfPlayers;
-    local string MapName;
-    local string WinningTeamName;
-    local ObjectiveInfo ObjInfo;
-    local BalanceStats BStats;
-
-    ClearTimer('DelayedCheckReinforcementLockdown');
-
-    if (bDebugMorale)
-    {
-        `log("RoundWon()");
-    }
-
-    SetMorale(255, 255);
-
-    MapName = string(WorldInfo.GetPackageName());
-    WinningTeamName = (WinningTeam == `AXIS_TEAM_INDEX ? "Axis" : "Allies");
-    NumOfPlayers = GetNumPlayers();
-
-    `log("BALANCE STATS:" @ MapName @ "|" @ MaxPlayers @ " max players |" @ NumOfPlayers
-        @ "players playing" @ "Teams Swapped=" @ bReverseRolesAndSpawns,,'DevBalanceStats');
-    `log("BALANCE STATS: WinningTeam=" $ WinningTeamName @ "Teams Swapped="
-        @ bReverseRolesAndSpawns,, 'DevBalanceStats');
-    `log("BALANCE STATS: TimeRemaining=" $ GameReplicationInfo.RemainingTime $ " seconds which is "
-        $ (GameReplicationInfo.RemainingTime / 60.0) $ " minutes" @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');
-    `log("BALANCE STATS: AxisReinforcements=" $ AxisTeam.ReinforcementsRemaining @ "AlliesReinforcements="
-        $ AlliesTeam.ReinforcementsRemaining @ "Teams Swapped=" @ bReverseRolesAndSpawns,, 'DevBalanceStats');
-
-    BStats.MapName = MapName;
-    BStats.WinningTeamName = WinningTeamName;
-    BStats.MaxPlayers = MaxPlayers;
-    BStats.NumPlayers = NumOfPlayers;
-    BStats.TimeRemainingSeconds = GameReplicationInfo.RemainingTime;
-    BStats.AxisReinforcements = AxisTeam.ReinforcementsRemaining;
-    BStats.AlliesReinforcements = AlliesTeam.ReinforcementsRemaining;
-    BStats.bReverseRolesAndSpawns = bReverseRolesAndSpawns;
-
-    for (i = 0; i < Objectives.Length; i++)
-    {
-        ObjInfo.ObjIndex = Objectives[i].ObjIndex;
-        ObjInfo.ObjState = Objectives[i].ObjState;
-        ObjInfo.ObjName = Objectives[i].ObjName;
-
-        BStats.ObjInfos.AddItem(ObjInfo);
-
-        if (Objectives[i] != none && Objectives[i].bActive)
-        {
-            `log("BALANCE STATS: ActiveObjectives " $ i $ " = " $ Objectives[i].ObjName
-                @ "Status=" $ (Objectives[i].ObjState == `AXIS_TEAM_INDEX ? "Axis" : (
-                    Objectives[i].ObjState == `ALLIES_TEAM_INDEX ? "Allies" : "Neutral")),, 'DevBalanceStats');
-        }
-    }
-
-    super.RoundWon(WinningTeam, WinCondition);
-
-    `log("BALANCE STATS: AxisTeamScore=" $ AxisTeam.Score @ "AlliesTeamScore=" $ AlliesTeam.Score,, 'DevBalanceStats');
-
-    BStats.AxisTeamScore = AxisTeam.Score;
-    BStats.AlliesTeamScore = AlliesTeam.Score;
-
-    LastTeamObjectivesCaptured[`AXIS_TEAM_INDEX] = TeamObjectivesCaptured[`AXIS_TEAM_INDEX];
-    LastTeamObjectivesCaptured[`ALLIES_TEAM_INDEX] = TeamObjectivesCaptured[`ALLIES_TEAM_INDEX];
-    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`AXIS_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`AXIS_TEAM_INDEX];
-    ROGameReplicationInfo(GameReplicationInfo).LastRoundGrandScore[`ALLIES_TEAM_INDEX] = ROGameReplicationInfo(GameReplicationInfo).TeamsGrandScore[`ALLIES_TEAM_INDEX];
-
-    SendBalanceStatsPackage(BStats);
-}
-*/
 
 // TODO: Config.
 var /*config*/ bool bBalanceStatsAnalyticsEnabled;
@@ -153,9 +83,11 @@ struct ObjectiveInfo
 struct BalanceStats
 {
     var string MapName;
+    var int MapVersion;
     var string WinningTeamName;
     var byte MaxPlayers;
     var byte NumPlayers;
+    var byte WinCondition;
     var bool bReverseRolesAndSpawns;
     var int TimeRemainingSeconds;
     var int AxisReinforcements;
@@ -200,22 +132,18 @@ final function string MakeBalanceStatsPackage(const out BalanceStats BStats)
     local string SanitizedObjName;
     local ObjectiveInfo ObjInfo;
 
-    // MapName?WinningTeamName?MaxPlayers?NumPlayers?TimeRemainingSeconds
-    // ?AxisReinf?AlliesReinf?bReverse?AxisScore?AlliesScore?
-
     // Team name -> byte index (0 or 1)
 
     // Basic score:
-    // DRTE-ElAlamein?164090?500?455?25?1111?8888?<info1>?<info2>
+    // DRTE-ElAlamein?16409130?500?455?25?1111?8888?<info1>?<info2>
     // Obj stats:
     // <00?GenericObjectiveName>?<11?ObjASDasd>
 
     // Full package:
-    // DRTE-ElAlamein?164640?500?455?25?1111?8888?<00?Obj1>?<11?Obj2>
-
-    // DRTE-Test     ?0?01?01?0?1562?5?6?1?1?<00?Field >?<10?Another Field>
+    // DRTE-ElAlamein?16464130?500?455?25?1111?8888?<00?Obj1>?<11?Obj2>
 
     Body $= BStats.MapName $ SEP;
+    Body $= BStats.MapVersion $ SEP;
 
     if (BStats.WinningTeamName == "Axis")
     {
@@ -252,7 +180,17 @@ final function string MakeBalanceStatsPackage(const out BalanceStats BStats)
         Body $= BStats.NumPlayers;
     }
 
-    Body $= byte(BStats.bReverseRolesAndSpawns);
+    if (BStats.WinCondition < 10)
+    {
+        Body $= "0" $ BStats.WinCondition;
+    }
+    else
+    {
+        // NOTE: WinCondition > 99 will break.
+        Body $= BStats.WinCondition;
+    }
+
+    Body $= BStats.bReverseRolesAndSpawns ? 1 : 0;
 
     Body $= SEP $ BStats.TimeRemainingSeconds;
     Body $= SEP $ BStats.AxisReinforcements;
