@@ -64,10 +64,10 @@ DefaultProperties
     WeaponReloadEmptyMagIronAnim=Reload
     WeaponReloadNonEmptyMagIronAnim=Reload
 
-    WeaponAmmoCheckAnim=M1917_ammocheck
-    WeaponAmmoCheckIronAnim=M1917_ammocheck
-    WeaponAltAmmoCheckAnim=M1917_Ammocheck//_uncocked
-    WeaponAltAmmoCheckIronAnim=M1917_Ammocheck//_uncocked
+    WeaponAmmoCheckAnim=None
+    WeaponAmmoCheckIronAnim=None
+    WeaponAltAmmoCheckAnim=None
+    WeaponAltAmmoCheckIronAnim=None
 
     WeaponSprintStartAnim=RunInitial
     WeaponSprintLoopAnim=RunLoop
@@ -75,11 +75,11 @@ DefaultProperties
 
     WeaponMantleOverAnim=Vault
 
-    WeaponSwitchToAltFireModeAnim=M1917_Manual_Hammer
-    WeaponSightedSwitchToAltFireModeAnim=M1917_Manual_Hammer
+    // WeaponSwitchToAltFireModeAnim=''
+    // WeaponSightedSwitchToAltFireModeAnim=''
 
-    WeaponSpotEnemyAnim=M1917_SpotEnemy
-    WeaponSpotEnemySightedAnim=M1917_SpotEnemy_ironsight
+    WeaponSpotEnemyAnim=Spot
+    WeaponSpotEnemySightedAnim=SpotAim
 
     WeaponMeleeAnims(0)=Melee
 
@@ -87,8 +87,8 @@ DefaultProperties
     MeleeHoldAnim=ChargeLoop
     WeaponMeleeHardAnim=ChargeEnd
 
-    WeaponDryFireAnim=FireDouble
-    WeaponDryFireSightedAnim=FireDouble
+    WeaponDryFireAnim=FireDry
+    WeaponDryFireSightedAnim=FireDry
 
     bUsesIronSightAnims=false
     bUsesIronsightMeleeAnim=false
@@ -127,7 +127,7 @@ DefaultProperties
     RoundBoneNames(2)=Enfield_Bullet3
     RoundBoneNames(3)=Enfield_Bullet4
     RoundBoneNames(4)=Enfield_Bullet5
-    RoundBoneNames(5)=Enfield_Bullet6
+    // RoundBoneNames(5)=Enfield_Bullet6
 
     SightRanges.Empty
 }
