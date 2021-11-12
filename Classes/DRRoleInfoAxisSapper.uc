@@ -7,7 +7,7 @@ DefaultProperties
     ClassIndex=`DRCI_SAPPER
 
     Items[RORIGM_Default]={(
-        PrimaryWeapons=(class'DRWeap_Kar98_Rifle'),
+        PrimaryWeapons=(class'DRWeap_Kar98_Rifle',class'DRWeap_Kar98AZ_Rifle'),
         OtherItems=(class'DRWeap_Dynamite'),
     )}
 

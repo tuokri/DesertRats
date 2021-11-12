@@ -42,6 +42,7 @@
 `define DRII_BERETTA_M1934_PISTOL   15
 `define DRII_ENFIELDNO2_REVOLVER    16
 `define DRII_BOYS_AT                17
+`define DRII_KAR98AZ_RIFLE          18
 
 `define DRII_DYNAMITE               34
 `define DRII_TNT                    35

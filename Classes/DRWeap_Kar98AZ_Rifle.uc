@@ -1,6 +1,5 @@
-class DRWeap_Kar98_Rifle extends ROProjectileWeapon
+class DRWeap_Kar98AZ_Rifle extends ROProjectileWeapon
     abstract;
-
 
 // @TEMP - triple spread for most handheld weapons?
 simulated function float GetSpreadMod()
@@ -72,20 +71,21 @@ simulated function PlayFiringSound(byte FireModeNum)
 }
 */
 
+// TODO: Tweak ammo, bullet etc? Fire parameters etc etc.
 DefaultProperties
 {
-    AltFireModeType=ROAFT_Bayonet
+    AltFireModeType=ROAFT_None
 
-    WeaponContentClass(0)="DesertRats.DRWeap_Kar98_Rifle_Content"
+    WeaponContentClass(0)="DesertRats.DRWeap_Kar98AZ_Rifle_Content"
 
-    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Kar'
+    RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Kar' // TODO: AZ doesn't have its own selection image.
 
     WeaponClassType=ROWCT_Rifle
     TeamIndex=`AXIS_TEAM_INDEX
 
     Category=ROIC_Primary   //ROIC_Primary
     Weight=3.7              //KG
-    InvIndex=`DRII_KAR98_RIFLE
+    InvIndex=`DRII_KAR98AZ_RIFLE
     InventoryWeight=0
 
     PlayerIronSightFOV=40.0
@@ -93,7 +93,7 @@ DefaultProperties
     // MAIN FIREMODE
     FiringStatesArray(0)=WeaponSingleFiring
     WeaponFireTypes(0)=EWFT_Custom
-    WeaponProjectiles(0)=class'DRBullet_Kar98'
+    WeaponProjectiles(0)=class'DRBullet_Kar98AZ'
     FireInterval(0)=1.1//+1.25
     DelayedRecoilTime(0)=0.01
     Spread(0)=0.00015
@@ -101,7 +101,7 @@ DefaultProperties
     // ALT FIREMODE
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponManualSingleFiring
     WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Custom
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_Kar98'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_Kar98AZ'
     FireInterval(ALTERNATE_FIREMODE)=1.1//+1.25
     DelayedRecoilTime(ALTERNATE_FIREMODE)=0.01
     Spread(ALTERNATE_FIREMODE)=0.00015
@@ -110,7 +110,6 @@ DefaultProperties
 
     ShoulderedSpreadMod=6.0
     HippedSpreadMod=10.0
-
 
     // AI
     MinBurstAmount=1
@@ -141,8 +140,8 @@ DefaultProperties
     InstantHitDamage(0)=115
     InstantHitDamage(1)=115
 
-    InstantHitDamageTypes(0)=class'DRDmgType_Kar98Bullet'
-    InstantHitDamageTypes(1)=class'DRDmgType_Kar98Bullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_Kar98AZBullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_Kar98AZBullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_Rifles_round'
@@ -277,21 +276,21 @@ DefaultProperties
     MeleePullbackAnim=K98_Pullback
     MeleeHoldAnim=K98_Pullback_Hold
 
-    WeaponBayonetMeleeAnims(0)=K98_Stab
-    WeaponBayonetMeleeHardAnim=K98_StabHard
+    // WeaponBayonetMeleeAnims(0)=K98_Stab
+    // WeaponBayonetMeleeHardAnim=K98_StabHard
 
-    WeaponAttachBayonetAnim=Bayonet_attach
-    WeaponDetachBayonetAnim=Bayonet_detach
+    // WeaponAttachBayonetAnim=Bayonet_attach
+    // WeaponDetachBayonetAnim=Bayonet_detach
 
     WeaponSpotEnemyAnim=enemyspot
     WeaponSpotEnemySightedAnim=enemyspot_ironsight
 
-    BayonetSkelControlName=Bayonet_K98
-    bHasBayonet=true
-    BayonetAttackRange=73.0
-    WeaponBayonetLength=9.8
+    // BayonetSkelControlName=Bayonet_K98
+    bHasBayonet=false
+    // BayonetAttackRange=73.0
+    // WeaponBayonetLength=9.8
 
-    WeaponBayonetSpreadScale=0.98
+    // WeaponBayonetSpreadScale=0.98
 
     EquipTime=+0.75
     PutDownTime=+0.50
