@@ -28,7 +28,7 @@ DefaultProperties
 
     Begin Object Name=PickupMesh
         SkeletalMesh=SkeletalMesh'DR_WP_DAK_KAR98AZ.Mesh.KAR98AZ_3rd'
-        PhysicsAsset=PhysicsAsset'WP_VN_3rd_Master.Phy.MN9130_3rd_Master_Physics'
+        PhysicsAsset=PhysicsAsset'DR_WP_DAK_KAR98AZ.Phy.KAR98AZ_3rd_Physics'
         AnimTreeTemplate=AnimTree'WP_VN_3rd_Master.AnimTree.MN9130_3rd_Tree'
         CollideActors=true
         BlockActors=true

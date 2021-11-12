@@ -317,12 +317,12 @@ DefaultProperties
     MaxPenetrationTests=3
     MaxNumPenetrations=2
 
-    PlayerViewOffset=(X=0.0,Y=8.0,Z=-5)
+    PlayerViewOffset=(X=0.50,Y=0.04,Z=-0.15)
     ZoomInRotation=(Pitch=-910,Yaw=0,Roll=2910)
     ShoulderedTime=0.35
     ShoulderedPosition=(X=0.5,Y=4.0,Z=-2.0)// (X=0,Y=1,Z=-1.4)
     ShoulderRotation=(Pitch=-500,Yaw=0,Roll=2500)
-    IronSightPosition=(X=0,Y=0,Z=-0.05)
+    IronSightPosition=(X=0.50,Y=0.04,Z=-0.15)
 
     bUsesFreeAim=true
 
@@ -359,7 +359,8 @@ DefaultProperties
     SightSlideControlName=Sight_Slide
     SightRotControlName=Sight_Rotation
 
-    SightRanges[0]=(SightRange=100,SightPitch=60,SightSlideOffset=0.0,SightPositionOffset=-0.05)//85
+    // SightRanges[0]=(SightRange=100,SightPitch=60,SightSlideOffset=0.0,SightPositionOffset=-0.05)//85
+    SightRanges[0]=(SightRange=100,SightPitch=100,SightSlideOffset=0.0,SightPositionOffset=-0.00)//85
     SightRanges[1]=(SightRange=200,SightPitch=165,SightSlideOffset=0.2,SightPositionOffset=-0.1)
     SightRanges[2]=(SightRange=300,SightPitch=280,SightSlideOffset=0.36,SightPositionOffset=-0.17)
     SightRanges[3]=(SightRange=400,SightPitch=400,SightSlideOffset=0.48,SightPositionOffset=-0.24)
