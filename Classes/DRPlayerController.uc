@@ -232,9 +232,12 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
 
         if (VoicePRI.Team.TeamIndex == `AXIS_TEAM_INDEX)
         {
-            if (VoicePRI.VoicePackIndex < NorthTeamVoicePacks.Length)
+            if (VoicePRI.VoicePackIndex < NorthTeamVoicePacks.Length )
             {
                 VoicePack = NorthTeamVoicePacks[VoicePRI.VoicePackIndex];
+            }
+            else if (VoicePRI.VoicePackIndex < NorthTeamVoicePacksCustom.Length)
+            {
                 CustomVoicePack = NorthTeamVoicePacksCustom[VoicePRI.VoicePackIndex];
             }
             else
@@ -250,6 +253,9 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
                 if (VoicePRI.VoicePackIndex < SouthTeamAltVoicePacks.Length)
                 {
                     VoicePack = SouthTeamAltVoicePacks[VoicePRI.VoicePackIndex];
+                }
+                else if (VoicePRI.VoicePackIndex < SouthTeamAltVoicePacksCustom.Length)
+                {
                     CustomVoicePack = SouthTeamAltVoicePacksCustom[VoicePRI.VoicePackIndex];
                 }
                 else
@@ -263,7 +269,10 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
                 if (VoicePRI.VoicePackIndex < SouthTeamVoicePacks.Length)
                 {
                     VoicePack = SouthTeamVoicePacks[VoicePRI.VoicePackIndex];
-                    CustomVoicePack = SouthTeamAltVoicePacksCustom[VoicePRI.VoicePackIndex];
+                }
+                else if (VoicePRI.VoicePackIndex < SouthTeamVoicePacksCustom.length)
+                {
+                    CustomVoicePack = SouthTeamVoicePacksCustom[VoicePRI.VoicePackIndex];
                 }
                 else
                 {
