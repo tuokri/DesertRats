@@ -6,9 +6,9 @@ DefaultProperties
     // ------------------------------- Mesh --------------------------------------------------------------
 
     Begin Object Name=ROSVehicleMesh
-        SkeletalMesh=SkeletalMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_Rig'
+        SkeletalMesh=SkeletalMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_Rig_Master'
         AnimTreeTemplate=AnimTree'DR_VH_DAK_SDKFZ222.Anim.SdKfz222_AnimTree'
-        PhysicsAsset=PhysicsAsset'DR_VH_DAK_SDKFZ222.Phy.SdKfz222_Rig_Physics'
+        PhysicsAsset=PhysicsAsset'DR_VH_DAK_SDKFZ222.Phy.SdKfz222_Rig_Master_Physics'
     End Object
 
     // --------------------------------- Sounds -----------------------------------------------------------
@@ -134,10 +134,11 @@ DefaultProperties
 
     // RoleSelectionImage=Texture2D'UI_Textures_VehiclePack.Textures.Sov_tank_UC'
 
-    // Driver
-    SeatProxies(0)={(
+    // TODO: DAK proxies.
+    // Driver.
+    SeatProxies(`SDKFZ_222_DRIVER_SPI)={(
         TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
-        HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
+        HeadGearMeshType=None,
         HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
         HeadphonesMeshType=none,
         HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
@@ -145,30 +146,32 @@ DefaultProperties
         SeatIndex=0,
         PositionIndex=0)}
 
-    /*
-    SeatProxies(1)={(
-        TunicMeshType=SkeletalMesh'CHR_Ger_RawRecruit.Mesh.ger_rr_tunic',
-        HeadGearMeshType=SkeletalMesh'CHR_Ger_RawRecruit.Mesh.ger_rr_helmet',
-        HeadAndArmsMeshType=SkeletalMesh'CHR_Ger_RawRecruit_Heads.Mesh.ger_rr_head_A01',
+    // Gunner.
+    SeatProxies(`SDKFZ_222_GUNNER_SPI)={(
+        TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
+        HeadGearMeshType=None,
+        HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
         HeadphonesMeshType=none,
-        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_Ger_RawRecruit_Heads.Materials.Ger_Rank1_Head01_M',
-        BodyMICTemplate=MaterialInstanceConstant'CHR_Ger_RawRecruit.Materials.Ger_Rank1_Tunic_M',
+        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
+        BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=1,
         PositionIndex=0)}
 
+    /*
+    // Commander / loader.
     SeatProxies(2)={(
-        TunicMeshType=SkeletalMesh'CHR_Ger_RawRecruit.Mesh.ger_rr_tunic',
-        HeadGearMeshType=SkeletalMesh'CHR_Ger_RawRecruit.Mesh.ger_rr_helmet',
-        HeadAndArmsMeshType=SkeletalMesh'CHR_Ger_RawRecruit_Heads.Mesh.ger_rr_head_A01',
+        TunicMeshType=SkeletalMesh'CHR_VN_US_Army.Mesh.US_Tunic_Long_Mesh',
+        HeadGearMeshType=SkeletalMesh'CHR_VN_US_Headgear.Mesh.US_headgear_var1',
+        HeadAndArmsMeshType=SkeletalMesh'CHR_VN_US_Heads.Mesh.US_Head1_Mesh',
         HeadphonesMeshType=none,
-        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_Ger_RawRecruit_Heads.Materials.Ger_Rank1_Head01_M',
-        BodyMICTemplate=MaterialInstanceConstant'CHR_Ger_RawRecruit.Materials.Ger_Rank1_Tunic_M',
+        HeadAndArmsMICTemplate=MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_01_Long_INST',
+        BodyMICTemplate=MaterialInstanceConstant'CHR_VN_US_Army.Materials.M_US_Tunic_Long_INST',
         SeatIndex=2,
         PositionIndex=0)}
     */
 
-    // Seat proxy animations
-    SeatProxyAnimSet=AnimSet'DR_VH_Common.Anim.CHR_Panzer4G_Anim_Master'
+    // Seat proxy animations.
+    SeatProxyAnimSet=AnimSet'VH_VN_ARVN_M113_APC.Anim.CHR_M113_Anim_Master'
 
     //----------------------------------------------------------------
     //                 Tank Attachments
@@ -184,15 +187,13 @@ DefaultProperties
     // the exterior.
     //----------------------------------------------------------------
 
+    // -------------- Exterior attachments ------------------//
 
-    // -------------- Interior attachments ------------------//
-
-    /*
-    Begin Object class=StaticMeshComponent name=IntBodyAttachment0
-        StaticMesh=StaticMesh'WF_Vehicles_Jeep.jeep_glass'
-        LightingChannels=(Dynamic=FALSE,Unnamed_1=TRUE,bInitialized=TRUE)
-        LightEnvironment = MyInteriorLightEnvironment
-        CastShadow=false
+    Begin Object class=StaticMeshComponent name=ExtBodyAttachment0
+        StaticMesh=StaticMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_Ext'
+        LightingChannels=(Dynamic=TRUE,Unnamed_1=FALSE,bInitialized=TRUE)
+        LightEnvironment=MyLightEnvironment
+        CastShadow=true
         DepthPriorityGroup=SDPG_Foreground
         HiddenGame=true
         CollideActors=false
@@ -201,7 +202,21 @@ DefaultProperties
         BlockNonZeroExtent=false
     End Object
 
-    MeshAttachments(0)={(AttachmentName=IntBodyComponent,Component=IntBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=windshield)}
-    */
+    // "Exterior interior" because this vehicle has an open top.
+    Begin Object class=StaticMeshComponent name=IntBodyAttachment0
+        StaticMesh=StaticMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_Int'
+        LightingChannels=(Dynamic=TRUE,Unnamed_1=FALSE,bInitialized=TRUE)
+        LightEnvironment=MyLightEnvironment
+        CastShadow=true
+        DepthPriorityGroup=SDPG_Foreground
+        HiddenGame=true
+        CollideActors=false
+        BlockActors=false
+        BlockZeroExtent=false
+        BlockNonZeroExtent=false
+    End Object
+
     MeshAttachments.Empty
+    MeshAttachments(0)={(AttachmentName=ExtBodyComponent,Component=ExtBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=attachments_body)}
+    MeshAttachments(1)={(AttachmentName=IntBodyComponent,Component=IntBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=attachments_body)}
 }

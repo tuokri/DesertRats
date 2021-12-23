@@ -1536,9 +1536,6 @@ defaultproperties
 
     Seats(2)={(
         GunClass=class'DRVWeapon_PanzerIVF_Turret',
-        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_Crusader', // TODO: TEMPORARY
-        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_M4A1',
-        // SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_optics_M55',
         SightOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg',
         NeedleOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_bg_TOP',
         RangeOverlayTexture=Texture2D'DR_UI.VehicleOptics.ui_hud_vehicle_PZIV_optics_range',

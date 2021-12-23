@@ -6,10 +6,10 @@ DefaultProperties
     // ------------------------------- Mesh --------------------------------------------------------------
 
     Begin Object Name=ROSVehicleMesh
-        SkeletalMesh=SkeletalMesh'DR_VH_UK_JEEP.Mesh.jeep_rig_master'
+        SkeletalMesh=SkeletalMesh'DR_VH_UK_JEEP.Mesh.Jeep_Rig_Master_New'
         LightingChannels=(Dynamic=TRUE,Unnamed_1=TRUE,bInitialized=TRUE)
-        AnimTreeTemplate=AnimTree'DR_VH_UK_JEEP.Anim.AT_Jeep'
-        PhysicsAsset=PhysicsAsset'DR_VH_UK_JEEP.Phy.jeep_Physics'
+        AnimTreeTemplate=AnimTree'DR_VH_UK_JEEP.Anim.AT_Jeep_New'
+        PhysicsAsset=PhysicsAsset'DR_VH_UK_JEEP.Phy.Jeep_Rig_Master_New_Physics'
         AnimSets.Add(AnimSet'DR_VH_UK_JEEP.Anim.jeepAnims')
     End Object
 
@@ -207,6 +207,7 @@ DefaultProperties
 
     // -------------- Exterior attachments ------------------//
 
+    /*
     Begin Object class=StaticMeshComponent name=ExtBodyAttachment0
         StaticMesh=StaticMesh'DR_VH_UK_JEEP.Mesh.JEEP_Body'
         LightingChannels=(Dynamic=TRUE,Unnamed_1=FALSE,bInitialized=TRUE)
@@ -234,6 +235,7 @@ DefaultProperties
         BlockZeroExtent=false
         BlockNonZeroExtent=false
     End Object
+    */
 
 //  Begin Object class=StaticMeshComponent name=IntBodyAttachment1
 //      StaticMesh=StaticMesh'VH_Ger_Halftrack.Mesh.VH_SM_HT_Driver_Side'
@@ -287,8 +289,8 @@ DefaultProperties
         BlockNonZeroExtent=false
     End Object*/
 
-    MeshAttachments(0)={(AttachmentName=ExtBodyComponent,Component=ExtBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=body)}
-    MeshAttachments(1)={(AttachmentName=IntBodyComponent,Component=IntBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=windshield)}
+    //MeshAttachments(0)={(AttachmentName=ExtBodyComponent,Component=ExtBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=body)}
+    //MeshAttachments(1)={(AttachmentName=IntBodyComponent,Component=IntBodyAttachment0,bAttachToSocket=true,AttachmentTargetName=windshield)}
     //MeshAttachments(2)={(AttachmentName=IntBodyComponent2,Component=IntBodyAttachment1,AttachmentTargetName=chassis)}
     //MeshAttachments(3)={(AttachmentName=IntBodyComponent3,Component=IntBodyAttachment2,AttachmentTargetName=chassis)}
     //MeshAttachments(4)={(AttachmentName=IntBodyComponent4,Component=IntBodyAttachment3,AttachmentTargetName=chassis)}

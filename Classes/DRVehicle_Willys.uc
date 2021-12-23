@@ -424,7 +424,7 @@ DefaultProperties
                                     bIsExterior=true,
                                     LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverLeftSteer,DefaultEffectorRotationTargetName=IK_DriverLeftSteer),
                                     RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverRightSteer,DefaultEffectorRotationTargetName=IK_DriverRightSteer,
-                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=IK_DriverClutchLever,EffectorRotationTargetName=IK_DriverClutchLever))),
+                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=IK_DriverGearShifter,EffectorRotationTargetName=IK_DriverGearShifter))),
                                     LeftFootIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverClutchPedal,DefaultEffectorRotationTargetName=IK_DriverClutchPedal,
                                         AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=IK_DriverClutchPedal,EffectorRotationTargetName=IK_DriverClutchPedal))),
                                     RightFootIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverGasPedal,DefaultEffectorRotationTargetName=IK_DriverGasPedal),
@@ -436,7 +436,7 @@ DefaultProperties
                                     bIsExterior=true,
                                     LeftHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverLeftSteer,DefaultEffectorRotationTargetName=IK_DriverLeftSteer),
                                     RightHandIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverRightSteer,DefaultEffectorRotationTargetName=IK_DriverRightSteer,
-                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=IK_DriverClutchLever,EffectorRotationTargetName=IK_DriverClutchLever))),
+                                        AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=IK_DriverGearShifter,EffectorRotationTargetName=IK_DriverGearShifter))),
                                     LeftFootIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverClutchPedal,DefaultEffectorRotationTargetName=IK_DriverClutchPedal,
                                         AlternateEffectorTargets=((Action=DAct_ShiftGears,IKEnabled=true,EffectorLocationTargetName=IK_DriverClutchPedal,EffectorRotationTargetName=IK_DriverClutchPedal))),
                                     RightFootIKInfo=(IKEnabled=true,DefaultEffectorLocationTargetName=IK_DriverGasPedal,DefaultEffectorRotationTargetName=IK_DriverGasPedal),
@@ -509,16 +509,16 @@ Seats(3)={( CameraTag=None,
     RightSteerableWheelIndex=0
     LeftSteerableSimWheelIndex=3
     RightSteerableSimWheelIndex=1
-    MaxVisibleSteeringAngle=45.0
+    MaxVisibleSteeringAngle=25.0
 
     LeftWheels.Empty
     RightWheels.Empty
 
-    LeftWheels(0)="L1_Wheel"
-    LeftWheels(1)="L2_Wheel"
+    LeftWheels(0)="L_Wheel_00"
+    LeftWheels(1)="L_Wheel_01"
     //
-    RightWheels(0)="R1_Wheel"
-    RightWheels(1)="R2_Wheel"
+    RightWheels(0)="R_Wheel_00"
+    RightWheels(1)="R_Wheel_01"
 
     /** Physics Wheels */
 
@@ -526,9 +526,9 @@ Seats(3)={( CameraTag=None,
 
     // Right Rear Wheel
     Begin Object Name=RRWheel
-        BoneName="RearWheelRight"
-        BoneOffset=(X=-6.0,Y=0.0,Z=0.0)
-        WheelRadius=19.5
+        BoneName="R_Wheel_01"
+        BoneOffset=(X=0.0,Y=5.0,Z=-10.0)
+        WheelRadius=18.5
         SteerFactor=0 //0.1f
         bPoweredWheel=True
         SuspensionTravel=25
@@ -539,9 +539,9 @@ Seats(3)={( CameraTag=None,
 
     // Right Front Wheel
     Begin Object Name=RFWheel
-        BoneName="FrontWheelRight"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
-        WheelRadius=19.5
+        BoneName="R_Wheel_00"
+        BoneOffset=(X=0.0,Y=5.0,Z=-10.0)
+        WheelRadius=18.5
         SteerFactor=1.0f
         bPoweredWheel=False
         SuspensionTravel=25
@@ -550,9 +550,9 @@ Seats(3)={( CameraTag=None,
 
     // Left Rear Wheel
     Begin Object Name=LRWheel
-        BoneName="RearWheelLeft"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
-        WheelRadius=19.5
+        BoneName="L_Wheel_01"
+        BoneOffset=(X=0.0,Y=-5.0,Z=-10.0)
+        WheelRadius=18.5
         SteerFactor=0 // 0.1f
         bPoweredWheel=False
         SuspensionTravel=25
@@ -563,9 +563,9 @@ Seats(3)={( CameraTag=None,
 
     // Left Front Wheel
     Begin Object Name=LFWheel
-        BoneName="FrontWheelLeft"
-        BoneOffset=(X=0.0,Y=0.0,Z=0.0)
-        WheelRadius=19.5
+        BoneName="L_Wheel_00"
+        BoneOffset=(X=0.0,Y=-5.0,Z=-10.0)
+        WheelRadius=18.5
         SteerFactor=1.0f
         bPoweredWheel=True
         SuspensionTravel=25
@@ -738,7 +738,7 @@ Seats(3)={( CameraTag=None,
     EngineIdleRPM=0 // Lowest marker on visible speedo is 300
     EngineNormalRPM=2700
     EngineMaxRPM=4500 // 3500 // 3200+300
-    Speedo3DGaugeMaxAngle=101944 //50972 // HUD speedo goes to 100, physical only does 50, so divide this value by 0.5
+    Speedo3DGaugeMaxAngle=40049.768 // 220 degrees = 60 mp/h on physical speedo.
     EngineOil3DGaugeMinAngle=12000
     EngineOil3DGaugeMaxAngle=29768
     EngineOil3DGaugeDamageAngle=4096
@@ -746,10 +746,10 @@ Seats(3)={( CameraTag=None,
     GearboxOil3DGaugeNormalAngle=22500
     GearboxOil3DGaugeMaxAngle=32768
     GearboxOil3DGaugeDamageAngle=5000
-    EngineTemp3DGaugeNormalAngle=10923
-    EngineTemp3DGaugeEngineDamagedAngle=16748
-    EngineTemp3DGaugeFireDamagedAngle=20025
-    EngineTemp3DGaugeFireDestroyedAngle=22756
+    EngineTemp3DGaugeNormalAngle=23790 // ~180 F.
+    EngineTemp3DGaugeEngineDamagedAngle=32940 // ~200 F.
+    EngineTemp3DGaugeFireDamagedAngle=40260 // ~ 220 F.
+    EngineTemp3DGaugeFireDestroyedAngle=45800 // Off the scale.
 
     // Muzzle Flashes
     VehicleEffects(TankVFX_Firing1)=(EffectStartTag=HTHullMG,EffectTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_3rdP_Rifles_split',EffectSocket=MG_Barrel)

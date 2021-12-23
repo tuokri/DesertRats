@@ -3,7 +3,7 @@ class DRVehicleFactory_SdKfz_222_Recon extends DRVehicleFactory;
 DefaultProperties
 {
     Begin Object Name=SVehicleMesh
-        SkeletalMesh=SkeletalMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_Rig'
+        SkeletalMesh=SkeletalMesh'DR_VH_DAK_SDKFZ222.Mesh.SdKfz222_PHAT_Ref'
     End Object
 
     Begin Object Name=CollisionCylinder

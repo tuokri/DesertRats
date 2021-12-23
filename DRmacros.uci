@@ -48,14 +48,19 @@
 `define DRII_TNT                    35
 `define DRII_MILLS_GRENADE          36
 `define DRII_M39_Grenade            37
+`define DRII_NO37_WP_GRENADE        38
 
-`define DRII_MG34_TRIPOD            38
-`define DRII_VICKERS_HMG            39
+`define DRII_MG34_TRIPOD            50
+`define DRII_VICKERS_HMG            51
 
 // Seat proxy indices.
 `define CRUSADER_DRIVER_SPI         0
 `define CRUSADER_COMMANDER_SPI      1
 `define CRUSADER_GUNNER_SPI         2
+
+`define SDKFZ_222_DRIVER_SPI        0
+`define SDKFZ_222_GUNNER_SPI        1
+`define SDKFZ_222_COMMANDER_SPI     2
 
 `define PZIV_DRIVER_SPI             0
 `define PZIV_COMMANDER_SPI          1
