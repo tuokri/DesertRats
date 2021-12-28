@@ -10,6 +10,7 @@ simulated function float GetSpreadMod()
     return 3 * super.GetSpreadMod();
 }
 
+/*
 simulated function SetupArmsAnim()
 {
     super.SetupArmsAnim();
@@ -18,6 +19,7 @@ simulated function SetupArmsAnim()
     ROPawn(Instigator).ArmsMesh.AnimSets[1] = SkeletalMeshComponent(Mesh).AnimSets[0];
     ROPawn(Instigator).ArmsMesh.AnimSets[4] = SkeletalMeshComponent(Mesh).AnimSets[1];
 }
+*/
 
 simulated function bool ShouldLoadStripperClip()
 {
@@ -173,141 +175,82 @@ DefaultProperties
     bHasManualBolting=true
 
     //Equip and putdown
-    WeaponPutDownAnim=SMLE_Putaway
-    WeaponEquipAnim=SMLE_Pullout
-    WeaponDownAnim=SMLE_Down
-    WeaponUpAnim=SMLE_Up
+    WeaponPutDownAnim=SMLE_SelectDown
+    WeaponEquipAnim=SMLE_SelectUp
+    WeaponDownAnim=SMLE_SelectDown
+    WeaponUpAnim=SMLE_SelectUp
 
     // Fire Anims
     //Hip fire
-    WeaponFireAnim(0)=SMLE_Hip_Bolt
-    WeaponFireAnim(1)=SMLE_Hip_Bolt
-    WeaponFireLastAnim=SMLE_Hip_ShootLAST
-
+    WeaponFireAnim(0)=SMLE_FireBolt
+    WeaponFireAnim(1)=SMLE_FireBolt
+    WeaponFireLastAnim=SMLE_Fire
     //Shouldered fire
-    WeaponFireShoulderedAnim(0)=SMLE_Hip_Bolt
-    WeaponFireShoulderedAnim(1)=SMLE_Hip_Bolt
-    WeaponFireLastShoulderedAnim=SMLE_Hip_ShootLAST
-
+    WeaponFireShoulderedAnim(0)=SMLE_FireBolt
+    WeaponFireShoulderedAnim(1)=SMLE_FireBolt
+    WeaponFireLastShoulderedAnim=SMLE_Fire
     //Fire using iron sights
-    WeaponFireSightedAnim(0)=SMLE_Iron_Manual_Bolt
-    WeaponFireSightedAnim(1)=SMLE_Iron_Manual_Bolt
-    WeaponFireLastSightedAnim=SMLE_Iron_ShootLAST
-
+    WeaponFireSightedAnim(0)=SMLE_FireBolt
+    WeaponFireSightedAnim(1)=SMLE_FireBolt
+    WeaponFireLastSightedAnim=SMLE_Fire
     //Manual bolting
-    WeaponManualBoltAnim=SMLE_Iron_Manual_Bolt
-    WeaponManualBoltRestAnim=SMLE_Iron_Manual_Bolt_rest
+    WeaponManualBoltAnim=SMLE_Bolting
+    WeaponManualBoltRestAnim=SMLE_Bolting
 
     // Idle Anims
-    //Hip Idle
-    WeaponIdleAnims(0)=SMLE_Hip_Idle
-    WeaponIdleAnims(1)=SMLE_Hip_Idle
+    // Hip Idle
+    WeaponIdleAnims(0)=SMLE_Idle
+    WeaponIdleAnims(1)=SMLE_Idle
     // Shouldered idle
-    WeaponIdleShoulderedAnims(0)=SMLE_Hip_Idle
-    WeaponIdleShoulderedAnims(1)=SMLE_Hip_Idle
-    //Sighted Idle
-    WeaponIdleSightedAnims(0)=SMLE_Iron_Idle
-    WeaponIdleSightedAnims(1)=SMLE_Iron_Idle
+    WeaponIdleShoulderedAnims(0)=SMLE_Idle
+    WeaponIdleShoulderedAnims(1)=SMLE_Idle
+    // Sighted Idle
+    WeaponIdleSightedAnims(0)=SMLE_Idle
+    WeaponIdleSightedAnims(1)=SMLE_Idle
 
     // Prone Crawl
-    WeaponCrawlingAnims(0)=SMLE_CrawlF
-    WeaponCrawlStartAnim=SMLE_Crawl_into
-    WeaponCrawlEndAnim=SMLE_Crawl_out
+    WeaponCrawlingAnims(0)=SMLE_ProneLoop
+    WeaponCrawlStartAnim=SMLE_ProneIn
+    WeaponCrawlEndAnim=SMLE_ProneOut
 
     //Reloading
-    WeaponReloadStripperAnim=SMLE_Reload_Half
-    ReloadStripperDoubleAnim=SMLE_Reload_Empty
-    WeaponReloadSingleBulletAnim=SMLE_Rsingle_Insert
-    WeaponReloadEmptySingleBulletAnim=SMLE_Rsingle_Insert_empty
+    WeaponReloadStripperAnim=SMLE_ReloadClip
+    WeaponReloadSingleBulletAnim=SMLE_ReloadSingle
+    WeaponReloadEmptySingleBulletAnim=SMLE_ReloadSingle
     WeaponOpenBoltAnim=SMLE_Rsingle_Boltopen
-    WeaponOpenBoltEmptyAnim=SMLE_Rsingle_Boltopen_empty
-    WeaponCloseBoltAnim=SMLE_Rsingle_Boltclose
+    WeaponOpenBoltEmptyAnim=SMLE_ReloadSingle
+    WeaponCloseBoltAnim=SMLE_ReloadClose
 
-    WeaponRestReloadStripperAnim=SMLE_Reload_Half_rest
-    RestReloadStripperDoubleAnim=SMLE_Reload_Empty_rest
-    WeaponRestReloadSingleBulletAnim=SMLE_Rsingle_Insert_rest
-    WeaponRestReloadEmptySingleBulletAnimSMLE_Rsingle_Insert_empty_rest
-    WeaponRestOpenBoltAnim=SMLE_Rsingle_Boltopen_rest
-    WeaponRestOpenBoltEmptyAnim=SMLE_Rsingle_Boltopen_empty_rest
-    WeaponRestCloseBoltAnim=SMLE_Rsingle_Boltclose_rest
+    WeaponRestReloadStripperAnim=SMLE_ReloadClip
+    WeaponRestReloadSingleBulletAnim=SMLE_ReloadSingle
+    WeaponRestReloadEmptySingleBulletAnim=SMLE_ReloadSingle
+    WeaponRestOpenBoltAnim=SMLE_Rsingle_Boltopen
+    WeaponRestOpenBoltEmptyAnim=SMLE_ReloadSingle
+    WeaponRestCloseBoltAnim=SMLE_ReloadClose
 
     // Ammo check
-    WeaponAmmoCheckAnim=SMLE_ammocheck
-    WeaponRestAmmoCheckAnim=SMLE_Ammocheck_rest
+    WeaponAmmoCheckAnim=SMLE_BoltCheck
+    WeaponRestAmmoCheckAnim=SMLE_BoltCheck
 
     // Sprinting
-    WeaponSprintStartAnim=SMLE_sprint_into
-    WeaponSprintLoopAnim=SMLE_Sprint
-    WeaponSprintEndAnim=SMLE_sprint_out
-    Weapon1HSprintStartAnim=SMLE_sprint_into
-    Weapon1HSprintLoopAnim=SMLE_Sprint
-    Weapon1HSprintEndAnim=SMLE_sprint_out
+    WeaponSprintStartAnim=SMLE_RunIn
+    WeaponSprintLoopAnim=SMLE_Run2Loop
+    WeaponSprintEndAnim=SMLE_RunEnd
+    Weapon1HSprintStartAnim=SMLE_RunIn
+    Weapon1HSprintLoopAnim=SMLE_Run1Loop
+    Weapon1HSprintEndAnim=SMLE_RunEnd
 
     // Mantling
-    WeaponMantleOverAnim=SMLE_Mantle
-
-    // Cover/Blind Fire Anims
-    WeaponRestAnim=SMLE_rest_idle
-    WeaponEquipRestAnim=SMLE_pullout_rest
-    WeaponPutDownRestAnim=SMLE_putaway_rest
-    WeaponBlindFireRightAnim=SMLE_BF_Right_Shoot
-    WeaponBlindFireLeftAnim=SMLE_BF_Left_Shoot
-    WeaponBlindFireUpAnim=SMLE_BF_up_Shoot
-    WeaponIdleToRestAnim=SMLE_idleTOrest
-    WeaponRestToIdleAnim=SMLE_restTOidle
-    WeaponRestToBlindFireRightAnim=SMLE_restTOBF_Right
-    WeaponRestToBlindFireLeftAnim=SMLE_restTOBF_Left
-    WeaponRestToBlindFireUpAnim=SMLE_restTOBF_up
-    WeaponBlindFireRightToRestAnim=SMLE_BF_Right_TOrest
-    WeaponBlindFireLeftToRestAnim=SMLE_BF_Left_TOrest
-    WeaponBlindFireUpToRestAnim=SMLE_BF_up_TOrest
-    WeaponBFLeftToUpTransAnim=SMLE_BFleft_toBFup
-    WeaponBFRightToUpTransAnim=SMLE_BFright_toBFup
-    WeaponBFUpToLeftTransAnim=SMLE_BFup_toBFleft
-    WeaponBFUpToRightTransAnim=SMLE_BFup_toBFright
-
-    // Blind Fire ready
-    WeaponBF_Rest2LeftReady=SMLE_restTO_L_ready
-    WeaponBF_LeftReady2LeftFire=SMLE_L_readyTOBF_L
-    WeaponBF_LeftFire2LeftReady=SMLE_BF_LTO_L_ready
-    WeaponBF_LeftReady2Rest=SMLE_L_readyTOrest
-    WeaponBF_Rest2RightReady=SMLE_restTO_R_ready
-    WeaponBF_RightReady2RightFire=SMLE_R_readyTOBF_R
-    WeaponBF_RightFire2RightReady=SMLE_BF_RTO_R_ready
-    WeaponBF_RightReady2Rest=SMLE_R_readyTOrest
-    WeaponBF_Rest2UpReady=SMLE_restTO_Up_ready
-    WeaponBF_UpReady2UpFire=SMLE_Up_readyTOBF_Up
-    WeaponBF_UpFire2UpReady=SMLE_BF_UpTO_Up_ready
-    WeaponBF_UpReady2Rest=SMLE_Up_readyTOrest
-    WeaponBF_LeftReady2Up=SMLE_L_ready_toUp_ready
-    WeaponBF_LeftReady2Right=SMLE_L_ready_toR_ready
-    WeaponBF_UpReady2Left=SMLE_Up_ready_toL_ready
-    WeaponBF_UpReady2Right=SMLE_Up_ready_toR_ready
-    WeaponBF_RightReady2Up=SMLE_R_ready_toUp_ready
-    WeaponBF_RightReady2Left=SMLE_R_ready_toL_ready
-    WeaponBF_LeftReady2Idle=SMLE_L_readyTOidle
-    WeaponBF_RightReady2Idle=SMLE_R_readyTOidle
-    WeaponBF_UpReady2Idle=SMLE_Up_readyTOidle
-    WeaponBF_Idle2UpReady=SMLE_idleTO_Up_ready
-    WeaponBF_Idle2LeftReady=SMLE_idleTO_L_ready
-    WeaponBF_Idle2RightReady=SMLE_idleTO_R_ready
+    WeaponMantleOverAnim=SMLE_Vault
 
     // Melee anims
     WeaponMeleeAnims(0)=SMLE_Bash
-    WeaponMeleeHardAnim=SMLE_BashHard
-    MeleePullbackAnim=SMLE_Pullback
-    MeleeHoldAnim=SMLE_Pullback_Hold
+    WeaponMeleeHardAnim=SMLE_ChargeBash
+    MeleePullbackAnim=SMLE_ChargeIn
+    MeleeHoldAnim=SMLE_Idle // TODO: REPLACE ME
 
-    WeaponBayonetMeleeAnims(0)=SMLE_Stab
-    WeaponBayonetMeleeHardAnim=SMLE_StabHard
-
-    WeaponAttachBayonetAnim=Bayonet_Attach
-    WeaponDetachBayonetAnim=Bayonet_Detach
-
-    // Enemy spotting
-    WeaponSpotEnemyAnim=Spot
-    WeaponSpotEnemySightedAnim=Spot
-    //? WeaponSpotEnemyDeployedAnim=Spot
+    WeaponSpotEnemyAnim=SMLE_Spot
+    WeaponSpotEnemySightedAnim=SMLE_SpotAim
 
     // TODO: Tweak attack range?
     BayonetSkelControlName=Bayonet_SMLE
@@ -319,7 +262,7 @@ DefaultProperties
 
     EquipTime=+0.75
     PutDownTime=+0.50
-    BoltControllerNames[0]=Hammer_9130
+    BoltControllerNames[0]=Hammer
     ISFocusDepth=30
     ISFocusBlendRadius=12
 
@@ -373,10 +316,14 @@ DefaultProperties
     FireCameraAnim[0]=CameraAnim'1stperson_Cameras.Anim.Camera_MN9130_Shoot'
     FireCameraAnim[1]=CameraAnim'1stperson_Cameras.Anim.Camera_MN9130_Shoot'
 
-    SightSlideControlName=Sight_Rotation
+    SightSlideControlName=Sight_Translation
     SightRotControlName=Sight_Rotation
 
-    // SightRanges[0]=(SightRange=100,SightPitch=60,SightSlideOffset=0.05,SightPositionOffset=-0.03)
+    // TODO: proper sight ranges.
+    SightRanges[0]=(SightRange=100,SightPitch=0,SightSlideOffset=0.0,SightPositionOffset=0)
+    SightRanges[1]=(SightRange=200,SightPitch=0,SightSlideOffset=0.0,SightPositionOffset=-0.047)
+    SightRanges[2]=(SightRange=300,SightPitch=0,SightSlideOffset=0.0,SightPositionOffset=-0.088)
+    SightRanges[3]=(SightRange=400,SightPitch=16383,SightSlideOffset=0.0,SightPositionOffset=-0.131)
 
     SuppressionPower=20
 
