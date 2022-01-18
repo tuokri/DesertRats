@@ -26,6 +26,19 @@ simulated event PostBeginPlay()
     }
 }
 
+`ifndef(RELEASE)
+function bool InGodMode()
+{
+    return DRPlayerController(Controller).bGodDR || Controller.bGodMode;
+}
+
+event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector Momentum,
+    class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
+{
+    Super.TakeDamage(InGodMode() ? 0 : Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+}
+`endif
+
 function ClearLeftVehicleFlag()
 {
     bLeftVehicleRecently = False;
@@ -712,7 +725,7 @@ simulated private function PlayQueuedSpeakLine()
 
     // Handle current speech, if any.
     DialogAkComp.StopEvents();
-    DialogAudioComp.Stop();
+    DialogAudioComp.FadeOut(0.2f, 0.f);
 
     bVersusMulti = true;
 
@@ -777,7 +790,10 @@ simulated private function PlayQueuedSpeakLine()
             DialogAudioComp.SoundCue = DelayedSpeakLineParamsCustom.CustomAudio;
             DialogAudioComp.bAllowSpatialization = bAllowSpatialization;
             DialogAudioComp.VolumeMultiplier = 1.0; // TODO: volume control.
-            DialogAudioComp.Play();
+            DialogAudioComp.OcclusionCheckInterval = (bAllowSpatialization ? 0.1 : 0.0);
+            DialogAudioComp.Location = Location;
+            DialogAudioComp.bAutoDestroy = True;
+            DialogAudioComp.FadeIn(0.05f, 1.f);
         }
         else
         {
@@ -828,10 +844,11 @@ DefaultProperties
 
     // --- BEGIN SOUNDCUE BACKPORT ---
     Begin Object Class=DRAudioComponent Name=DialogAudioComp0
-        bStopWhenOwnerDestroyed=true
         AudioClass=EAC_SFX
+        bStopWhenOwnerDestroyed=True
     End Object
     DialogAudioComp=DialogAudioComp0
+    Components.Add(DialogAudioComp0)
     // --- END SOUNDCUE BACKPORT ---
 
     Begin Object Name=ROPawnSkeletalMeshComponent

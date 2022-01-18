@@ -1,6 +1,7 @@
 class DRPlayerController extends ROPlayerController
     config(Game_DesertRats_Client);
 
+var bool bGodDR;
 
 // MORALE MUSIC
 var bool bWaitingForVictoryMusicToEnd;
@@ -361,7 +362,7 @@ simulated event class<ROVoicePack> PlayVoiceCom(Pawn VoicePawn, byte VoiceSeatIn
     // Determine how we want to play the sound.
     if (PawnSpeaker != none)
     {
-        `log("PlayVoiceCom(): PawnSpeaker=" $ PawnSpeaker, `DEBUG_VOICECOMS, 'DRAudio');
+        `log(GetFuncName() $ ": PawnSpeaker=" $ PawnSpeaker, `DEBUG_VOICECOMS, 'DRAudio');
 
         // Make Pawn say the line.
         DRPawn(PawnSpeaker).SpeakLineCustom(none, VoicePack.static.GetVoiceComSound(VoiceComIndex), "VoiceComSpeakLine", 0.0,
@@ -440,7 +441,8 @@ function PlayAnnouncerSound(byte VoxType, byte Team, byte VOXIndex, optional byt
                 }
                 else
                 {
-                    PlaySoundBase(CustomAnnouncerSound, true, false, true, PlayLocation);
+                    PlayPooledSoundCustom(CustomAnnouncerSound, None, False, True, PlayLocation);
+                    // PlaySoundBase(CustomAnnouncerSound, true, false, true, PlayLocation);
                 }
                 break;
             default:
@@ -2002,7 +2004,7 @@ simulated exec function SpawnBirdDog()
     local class<ROVehicle> VehicleClass;
     local ROVehicle Vehicle;
 
-    VehicleClass = class<ROVehicle> (DynamicLoadObject("DesertRats.DRAircraft_O1BirdDog_Content", class'Class'));
+    VehicleClass = class<ROVehicle>(DynamicLoadObject("DesertRats.DRAircraft_O1BirdDog_Content", class'Class'));
 
     Vehicle = Spawn(VehicleClass, , , Pawn.Location + Vect(0, 0, 1000));
     // Vehicle.Mesh.AddImpulse(vect(10, 10, 10), Vehicle.Location);
@@ -2552,4 +2554,6 @@ DefaultProperties
     NorthRoundLostTheme=none
     SouthRoundWinTheme=none
     SouthRoundLostTheme=none
+
+    CheatClass=class'DRCheatManager'
 }
