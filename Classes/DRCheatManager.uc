@@ -13,3 +13,8 @@ exec function God()
         bGodDR = True;
     }
 }
+
+exec function DRGod()
+{
+    God();
+}

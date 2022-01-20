@@ -26,7 +26,6 @@ simulated event PostBeginPlay()
     }
 }
 
-`ifndef(RELEASE)
 function bool InGodMode()
 {
     return DRPlayerController(Controller).bGodDR || Controller.bGodMode;
@@ -35,9 +34,8 @@ function bool InGodMode()
 event TakeDamage(int Damage, Controller InstigatedBy, vector HitLocation, vector Momentum,
     class<DamageType> DamageType, optional TraceHitInfo HitInfo, optional Actor DamageCauser)
 {
-    Super.TakeDamage(InGodMode() ? 0 : Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
+    Super.TakeDamage((WorldInfo.NetMode == NM_Standalone && InGodMode()) ? 0 : Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitInfo, DamageCauser);
 }
-`endif
 
 function ClearLeftVehicleFlag()
 {
