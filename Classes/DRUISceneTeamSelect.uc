@@ -18,9 +18,9 @@ event PostInitialize()
 
     super.PostInitialize();
 
-    MapTitleLabelButton = UILabelButton(FindChild(MapTitleLabelName));
-    MapGameModeLabelButton = UILabelButton(FindChild(MapGameModeLabelName));
-    MapDescriptionLabelButton = UILabelButton(FindChild(MapDescriptionLabelName));
+    MapTitleLabelButton = UILabelButton(FindChild(MapTitleLabelName, true));
+    MapGameModeLabelButton = UILabelButton(FindChild(MapGameModeLabelName, true));
+    MapDescriptionLabelButton = UILabelButton(FindChild(MapDescriptionLabelName, true));
 
     WInfo = GetPlayerOwner().Actor.WorldInfo;
     MapName = WInfo.GetMapName(true);
@@ -88,7 +88,7 @@ DefaultProperties
     SouthDisabledLogos(0)    = MaterialInstanceConstant'DR_UI.TeamSelect.Team_Cutout_UK_disabled'
     SouthHighlightedLogos(0) = MaterialInstanceConstant'DR_UI.TeamSelect.Team_Cutout_UK_highlighted'
 
-    MapTitleLabelName=UILabelButton_Title
-    MapGameModeLabelName=UILabelButton_GameMode
-    MapDescriptionLabelName=UILabelButton_Description
+    MapTitleLabelName="UILabelButton_MapTitle"
+    MapGameModeLabelName="UILabelButton_GameMode"
+    MapDescriptionLabelName="UILabelButton_Description"
 }
