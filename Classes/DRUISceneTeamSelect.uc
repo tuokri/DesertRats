@@ -14,6 +14,7 @@ event PostInitialize()
 {
     local string MapName;
     local ROUIDataProvider_MapInfo MapInfo;
+    local WorldInfo WInfo;
 
     super.PostInitialize();
 
@@ -21,11 +22,12 @@ event PostInitialize()
     MapGameModeLabelButton = UILabelButton(FindChild(MapGameModeLabelName));
     MapDescriptionLabelButton = UILabelButton(FindChild(MapDescriptionLabelName));
 
-    MapName = WorldInfo.GetMapName(true);
+    WInfo = GetPlayerOwner().Actor.WorldInfo;
+    MapName = WInfo.GetMapName(true);
     MapInfo = class'ROGameEngine'.static.GetDataProvider_MapInfo(MapName);
 
     MapTitleLabelButton.SetCaption(MapInfo.FriendlyName);
-    MapGameModeLabelButton.SetCaption(WorldInfo.Game.DisplayName);
+    MapGameModeLabelButton.SetCaption(ROGameInfo(WInfo.Game).DisplayName);
     MapDescriptionLabelButton.SetCaption(MapInfo.Description);
 }
 
