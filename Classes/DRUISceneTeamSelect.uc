@@ -23,24 +23,30 @@ event PostInitialize()
     MapDescriptionLabelButton = UILabelButton(FindChild(MapDescriptionLabelName, true));
 }
 
-function HandleSceneActivated( UIScene ActivatedScene, bool bInitialActivation )
+function HandleSceneActivated(UIScene ActivatedScene, bool bInitialActivation)
 {
     local ROUIDataProvider_MapInfo MapInfoProvider;
 
     super.HandleSceneActivated(ActivatedScene, bInitialActivation);
 
     MapName = GetPlayerOwner().Actor.WorldInfo.GetMapName(true);
+    class'Actor'.static.ReplaceText(MapName, "UEDPIE", "");
+    // `log("MapName = " $ MapName,, 'DRDebug');
 
     if (CachedMapName == MapName)
     {
         MapInfoProvider = CachedMapInfoProvider;
+        // `log("Using cached MapInfoProvider",, 'DRDebug');
     }
     else
     {
         MapInfoProvider = class'ROGameEngine'.static.GetDataProvider_MapInfo(MapName);
         CachedMapName = MapName;
         CachedMapInfoProvider = MapInfoProvider;
+        // `log("MapInfoProvider was not cached, fetched new one",, 'DRDebug');
     }
+
+    // `log("MapInfoProvider = " $ MapInfoProvider,, 'DRDebug');
 
     MapTitleLabelButton.SetCaption(MapInfoProvider.FriendlyName);
     MapGameModeLabelButton.SetCaption(ROGameInfo(GetPlayerOwner().Actor.WorldInfo.Game).DisplayName);
