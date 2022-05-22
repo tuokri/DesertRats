@@ -29,13 +29,14 @@ function HandleSceneActivated( UIScene ActivatedScene, bool bInitialActivation )
 
     super.HandleSceneActivated(ActivatedScene, bInitialActivation);
 
+    MapName = GetPlayerOwner().Actor.WorldInfo.GetMapName(true);
+
     if (CachedMapName == MapName)
     {
         MapInfoProvider = CachedMapInfoProvider;
     }
     else
     {
-        MapName = GetPlayerOwner().Actor.WorldInfo.GetMapName(true);
         MapInfoProvider = class'ROGameEngine'.static.GetDataProvider_MapInfo(MapName);
         CachedMapName = MapName;
         CachedMapInfoProvider = MapInfoProvider;
