@@ -10,25 +10,40 @@ var UILabelButton MapTitleLabelButton;
 var UILabelButton MapGameModeLabelButton;
 var UILabelButton MapDescriptionLabelButton;
 
+var string MapName;
+var string CachedMapName;
+var ROUIDataProvider_MapInfo CachedMapInfoProvider;
+
 event PostInitialize()
 {
-    local string MapName;
-    local ROUIDataProvider_MapInfo MapInfo;
-    local WorldInfo WInfo;
-
     super.PostInitialize();
 
     MapTitleLabelButton = UILabelButton(FindChild(MapTitleLabelName, true));
     MapGameModeLabelButton = UILabelButton(FindChild(MapGameModeLabelName, true));
     MapDescriptionLabelButton = UILabelButton(FindChild(MapDescriptionLabelName, true));
+}
 
-    WInfo = GetPlayerOwner().Actor.WorldInfo;
-    MapName = WInfo.GetMapName(true);
-    MapInfo = class'ROGameEngine'.static.GetDataProvider_MapInfo(MapName);
+function HandleSceneActivated( UIScene ActivatedScene, bool bInitialActivation )
+{
+    local ROUIDataProvider_MapInfo MapInfoProvider;
 
-    MapTitleLabelButton.SetCaption(MapInfo.FriendlyName);
-    MapGameModeLabelButton.SetCaption(ROGameInfo(WInfo.Game).DisplayName);
-    MapDescriptionLabelButton.SetCaption(MapInfo.Description);
+    super.HandleSceneActivated(ActivatedScene, bInitialActivation);
+
+    if (CachedMapName == MapName)
+    {
+        MapInfoProvider = CachedMapInfoProvider;
+    }
+    else
+    {
+        MapName = GetPlayerOwner().Actor.WorldInfo.GetMapName(true);
+        MapInfoProvider = class'ROGameEngine'.static.GetDataProvider_MapInfo(MapName);
+        CachedMapName = MapName;
+        CachedMapInfoProvider = MapInfoProvider;
+    }
+
+    MapTitleLabelButton.SetCaption(MapInfoProvider.FriendlyName);
+    MapGameModeLabelButton.SetCaption(ROGameInfo(GetPlayerOwner().Actor.WorldInfo.Game).DisplayName);
+    MapDescriptionLabelButton.SetCaption(MapInfoProvider.Description);
 }
 
 function InitializeButtonStyle(ROPlayerController ROPC)
