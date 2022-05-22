@@ -2,6 +2,33 @@ class DRUISceneTeamSelect extends ROUISceneTeamSelect;
 
 var localized array<string> TeamDescriptions;
 
+var (MapInfo) name MapTitleLabelName;
+var (MapInfo) name MapGameModeLabelName;
+var (MapInfo) name MapDescriptionLabelName;
+
+var UILabelButton MapTitleLabelButton;
+var UILabelButton MapGameModeLabelButton;
+var UILabelButton MapDescriptionLabelButton;
+
+event PostInitialize()
+{
+    local string MapName;
+    local ROUIDataProvider_MapInfo MapInfo;
+
+    super.PostInitialize();
+
+    MapTitleLabelButton = UILabelButton(FindChild(MapTitleLabelName));
+    MapGameModeLabelButton = UILabelButton(FindChild(MapGameModeLabelName));
+    MapDescriptionLabelButton = UILabelButton(FindChild(MapDescriptionLabelName));
+
+    MapName = WorldInfo.GetMapName(true);
+    MapInfo = class'ROGameEngine'.static.GetDataProvider_MapInfo(MapName);
+
+    MapTitleLabelButton.SetCaption(MapInfo.FriendlyName);
+    MapGameModeLabelButton.SetCaption(WorldInfo.Game.DisplayName);
+    MapDescriptionLabelButton.SetCaption(MapInfo.Description);
+}
+
 function InitializeButtonStyle(ROPlayerController ROPC)
 {
     NorthButtonImageEnabled = NorthEnabledLogos[0];
@@ -58,4 +85,8 @@ DefaultProperties
     SouthEnabledLogos(0)     = MaterialInstanceConstant'DR_UI.TeamSelect.Team_Cutout_UK_desat'
     SouthDisabledLogos(0)    = MaterialInstanceConstant'DR_UI.TeamSelect.Team_Cutout_UK_disabled'
     SouthHighlightedLogos(0) = MaterialInstanceConstant'DR_UI.TeamSelect.Team_Cutout_UK_highlighted'
+
+    MapTitleLabelName=UILabelButton_Title
+    MapGameModeLabelName=UILabelButton_GameMode
+    MapDescriptionLabelName=UILabelButton_Description
 }
