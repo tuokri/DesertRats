@@ -25,6 +25,13 @@ DefaultProperties
     RoleSelectionImage(0)=Texture2D'DR_UI.WP_Render.WP_Render_Lewis'
     WeaponContentClass(0)="DesertRats.DRWeap_Lewis_LMG_Content"
 
+    WeaponProjectiles(0)=class'DRBullet_Lewis'
+    InstantHitDamageTypes(0)=class'DRDmgType_LewisBullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_LewisBullet'
+    AmmoClass=class'DRAmmo_Lewis'
+    TracerClass=class'DP28BulletTracer'
+
+    TracerFrequency=5
     // Equip and putdown
     WeaponPutDownAnim=MG34_putaway
     WeaponEquipAnim=MG34_pullout

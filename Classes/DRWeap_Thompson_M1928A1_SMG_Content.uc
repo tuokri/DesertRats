@@ -35,4 +35,22 @@ DefaultProperties
         bSkipAllUpdateWhenPhysicsAsleep=TRUE
         bSyncActorLocationToRootRigidBody=true
     End Object
+
+
+    WeaponProjectiles(0)=class'DRBullet_Thompson'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_Thompson'
+    InstantHitDamageTypes(0)=class'DRDmgType_M1928A1'
+    InstantHitDamageTypes(1)=class'DRDmgType_M1928A1'
+
+    // Ammo
+    AmmoClass=class'DRAmmo_Thompson'
+    MaxAmmoCount=20
+    bUsesMagazines=true
+    InitialNumPrimaryMags=5
+    bPlusOneLoading=false
+    bCanReloadNonEmptyMag=true
+    PenetrationDepth=13
+    MaxPenetrationTests=3
+    MaxNumPenetrations=2
+    PerformReloadPct=0.85f
 }

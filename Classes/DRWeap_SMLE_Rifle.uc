@@ -121,7 +121,7 @@ DefaultProperties
 
     FiringStatesArray(0)=WeaponSingleFiring
     WeaponFireTypes(0)=EWFT_Custom
-    WeaponProjectiles(0)=class'MN9130Bullet'
+    WeaponProjectiles(0)=class'DRBullet_SMLE'
     FireInterval(0)=1.1//+1.5
     DelayedRecoilTime(0)=0.01
     Spread(0)=0.00012
@@ -129,7 +129,7 @@ DefaultProperties
     AltFireModeType=ROAFT_Bayonet
     FiringStatesArray(ALTERNATE_FIREMODE)=WeaponManualSingleFiring
     WeaponFireTypes(ALTERNATE_FIREMODE)=EWFT_Custom
-    WeaponProjectiles(ALTERNATE_FIREMODE)=class'MN9130Bullet'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_SMLE'
     FireInterval(ALTERNATE_FIREMODE)=1.1//+1.5
     DelayedRecoilTime(ALTERNATE_FIREMODE)=0.01
     Spread(ALTERNATE_FIREMODE)=0.00012
@@ -160,8 +160,8 @@ DefaultProperties
     InstantHitDamage(0)=115
     InstantHitDamage(1)=115
 
-    InstantHitDamageTypes(0)=class'RODmgType_MN9130Bullet'
-    InstantHitDamageTypes(1)=class'RODmgType_MN9130Bullet'
+    InstantHitDamageTypes(0)=class'DRDmgType_SMLEBullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_SMLEBullet'
 
     MuzzleFlashSocket=MuzzleFlashSocket
     MuzzleFlashPSCTemplate=ParticleSystem'FX_VN_Weapons.MuzzleFlashes.FX_VN_MuzzleFlash_1stP_Rifles_round'
@@ -266,7 +266,7 @@ DefaultProperties
     ISFocusDepth=30
     ISFocusBlendRadius=12
 
-    AmmoClass=class'ROAmmo_762x54R_MNStripper'
+    AmmoClass=class'DRAmmo_SMLE'
     MaxAmmoCount=10
     bUsesMagazines=false
     InitialNumPrimaryMags=12

@@ -40,6 +40,12 @@ DefaultProperties
     WeaponClassType=ROWCT_ScopedRifle
     TeamIndex=`ALLIES_TEAM_INDEX
 
+    WeaponProjectiles(0)=class'DRBullet_P14'
+    WeaponProjectiles(ALTERNATE_FIREMODE)=class'DRBullet_P14'
+    InstantHitDamageTypes(0)=class'DRDmgType_P14Bullet'
+    InstantHitDamageTypes(1)=class'DRDmgType_P14Bullet'
+    AmmoClass=class'DRAmmo_P14'
+
     // PlayerViewOffset=(X=0,Y=0,Z=0)
 
     IronSightPosition=(X=0,Y=0.02,Z=0)
