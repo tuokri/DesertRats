@@ -51,4 +51,26 @@ DefaultProperties
     WeaponReloadEmptyMagIronAnim=PM_reloadempty_Ironsight_Slide
 
     SlideControlNegName=SlideControl_PM_Neg
+
+    // Shell eject FX
+    ShellEjectSocket=ShellEjectSocket
+    ShellEjectPSCTemplate=ParticleSystem'FX_VN_Weapons.ShellEjects.FX_Wep_ShellEject_VC_MAT49_9mm'
+
+    WeaponProjectiles(0)=class'DRBullet_BerettaM1934'
+    InstantHitDamageTypes(0)=class'DRDmgType_BerettaM1934'
+    InstantHitDamageTypes(1)=class'DRDmgType_BerettaM1934'
+
+    // Ammo
+    MaxAmmoCount=8
+    AmmoClass=class'DRAmmo_BerettaM1934'
+    bUsesMagazines=true
+    InitialNumPrimaryMags=3
+    bPlusOneLoading=true
+    bCanReloadNonEmptyMag=true
+    bCanLoadStripperClip=false
+    bCanLoadSingleBullet=false
+    PenetrationDepth=7
+    MaxPenetrationTests=3
+    MaxNumPenetrations=2
+    PerformReloadPct=0.75f
 }
