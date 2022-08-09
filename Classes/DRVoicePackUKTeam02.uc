@@ -1,315 +1,299 @@
+//=============================================================================
+// DRVoicePackUKTeam02.uc
+//=============================================================================
+// UK Voice Pack 2.
+//=============================================================================
+// Desert Rats for Rising Storm 2: Vietnam
+// Copyright (C) 2022
+// Authored by Adrian "adrian$t3@m" Bari
+//=============================================================================
+
 class DRVoicePackUKTeam02 extends DRVoicePack;
 
-DefaultProperties
+defaultproperties
 {
-    //Ethnicity=1
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////// INFANTRY /////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // INF_CommanderAbilities
+    CustomVoiceComs[`VOICECOM_RequestAbility1]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_CancelArtillery'")
+    CustomVoiceComs[`VOICECOM_RequestAbility2]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_CancelArtillery'")
+    CustomVoiceComs[`VOICECOM_RequestAbility3]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_CancelArtillery'")
+    CustomVoiceComs[`VOICECOM_CallForReconPlane]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_CancelArtillery'")
+    CustomVoiceComs[`VOICECOM_CancelArtillery]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_CancelArtillery'")
 
-    VoiceComs[`VOICECOM_InfantrySpotted]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_InfantrySpotted'")
-    VoiceComs[`VOICECOM_RequestOrders]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestOrders'")
-    VoiceComs[`VOICECOM_RequestSupport]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestSupport'")
-    VoiceComs[`VOICECOM_Confirm]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Confirm'")
-    VoiceComs[`VOICECOM_Thanks]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Thanks'")
-    VoiceComs[`VOICECOM_NeedAmmo]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LowOnAmmo'")
-    VoiceComs[`VOICECOM_Negative]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Deny'")
-    VoiceComs[`VOICECOM_Sorry]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Sorry'")
-    VoiceComs[`VOICECOM_TakeCover]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_IncomingArty'")
-    VoiceComs[`VOICECOM_SLSupressiveFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SupressingFire'")
-    VoiceComs[`VOICECOM_SLMove]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_MoveTO'")
-    VoiceComs[`VOICECOM_SLAttack]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackObj'")
-    VoiceComs[`VOICECOM_SLConfirm]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Confirm'")
-    VoiceComs[`VOICECOM_SLFollow]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FollowMe'")
-    VoiceComs[`VOICECOM_SLDefend]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DefendObjective'")
-    VoiceComs[`VOICECOM_SLReject]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Deny'")
-    VoiceComs[`VOICECOM_SLResume]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Resume'")
-    VoiceComs[`VOICECOM_SLRequestArty]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestSupportArty'")
-    VoiceComs[`VOICECOM_SLAttackTank]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackGeneric'")
-    VoiceComs[`VOICECOM_SLAttackHelo]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackGeneric'")
-    VoiceComs[`VOICECOM_TLSupressiveFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SuppressingOfficer'")
-    VoiceComs[`VOICECOM_TLMove]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_MoveTO'")
-    VoiceComs[`VOICECOM_TLAttack]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackObj'")
-    VoiceComs[`VOICECOM_TLConfirm]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Confirm'")
-    VoiceComs[`VOICECOM_TLFollow]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FollowMe'")
-    VoiceComs[`VOICECOM_TLDefend]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DefendObjective'")
-    //VoiceComs[`VOICECOM_TLForcedRespawn]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CMD_INF_ForceRespawn'")
-    VoiceComs[`VOICECOM_TLResume]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Resume'")
-    VoiceComs[`VOICECOM_TLAttackTank]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackGeneric'")
-    VoiceComs[`VOICECOM_TLAttackHelo]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackGeneric'")
-/*
-    VoiceComs[`VOICECOM_TCSupressiveFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CMD_INF_SuppressingFire'")
-    VoiceComs[`VOICECOM_TCMove]=(MessageIndex=ROCOMMSG_TankMove,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Moveout_NOR_Cue'")
-    VoiceComs[`VOICECOM_TCAttack]=(MessageIndex=ROCOMMSG_TankAttackObjective,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackObjective_NOR_Cue'")
-    VoiceComs[`VOICECOM_TCAttackTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackTargetVehicleGeneric_NOR_Cue'")
-    VoiceComs[`VOICECOM_TCFireAtWill]=(MessageIndex=ROCOMMSG_TankFireAtWill,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_FireatWill_NOR_Cue'")
-    VoiceComs[`VOICECOM_TCDefend]=(MessageIndex=ROCOMMSG_TankDefendObjective,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_DefendObjective_NOR_Cue'")
-    VoiceComs[`VOICECOM_TCHoldFire]=(MessageIndex=ROCOMMSG_TankHoldFire,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_HoldFire_NOR_Cue'")
-    VoiceComs[`VOICECOM_TCResume]=(MessageIndex=ROCOMMSG_TankResume,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Resume_NOR_Cue'")
-*/
-    VoiceComs[`VOICECOM_IncomingArtillery]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_IncomingArty'")
-    VoiceComs[`VOICECOM_IncomingArtillery_Suppressed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_IncomingArtySupport'")
-    //VoiceComs[`VOICECOM_IncomingGunship]=(Sound="")
-    //VoiceComs[`VOICECOM_IncomingAirstrike]=(Sound="")
-    VoiceComs[`VOICECOM_Grenade]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LiveGrenade'")
-    //VoiceComs[`VOICECOM_Satchel]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CHA_INF_Satchel'")
-    VoiceComs[`VOICECOM_TakingFireUnknown]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingFireUnknown'")
-    VoiceComs[`VOICECOM_TakingFireUnknown_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingFireUnknownOfficer'")
-    VoiceComs[`VOICECOM_TakingFireInfantry]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingFireGeneric'")
-    VoiceComs[`VOICECOM_TakingFireSniper]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingFireSniper'")
-    VoiceComs[`VOICECOM_TakingFireMachineGunner]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingFireMG'")
-    //VoiceComs[`VOICECOM_TakingFireTank]=(Type=ROUST_TeamRadius,Sound="AKEvent'"Infantry.THR_INF_TakingFireTank_NOR_Cue'")
-    VoiceComs[`VOICECOM_FriendlyDeath]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FriendlyDeath'")
-    VoiceComs[`VOICECOM_FriendlyDeath_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FriendlyDeath'")
-    VoiceComs[`VOICECOM_FriendlyDeath_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FriendlyDeathOfficer'")
-    VoiceComs[`VOICECOM_FriendlyHeloDeathInf]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FriendlyHelicopterDown'")
-    VoiceComs[`VOICECOM_EnemyDeath]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemyDeath'")
-    VoiceComs[`VOICECOM_EnemyDeath_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemyDeathOfficer'")
-    VoiceComs[`VOICECOM_EnemyDeath_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemyDeath'")
-    VoiceComs[`VOICECOM_EnemyDeath_Suppressed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemyDeathSuppressed'")
-    VoiceComs[`VOICECOM_EnemyDeathUnknown]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemyDeathUnknown'")
-    VoiceComs[`VOICECOM_EnemyHeloDeath]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemyDeath'");
-    VoiceComs[`VOICECOM_EnemyTunnelDestroyed]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TunnelDestroyed'")
-    VoiceComs[`VOICECOM_Suppressed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Supressed'")
-    VoiceComs[`VOICECOM_Suppressed_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Supressed'")
-    VoiceComs[`VOICECOM_Suppressed_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SupressedOfficer'")
-    VoiceComs[`VOICECOM_Suppressing]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Suppressing'")
-    VoiceComs[`VOICECOM_Suppressing_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SuppressingOfficer'")
-    VoiceComs[`VOICECOM_FriendlyFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_FriendlyFire'")
-    VoiceComs[`VOICECOM_SawFriendlyFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SeeingFriendlyFire'")
-    VoiceComs[`VOICECOM_TakingObjective]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingObj'")
-    VoiceComs[`VOICECOM_TakingObjectiveOfficer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingObjOfficer'")
-    VoiceComs[`VOICECOM_TakingObjective_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingObj'")
-    VoiceComs[`VOICECOM_LosingObjective]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LosingObj'")
-    VoiceComs[`VOICECOM_LosingObjectiveOfficer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LosingObjOfficer'")
-    VoiceComs[`VOICECOM_LosingObjective_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LosingObj'")
-    //VoiceComs[`VOICECOM_ThrowingSatchel]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CHA_INF_ThrowingSatchel'")
-    VoiceComs[`VOICECOM_ThrowingGrenade]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_ThrowingGrenade'")
-    VoiceComs[`VOICECOM_ThrowingSmoke]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_ThrowingSmoke'")
-    VoiceComs[`VOICECOM_LowOnAmmo]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LowOnAmmo'")
-    VoiceComs[`VOICECOM_LowOnAmmo_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LowOnAmmo'")
-    VoiceComs[`VOICECOM_OutOfAmmo]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_OutOfAmmoSoldier'")
-    VoiceComs[`VOICECOM_OutOfAmmoMGer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_OutOfAmmoMG'")
-    VoiceComs[`VOICECOM_Reloading]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Reloading'")
-    VoiceComs[`VOICECOM_Reloading_Suppressed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_ReloadingSuppressed'")
-    //VoiceComs[`VOICECOM_Charging]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CHA_INF_Charging'")
-    //VoiceComs[`VOICECOM_TunnelPlaced]=(Sound="")
-    VoiceComs[`VOICECOM_SlowlyDying]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SlowDying'")
-    VoiceComs[`VOICECOM_SlowlyDying_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SlowDyingOfficer'")
-    VoiceComs[`VOICECOM_DeathHeart]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DyingFast'")
-    VoiceComs[`VOICECOM_DeathStomach]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DyingSlow'")
-    VoiceComs[`VOICECOM_DeathNeck]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DyingSlow'")
-    VoiceComs[`VOICECOM_DyingFast]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DyingFast'")
-    VoiceComs[`VOICECOM_DyingSlow]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DyingSlow'")
-    VoiceComs[`VOICECOM_Wounded]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Wounded'")
-    VoiceComs[`VOICECOM_Bandaging]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Bandaging'")
-    VoiceComs[`VOICECOM_IdleSituation1]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituation1_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituation2]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituation2_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituation3]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituation3_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituation3_HighMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierSituation'")
-    VoiceComs[`VOICECOM_IdleSituationOfficer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_OfficerSituation'")
-    VoiceComs[`VOICECOM_IdleSituationOfficer_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_OfficerSituation'")
-    VoiceComs[`VOICECOM_IdleSituationOfficer_HighMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_OfficerSituation'")
-/*
-    VoiceComs[`VOICECOM_TankDriverDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_DriverDead_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankGunnerDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_GunnerDead_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankLoaderDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_LoaderDead_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankHullGunnerDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_HullGunnerDead_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEngineDamaged]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_EngineisDamaged_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEngineDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_EngineisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankMainGunDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_MainGunisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankHullMGDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_HullMGisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankLeftTrackDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_LeftTrackisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankRightTrackDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_RightTrackisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankBrakesDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_BrakesareDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankGearBoxDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_GearBoxisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankTurretTraverseDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_TurretTraverseisDestroyed_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankHitFront]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_WereHitFront_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankHitBack]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_WereHitBack_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankHitLeft]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_WereHitLeft_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankHitRight]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_WereHitRight_NOR_Cue'")
-    VoiceComs[`VOICECOM_FriendlyTankDeath]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_FriendlyTankDeath_NOR_Cue'")
-    VoiceComs[`VOICECOM_FriendlyTankDeath_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_FriendlyTankDeath_LOW_Cue'")
-    VoiceComs[`VOICECOM_FriendlyTankDeath_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_FriendlyTankDeath_HIGH_Cue'")
-    VoiceComs[`VOICECOM_EnemyTankDeath]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_EnemyTankDeath_NOR_Cue'")
-    VoiceComs[`VOICECOM_EnemyTankDeath_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_EnemyTankDeath_LOW_Cue'")
-    VoiceComs[`VOICECOM_EnemyTankDeath_Hero]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_EnemyTankDeath_HIGH_Cue'")
-    VoiceComs[`VOICECOM_TankFriendlyFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_FriendlyFire_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankUnderFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_THR_TNK_UnderTankFire_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankTakingObjective]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_TakingObjective_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankTakingObjective_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_TakingObjective_LOW_Cue'")
-    VoiceComs[`VOICECOM_TankTakingObjectiveOfficer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_TakingObjective_Commander_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankLosingObjective]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_LosingObjective_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankLosingObjective_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_LosingObjective_LOW_Cue'")
-    VoiceComs[`VOICECOM_TankLosingObjectiveOfficer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_LosingObjective_Commander_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankIdleSituation]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_Situation_Crew_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankIdleSituation_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_Situation_Crew_LOW_Cue'")
-    VoiceComs[`VOICECOM_TankIdleCommanderSituation]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_Situation_Commander_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankIdleCommanderSituation_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_Situation_Commander_LOW_Cue'")
-    VoiceComs[`VOICECOM_TankIdleCommanderSituation_HighMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_Situation_Commander_HGH_Cue'")
-    VoiceComs[`VOICECOM_TankIdleVehicleGood]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_ConditionGood_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankIdleVehicleBad]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_ConditionBad_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankIdleVehicleHorrible]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CHA_TNK_ConditionHorrible_NOR_Cue'")
+    // INF_Attack
+    CustomVoiceComs[`VOICECOM_Attack]=                  (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
+    CustomVoiceComs[`VOICECOM_SLSupressiveFire]=        (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SupressingFire'")
+    CustomVoiceComs[`VOICECOM_SLAttackTank]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
+    CustomVoiceComs[`VOICECOM_SLAttackHelo]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
+    CustomVoiceComs[`VOICECOM_TLSupressiveFire]=        (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SupressingFire'")
+    CustomVoiceComs[`VOICECOM_TLAttackTank]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
+    CustomVoiceComs[`VOICECOM_TLAttackHelo]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
 
-*/
-    VoiceComs[`VOICECOM_SpawnAttacking]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnAttacking'")
-    VoiceComs[`VOICECOM_SpawnAttacking_HighMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnAttacking'")
-    VoiceComs[`VOICECOM_SpawnAttacking_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnAttacking'")
-    VoiceComs[`VOICECOM_SpawnDefending]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnDefenders'")
-    VoiceComs[`VOICECOM_SpawnDefending_HighMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnDefenders'")
-    VoiceComs[`VOICECOM_SpawnDefending_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnDefenders'")
-    VoiceComs[`VOICECOM_SpawnNeutral]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpawnNeutral'")
+    // INF_AttackObjective
+    CustomVoiceComs[`VOICECOM_SLAttack]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackObj'")
+    CustomVoiceComs[`VOICECOM_TLAttack]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackObj'")
 
-    VoiceComs[`VOICECOM_EnemySpottedInfantry]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_InfantrySpotted'")
-    VoiceComs[`VOICECOM_EnemySpottedSniper]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SniperSpotted'")
-    VoiceComs[`VOICECOM_EnemySpottedMGer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_MGerSpotted'")
-    VoiceComs[`VOICECOM_EnemySpottedAntiTank]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RPGSpotted'")
-    VoiceComs[`VOICECOM_EnemySpottedGrenadier]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpottedGeneric'")
-    VoiceComs[`VOICECOM_EnemySpottedEngineer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpottedGeneric'")
-    VoiceComs[`VOICECOM_EnemySpottedEngineer_Special]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpottedGeneric'")
-    VoiceComs[`VOICECOM_EnemySpottedTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpottedGeneric'")
-    VoiceComs[`VOICECOM_EnemySpottedTransport]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpottedGeneric'")
-    VoiceComs[`VOICECOM_EnemySpottedHelicopter]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SpottedGeneric'")
-    VoiceComs[`VOICECOM_EnemySpottedTunnel]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TunnelSpotted'")
+    // INF_Charging
+    //CustomVoiceComs[`VOICECOM_Charging]=              (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.AttackGeneric'")
 
-/*  VoiceComs[`VOICECOM_TankEnemySpottedInfantry]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_InfantrySpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedSniper]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_SniperSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedMGer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_MGSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedAntiTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_InfantryAntiTankSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedEngineer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_EngineerSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedEngineer_Special]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_EngineerSpottedDanger_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_TankSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedTransport]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_TransportSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankEnemySpottedHelicopter]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_VehicleAntiTankGunSpotted_NOR_Cue'")
-*/
-    VoiceComs[`VOICECOM_Retreat]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Retreat'")
-    VoiceComs[`VOICECOM_RequestAbility1]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_USCallingSpooky'")
-    VoiceComs[`VOICECOM_RequestAbility2]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_USCallingArty'")
-    VoiceComs[`VOICECOM_RequestAbility3]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_USCallingNapalm'")
-    //VoiceComs[`VOICECOM_TankMoveForward]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Forward,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Forward_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankMoveBackward]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Reverse,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Back_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankTurnLeft]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Left,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Left_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankTurnLeftSlowly]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_LeftSlowly,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_LeftSlowly_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankTurnRight]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Right,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Right_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankTurnRightSlowly]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_RightSlowly,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_RightSlowly_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankStop]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Stop,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Stop_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankAcknowleged]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Acknowledge,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Confirm_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankDenied]=(MessageClass=class'ROLocalMessageVehicle',MessageIndex=ROVEHMSG_Deny,Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_Negative_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankCannonReloaded]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_LoadedCannon_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankSwitchToAPRounds]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_SwitchtoAP_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankSwitchToHERounds]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_SwitchtoHE_NOR_Cue'")
-    //VoiceComs[`VOICECOM_TankSwitchToSmokeRounds]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_SwitchtoSmoke_NOR_Cue'")
-    VoiceComs[`VOICECOM_SLRequestOrders]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestOrderstoCom'")
-/*
-    VoiceComs[`VOICECOM_TankAttackVehicle1oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_1oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle2oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_2oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle3oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_3oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle4oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_4oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle5oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_5oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle6oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_6oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle7oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_7oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle8oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_8oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle9oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_9oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle10oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_10oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle11oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_11oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackVehicle12oclock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackVehicle_12oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto1clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_1oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto2clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_2oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto3clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_3oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto4clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_4oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto5clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_5oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto6clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_6oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto7clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_7oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto8clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_8oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto9clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_9oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto10clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_10oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto11clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_11oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankAttackTargeto12clock]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_AttackGeneric_12oclock_NOR_Cue'")
-    VoiceComs[`VOICECOM_TankBailOut]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_CMD_TNK_BailOut_NOR_Cue'")
-*/
-    VoiceComs[`VOICECOM_TakingObjectiveOfficer_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_TakingObjOfficer'")
-    VoiceComs[`VOICECOM_LosingObjectiveOfficer_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_LosingObjOfficer'")
-    //VoiceComs[`VOICECOM_TankTakingObjectiveOfficer_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_TakingObjective_Commander_LOW_Cue'")
-    //VoiceComs[`VOICECOM_TankLosingObjectiveOfficer_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ACT_TNK_LosingObjective_Commander_LOW_Cue'")
-    VoiceComs[`VOICECOM_IdleEnemyLocation]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemiesLocation'")
-    VoiceComs[`VOICECOM_IdleEnemyLocation_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemiesLocation'")
-    VoiceComs[`VOICECOM_IdleEnemyLocationOfficer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemiesLocationOfficer'")
-    VoiceComs[`VOICECOM_IdleEnemyLocationOfficer_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_EnemiesLocationOfficer'")
-    VoiceComs[`VOICECOM_SoldierTired]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierTired'")
-    VoiceComs[`VOICECOM_SoldierHurt]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_SoldierHurt'")
-    VoiceComs[`VOICECOM_CallForReconPlane]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_USCallingReconPlane'")
-    VoiceComs[`VOICECOM_CancelArtillery]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_CancelArtillery'")
-    VoiceComs[`VOICECOM_Retreat_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Retreat'")
-    VoiceComs[`VOICECOM_TLRequestArtyCoords]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestSupportArty'")
-    VoiceComs[`VOICECOM_NeedMGSupport]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestSupportMG'")
-    //VoiceComs[`VOICECOM_NeedRecon]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_USCallingReconPlane'")
-    VoiceComs[`VOICECOM_NeedArtillery]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestSupportArty'")
-    //VoiceComs[`VOICECOM_NeedAntiTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CMD_INF_RequestSupportAT'")
-    VoiceComs[`VOICECOM_NeedHelo]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_ManAirSupportRequest'")
-    VoiceComs[`VOICECOM_NeedExplosives]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_ManExplosivesRequest'")
-    VoiceComs[`VOICECOM_NeedSmoke]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_RequestSupportSmoke'")
-    VoiceComs[`VOICECOM_Attack]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_AttackGeneric'")
-    VoiceComs[`VOICECOM_Taunt]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_Taunt'")
-    //VoiceComs[`VOICECOM_SpawnedFireFight]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CHA_INF_SpawnFireFight'")
-    //VoiceComs[`VOICECOM_SpawnedFireFight_HighMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CHA_INF_SpawnFireFight_HighMorale'")
-    //VoiceComs[`VOICECOM_SpawnedFireFight_LowMorale]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CHA_INF_SpawnFireFight_LowMorale'")
-    //VoiceComs[`VOICECOM_AIConfirm]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_VOX_ANZAC_VOICE1_CMD_INF_Confirm'")
-    VoiceComs[`VOICECOM_Burning]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_DeathByFire'")
-    //VoiceComs[`VOICECOM_BackBlastWarning]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_InfantrySpotted'")
-    VoiceComs[`VOICECOM_SpottedExplosive]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_ExplosivesSpotted'")
+    // INF_Confirm
+    CustomVoiceComs[`VOICECOM_Confirm]=                 (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Confirm'")
+    CustomVoiceComs[`VOICECOM_SLConfirm]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Confirm'")
+    CustomVoiceComs[`VOICECOM_TLConfirm]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Confirm'")
+    CustomVoiceComs[`VOICECOM_AIConfirm]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Confirm'")
 
-    // new Helicopter Lines below here
-    VoiceComs[`VOICECOM_HeloPilotDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloPilotKilled'")
-    VoiceComs[`VOICECOM_HeloCopilotDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloCoPilotKilled'")
-    VoiceComs[`VOICECOM_HeloBothPilotsDead]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Soldier_1_HeloPilotsDead'")
-    VoiceComs[`VOICECOM_HeloDoorGunnerDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloDoorGunnerKilled'")
-    VoiceComs[`VOICECOM_HeloPassengerDead]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloPassengerKilled_009'")
-    VoiceComs[`VOICECOM_HeloEngineDamaged]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloEngineDamaged'")
-    VoiceComs[`VOICECOM_HeloEngineDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloEngineDestroyedLow'")
-    VoiceComs[`VOICECOM_HeloEngineDestroyedGround]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloEngineDestroyedOnGround'")
-    VoiceComs[`VOICECOM_HeloMainRotorDamaged]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloRotorBladesDamaged'")
-    VoiceComs[`VOICECOM_HeloMainRotorDestroyedGround]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloRotorBladesDestroyedLow'")
-    VoiceComs[`VOICECOM_HeloTailRotorDamaged]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloTailRotorDamaged'")
-    VoiceComs[`VOICECOM_HeloTailRotorDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloTailRotorDestroyed'")
-    VoiceComs[`VOICECOM_HeloLeftSkidDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloSkidsDestroyed'")
-    VoiceComs[`VOICECOM_HeloRightSkidDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloSkidsDestroyed'")
-    VoiceComs[`VOICECOM_HeloTailboomDestroyedGround]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloTailboomDestroyedOnGround'")
-    VoiceComs[`VOICECOM_HeloGoingDown]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloGoingDown'")
-    VoiceComs[`VOICECOM_HeloHit]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloHit'")
-    VoiceComs[`VOICECOM_HeloIncomingRPG]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloUnderRPGFire'")
-    VoiceComs[`VOICECOM_HeloAntiAirWarning]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloInSAMRange'")
-    VoiceComs[`VOICECOM_HeloIncomingMissile]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloSAMFired'")
-    VoiceComs[`VOICECOM_FriendlyHeloDeath]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_FriendlyHeloDown'")
-    VoiceComs[`VOICECOM_EnemyVehicleDestroyed]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloDestroyedEnemyVehicle'")
-    VoiceComs[`VOICECOM_HeloUnderFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloUnderSmallArmsFire'")
-    VoiceComs[`VOICECOM_HeloTakingFriendlyFire]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloTakingFF'")
-    VoiceComs[`VOICECOM_HeloFriendlyFire]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloFF'")
-    VoiceComs[`VOICECOM_HeloStartRearm]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloReload'")
-    VoiceComs[`VOICECOM_HeloFinishRearm]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloReloadComplete'")
-    VoiceComs[`VOICECOM_HeloLowOnAmmo]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloLowAmmo'")
-    VoiceComs[`VOICECOM_HeloOutOfAmmo]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloOutOfAmmo_009'")
-    //VoiceComs[`VOICECOM_HeloIdleSituation]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloIdleGround'")
-    VoiceComs[`VOICECOM_HeloIdleVehicleGood]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloStatusGood'")
-    VoiceComs[`VOICECOM_HeloIdleVehicleBad]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloStatusPoor'")
-    VoiceComs[`VOICECOM_HeloIdleVehicleHorrible]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloStatusBad'")
-    VoiceComs[`VOICECOM_HeloEnemySpottedInfantry]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloEnemySpotted'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedSniper]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_SniperSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedMGer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_MGSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedAntiTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_InfantryAntiTankSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedEngineer]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_EngineerSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedTank]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_TankSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedTransport]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_TransportSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedTunnel]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_TransportSpotted_NOR_Cue'")
-    //VoiceComs[`VOICECOM_HeloEnemySpottedHelicopter]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_SPC_TNK_VehicleAntiTankGunSpotted_NOR_Cue'")
-    VoiceComs[`VOICECOM_HeloEnemyDeath]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloKillConfirmed'")
-    VoiceComs[`VOICECOM_HeloAcknowledged]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloGenConfirm'")
-    VoiceComs[`VOICECOM_HeloDenied]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloGenDeny'")
-    VoiceComs[`VOICECOM_HeloGetOut]=(Sound="AKEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloExitAircraft'")
-    VoiceComs[`VOICECOM_HeloLZConfirmed]=(Sound="AkEvent'WW_VOX_ANZAC_Voice1.Play_ANZAC_Pilot_1_HeloLZConfirmed'")
+    // INF_DefendObjective
+    CustomVoiceComs[`VOICECOM_SLDefend]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DefendObjective'")
+    CustomVoiceComs[`VOICECOM_TLDefend]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DefendObjective'")
+
+    // INF_EnemyDeath
+    CustomVoiceComs[`VOICECOM_EnemyDeath]=              (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EnemyDeath'")
+    CustomVoiceComs[`VOICECOM_EnemyDeath_Hero]=         (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EnemyDeath'")
+    CustomVoiceComs[`VOICECOM_EnemyDeath_LowMorale]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EnemyDeath'")
+    CustomVoiceComs[`VOICECOM_EnemyDeath_Suppressed]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EnemyDeathSuppressed'")
+    CustomVoiceComs[`VOICECOM_EnemyHeloDeath]=          (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EnemyDeath'")
 
 
+    // INF_EnemyDeathUnknown
+    CustomVoiceComs[`VOICECOM_EnemyDeathUnknown]=       (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EnemyDeath'")
 
+    // INF_EnemySpotted_Engineer
+    CustomVoiceComs[`VOICECOM_EnemySpottedEngineer]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EngineerSpotted'")
+    CustomVoiceComs[`VOICECOM_EnemySpottedEngineer_Special]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_EngineerSpotted'")
 
-    // CustomVoiceComs[`VOICECOM_EnemySpottedInfantry]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice1.Play_UK_Soldier_1_InfantrySpotted'")
-    // CustomVoiceComs[`VOICECOM_InfantrySpotted]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice1.Play_UK_Soldier_1_InfantrySpotted'")
+    // INF_EnemySpotted_Generic
+    CustomVoiceComs[`VOICECOM_InfantrySpotted]=         (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_InfantrySpotted'")
+    CustomVoiceComs[`VOICECOM_EnemySpottedInfantry]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_InfantrySpotted'")
+
+    // INF_EnemySpotted_MG
+    CustomVoiceComs[`VOICECOM_TakingFireMachineGunner]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireMG'")
+    CustomVoiceComs[`VOICECOM_EnemySpottedMGer]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.MGerSpotted'")
+
+    // INF_EnemySpotted_RPG
+    CustomVoiceComs[`VOICECOM_EnemySpottedAntiTank]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AntiTankSpotted'")
+
+    // INF_EnemySpotted_Sniper
+    CustomVoiceComs[`VOICECOM_TakingFireSniper]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireSniper'")
+    CustomVoiceComs[`VOICECOM_EnemySpottedSniper]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SniperSpotted'")
+
+    // INF_EnemySpotted_Tank
+    CustomVoiceComs[`VOICECOM_TakingFireTank]=(Type=ROVCT_TeamRadius,  CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupport'")
+    CustomVoiceComs[`VOICECOM_EnemySpottedTank]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TankSpotted'")
+
+    // INF_EnemySpotted_Transport
+    CustomVoiceComs[`VOICECOM_EnemySpottedTransport]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_InfantrySpotted'")
+
+    // INF_EnemySpotted_Trap
+    CustomVoiceComs[`VOICECOM_SpottedExplosive]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LiveGrenade'")
+
+    // INF_EnemySpotted_Tunnel
+    CustomVoiceComs[`VOICECOM_EnemySpottedTunnel]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TankSpotted'")
+
+    // INF_Follow
+    CustomVoiceComs[`VOICECOM_SLFollow]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FollowMe'")
+    CustomVoiceComs[`VOICECOM_TLFollow]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FollowMe'")
+
+    // INF_FriendlyDeath
+    CustomVoiceComs[`VOICECOM_FriendlyDeath]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FriendlyDeath'")
+    CustomVoiceComs[`VOICECOM_FriendlyDeath_LowMorale]= (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FriendlyDeath'")
+    CustomVoiceComs[`VOICECOM_FriendlyDeath_Hero]=      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FriendlyDeath'")
+    CustomVoiceComs[`VOICECOM_FriendlyHeloDeathInf]=        (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FriendlyDeathOfficer'")
+
+    // INF_FriendlyFire
+    CustomVoiceComs[`VOICECOM_FriendlyFire]=        (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_FriendlyFire'")
+    CustomVoiceComs[`VOICECOM_SawFriendlyFire]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SeeingFriendlyFire'")
+
+    // INF_IdleChatter
+    CustomVoiceComs[`VOICECOM_Bandaging]=                           (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Bandaging'")
+    CustomVoiceComs[`VOICECOM_IdleSituation1]=                      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituation1_LowMorale]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituation2]=                      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituation2_LowMorale]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituation3]=                      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituation3_LowMorale]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituation3_HighMorale]=           (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituationOfficer]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OfficerSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituationOfficer_LowMorale]=      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OfficerSituation'")
+    CustomVoiceComs[`VOICECOM_IdleSituationOfficer_HighMorale]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OfficerSituation'")
+    CustomVoiceComs[`VOICECOM_IdleEnemyLocation]=                   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleEnemyLocation_LowMorale]=         (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SoldierSituation'")
+    CustomVoiceComs[`VOICECOM_IdleEnemyLocationOfficer]=            (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OfficerSituation'")
+    CustomVoiceComs[`VOICECOM_IdleEnemyLocationOfficer_LowMorale]=  (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OfficerSituation'")
+    CustomVoiceComs[`VOICECOM_SoldierHurt]=                         (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Wounded'")
+
+    // INF_LosingObjective
+    CustomVoiceComs[`VOICECOM_LosingObjective]=             (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LosingObj'")
+    CustomVoiceComs[`VOICECOM_LosingObjectiveOfficer]=      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LosingObj'")
+    CustomVoiceComs[`VOICECOM_LosingObjective_LowMorale]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LosingObj'")
+
+    // INF_MoveOut
+    CustomVoiceComs[`VOICECOM_SLMove]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
+    CustomVoiceComs[`VOICECOM_TLMove]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_AttackGeneric'")
+
+    // INF_Negative
+    CustomVoiceComs[`VOICECOM_Negative]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Deny'")
+    CustomVoiceComs[`VOICECOM_SLReject]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Deny'")
+
+    // INF_NoAmmo
+    CustomVoiceComs[`VOICECOM_NeedAmmo]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LowOnAmmo'")
+    CustomVoiceComs[`VOICECOM_LowOnAmmo]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LowOnAmmo'")
+    CustomVoiceComs[`VOICECOM_LowOnAmmo_LowMorale]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LowOnAmmo'")
+    CustomVoiceComs[`VOICECOM_OutOfAmmo]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OutOfAmmoSoldier'")
+    CustomVoiceComs[`VOICECOM_OutOfAmmoMGer]=           (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_OutOfAmmoMG'")
+
+    // INF_Reloading
+    CustomVoiceComs[`VOICECOM_Reloading]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Reloading'")
+    CustomVoiceComs[`VOICECOM_Reloading_Suppressed]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_ReloadingSuppressed'")
+
+    // INF_RequestArtyCoordinates
+    CustomVoiceComs[`VOICECOM_TLRequestArtyCoords]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestOrders'")
+
+    // INF_RequestOrders
+    CustomVoiceComs[`VOICECOM_RequestOrders]=       (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestOrders'")
+    CustomVoiceComs[`VOICECOM_SLRequestOrders]= (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestOrderstoCom'")
+
+    // INF_RequestSupport_Air
+    //CustomVoiceComs[`VOICECOM_NeedHelo]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.NeedHelicopterSupport'")
+
+    // INF_RequestSupport_Artillery
+    CustomVoiceComs[`VOICECOM_SLRequestArty]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupportArty'")
+    CustomVoiceComs[`VOICECOM_NeedArtillery]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupportArty'")
+
+    // INF_RequestSupport_Engineer
+    CustomVoiceComs[`VOICECOM_NeedExplosives]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_ManExplosivesRequest'")
+
+    // INF_RequestSupport_Generic
+    CustomVoiceComs[`VOICECOM_RequestSupport]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupport'")
+
+    // INF_RequestSupport_MG
+    CustomVoiceComs[`VOICECOM_NeedMGSupport]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupportMG'")
+
+    // INF_RequestSupport_Recon
+    CustomVoiceComs[`VOICECOM_NeedRecon]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupport'")
+
+    // INF_RequestSupport_Smoke
+    CustomVoiceComs[`VOICECOM_NeedSmoke]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_RequestSupportSmoke'")
+
+    // INF_Resume
+    CustomVoiceComs[`VOICECOM_SLResume]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Resume'")
+    CustomVoiceComs[`VOICECOM_TLResume]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Resume'")
+
+    // INF_Retreat
+    CustomVoiceComs[`VOICECOM_Retreat]=         (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Retreat'")
+    CustomVoiceComs[`VOICECOM_Retreat_LowMorale]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Retreat'")
+
+    // INF_Sorry
+    CustomVoiceComs[`VOICECOM_Sorry]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Sorry'")
+
+    // INF_SpawnSpeech
+    CustomVoiceComs[`VOICECOM_SpawnAttacking]=          (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnAttacking'")
+    CustomVoiceComs[`VOICECOM_SpawnAttacking_HighMorale]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnAttacking'")
+    CustomVoiceComs[`VOICECOM_SpawnAttacking_LowMorale]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnAttacking'")
+    CustomVoiceComs[`VOICECOM_SpawnDefending]=          (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnDefenders'")
+    CustomVoiceComs[`VOICECOM_SpawnDefending_HighMorale]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnDefenders'")
+    CustomVoiceComs[`VOICECOM_SpawnDefending_LowMorale]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnDefenders'")
+    CustomVoiceComs[`VOICECOM_SpawnNeutral]=                (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SpawnAttacking'")
+
+    // INF_Suppressed
+    CustomVoiceComs[`VOICECOM_Suppressed]=          (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireGeneric'")
+    CustomVoiceComs[`VOICECOM_Suppressed_LowMorale]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireGeneric'")
+    CustomVoiceComs[`VOICECOM_Suppressed_Hero]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireGeneric'")
+
+    // INF_Suppressing
+    CustomVoiceComs[`VOICECOM_Suppressing]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Suppressing'")
+    CustomVoiceComs[`VOICECOM_Suppressing_Hero]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_SuppressingOfficer'")
+
+    // INF_TakingFire
+    CustomVoiceComs[`VOICECOM_TakeCover]=                       (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireGeneric'")
+    CustomVoiceComs[`VOICECOM_IncomingArtillery]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_IncomingArty'")
+    CustomVoiceComs[`VOICECOM_IncomingArtillery_Suppressed]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_IncomingArtySupport'")
+    CustomVoiceComs[`VOICECOM_IncomingGunship]=             (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_IncomingArtySupport'")
+    CustomVoiceComs[`VOICECOM_IncomingAirstrike]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_IncomingArtySupport'")
+    CustomVoiceComs[`VOICECOM_Grenade]=                     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_LiveGrenade'")
+    CustomVoiceComs[`VOICECOM_Satchel]=                     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_ReactSatchel'")
+    CustomVoiceComs[`VOICECOM_TakingFireUnknown]=               (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireUnknown'")
+    CustomVoiceComs[`VOICECOM_TakingFireUnknown_Hero]=      (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireUnknownOfficer'")
+    CustomVoiceComs[`VOICECOM_TakingFireInfantry]=          (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingFireGeneric'")
+
+    // INF_TakingObjective
+    CustomVoiceComs[`VOICECOM_TakingObjective]=         (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingObj'")
+    CustomVoiceComs[`VOICECOM_TakingObjectiveOfficer]=  (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingObjOfficer'")
+    CustomVoiceComs[`VOICECOM_TakingObjective_LowMorale]=   (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_TakingObj'")
+
+    // INF_Taunts
+    CustomVoiceComs[`VOICECOM_Taunt]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Thanks'")
+
+    // INF_Thanks
+    CustomVoiceComs[`VOICECOM_Thanks]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Thanks'")
+
+    // INF_ThrowingGrenade
+    CustomVoiceComs[`VOICECOM_ThrowingGrenade]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_ThrowingGrenade'")
+
+    // INF_ThrowingSatchel
+    CustomVoiceComs[`VOICECOM_ThrowingSatchel]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_ThrowingSatchel'")
+
+    // INF_ThrowingSmoke
+    CustomVoiceComs[`VOICECOM_ThrowingSmoke]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_ThrowingSmoke'")
+
+    // INF_TunnelDestroyed
+    CustomVoiceComs[`VOICECOM_EnemyTunnelDestroyed]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Thanks'")
+
+    // INF_Wounded
+    CustomVoiceComs[`VOICECOM_DeathHeart]=  (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingFast'")
+    CustomVoiceComs[`VOICECOM_DeathStomach]=    (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingSlow'")
+    CustomVoiceComs[`VOICECOM_DeathNeck]=       (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingFast'")
+    CustomVoiceComs[`VOICECOM_DyingFast]=       (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingFast'")
+    CustomVoiceComs[`VOICECOM_DyingSlow]=       (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingSlow'")
+    CustomVoiceComs[`VOICECOM_Wounded]=     (CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_Wounded'")
+
+    CustomVoiceComs[`VOICECOM_Burning]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DeathByFire'")
+
+    CustomVoiceComs[`VOICECOM_SlowlyDying]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingSlow'") // Bleeding Out
+    CustomVoiceComs[`VOICECOM_SlowlyDying_Hero]=(CustomSound="SoundCue'DR_AUD_VOX_UK_Voice2.Play_UK_Soldier_2_DyingSlow'") // Bleeding Out
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////// TANK ///////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*
+    // TNK_IdleChatter
+    CustomVoiceComs[`VOICECOM_TankIdleSituation]=                       (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCIdle'")
+    CustomVoiceComs[`VOICECOM_TankIdleSituation_LowMorale]=         (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCIdle'")
+    CustomVoiceComs[`VOICECOM_TankIdleCommanderSituation]=          (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCIdle'")
+    CustomVoiceComs[`VOICECOM_TankIdleCommanderSituation_LowMorale]=    (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCIdle'")
+    CustomVoiceComs[`VOICECOM_TankIdleCommanderSituation_HighMorale]=   (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCIdle'")
+    CustomVoiceComs[`VOICECOM_TankIdleVehicleGood]=                 (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCIdle'")
+
+    // TNK_IdleChatter_Damaged
+    CustomVoiceComs[`VOICECOM_TankIdleVehicleBad]=(CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCDamaged'")
+
+    // TNK_IdleChatter_Destroyed
+    CustomVoiceComs[`VOICECOM_TankIdleVehicleHorrible]=(CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCDestroyed'")
+
+    // TNK_LoadedCannon
+    CustomVoiceComs[`VOICECOM_TankCannonReloaded]=(CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.AttackGeneric'")
+
+    // TNK_UnderTankFire
+    CustomVoiceComs[`VOICECOM_TankDriverDead]=              (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCDriverKilled'")
+    CustomVoiceComs[`VOICECOM_TankGunnerDead]=              (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.FriendlyDeath'")
+    CustomVoiceComs[`VOICECOM_TankLoaderDead]=              (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.FriendlyDeath'")
+    CustomVoiceComs[`VOICECOM_TankHullGunnerDead]=          (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.FriendlyDeath'")
+    CustomVoiceComs[`VOICECOM_TankEngineDamaged]=           (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCDamaged'")
+    CustomVoiceComs[`VOICECOM_TankEngineDestroyed]=         (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCDestroyed'")
+    CustomVoiceComs[`VOICECOM_TankMainGunDestroyed]=        (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankHullMGDestroyed]=         (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankLeftTrackDestroyed]=      (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankRightTrackDestroyed]=     (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankBrakesDestroyed]=         (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankGearBoxDestroyed]=        (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankTurretTraverseDestroyed]= (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankHitFront]=                (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankHitBack]=                 (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankHitLeft]=                 (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankHitRight]=                (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCGenHit'")
+    CustomVoiceComs[`VOICECOM_TankUnderFire]=               (CustomSound="SoundCue'GOM4_VOX.ROK.Voice2.APC.APCUnderSmallArmsFire'")
+    */
+    // TODO: MAKE A TANKINCOMINGRPG VOICE COM
 }

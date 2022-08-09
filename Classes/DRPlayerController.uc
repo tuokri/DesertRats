@@ -1563,21 +1563,22 @@ simulated function CreateVoicePacks(byte TeamIndex)
         AnnouncerPacksCustom[`ALLIES_TEAM_INDEX].InitObjCooldowns();
     }
 
+    //NorthTeamVoicePacks[0] = AllTeamVoicePacksOne[NorthNationIndex];
+    //NorthTeamVoicePacks[1] = AllTeamVoicePacksTwo[NorthNationIndex];
+    //NorthTeamVoicePacks[2] = AllTeamVoicePacksThree[NorthNationIndex];
+
+    //SouthTeamVoicePacks[0] = AllTeamVoicePacksOne[SouthNationIndex];
+    //SouthTeamVoicePacks[1] = AllTeamVoicePacksTwo[SouthNationIndex];
+    //SouthTeamVoicePacks[2] = AllTeamVoicePacksThree[SouthNationIndex];
+
+    // TODO: IMPLEMENT GERMAN
     NorthTeamVoicePacks[0] = AllTeamVoicePacksOne[NorthNationIndex];
     NorthTeamVoicePacks[1] = AllTeamVoicePacksTwo[NorthNationIndex];
     NorthTeamVoicePacks[2] = AllTeamVoicePacksThree[NorthNationIndex];
 
-    SouthTeamVoicePacks[0] = AllTeamVoicePacksOne[SouthNationIndex];
-    SouthTeamVoicePacks[1] = AllTeamVoicePacksTwo[SouthNationIndex];
-    SouthTeamVoicePacks[2] = AllTeamVoicePacksThree[SouthNationIndex];
-
-    NorthTeamVoicePacksCustom[0] = AllTeamVoicePacksOneCustom[NorthNationIndex];
-    NorthTeamVoicePacksCustom[1] = AllTeamVoicePacksTwoCustom[NorthNationIndex];
-    NorthTeamVoicePacksCustom[2] = AllTeamVoicePacksThreeCustom[NorthNationIndex];
-
-    SouthTeamVoicePacksCustom[0] = AllTeamVoicePacksOneCustom[SouthNationIndex];
-    SouthTeamVoicePacksCustom[1] = AllTeamVoicePacksTwoCustom[SouthNationIndex];
-    SouthTeamVoicePacksCustom[2] = AllTeamVoicePacksThreeCustom[SouthNationIndex];
+    SouthTeamVoicePacksCustom[0] = class'DRVoicePackUKTeam01';
+    SouthTeamVoicePacksCustom[1] = class'DRVoicePackUKTeam02';
+    SouthTeamVoicePacksCustom[2] = class'DRVoicePackUKTeam02';
 
     /*
     // Hardcoded handler for ARVN combat pilots, who are spawned as US chars.
@@ -2526,13 +2527,14 @@ DefaultProperties
     // SouthTeamVoicePacks[1]=class'ROVoicePackAusTeam01'
     // SouthTeamVoicePacks[2]=class'ROVoicePackAusTeam01'
 
-    // SouthTeamVoicePacksCustom[0]=class'DRVoicePackUKTeam01'
-    // SouthTeamVoicePacksCustom[1]=class'DRVoicePackUKTeam01'
-    // SouthTeamVoicePacksCustom[2]=class'DRVoicePackUKTeam01'
-
+    AllTeamVoicePacksOneCustom[0]=class'ROVoicePackAusTeam01'
     AllTeamVoicePacksOneCustom[1]=class'DRVoicePackUKTeam01'
 
-    AllTeamVoicePacksTwoCustom[1]=class'DRVoicePackUKTeam02'
+    AllTeamVoicePacksTwoCustom[0]=class'ROVoicePackAusTeam01'
+    AllTeamVoicePacksTwoCustom[1]=class'DRVoicePackUKTeam01'
+
+    AllTeamVoicePacksThreeCustom[0]=class'ROVoicePackAusTeam01'
+    AllTeamVoicePacksThreeCustom[1]=class'DRVoicePackUKTeam01'
 
     // AllAnnouncerPacks[`AXIS_TEAM_INDEX]=class'WWVoicePack_FIN_C'
     // AllAnnouncerPacks[`ALLIES_TEAM_INDEX]=class'WWVoicePack_RUS_C'

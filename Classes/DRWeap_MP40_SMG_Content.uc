@@ -4,11 +4,14 @@ DefaultProperties
 {
 	ArmsAnimSet=AnimSet'WP_VN_VC_MP40.Animation.WP_MP40hands'
 
+	WeaponReloadEmptyMagAnim=MP40_reloadempty_NEW
+
 	Begin Object Name=FirstPersonMesh
 		DepthPriorityGroup=SDPG_Foreground
 		SkeletalMesh=SkeletalMesh'WP_VN_VC_MP40.Mesh.VC_MP40'
 		PhysicsAsset=PhysicsAsset'WP_VN_VC_MP40.Phys.VC_MP40_Physics'
 		AnimSets(0)=AnimSet'WP_VN_VC_MP40.Animation.WP_MP40hands'
+		AnimSets(1)=AnimSet'DR_WP_DAK_MP41.Animation.mp40_anim' // animations by hoover ~ @adrian
 		AnimTreeTemplate=AnimTree'WP_VN_VC_MP40.Animation.VC_MP40_Tree'
 		Scale=1.0
 		FOV=70

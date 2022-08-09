@@ -51,7 +51,7 @@ function SetLeftVehicleFlag()
 
 simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlayerReplicationInfo OverrideROPRI)
 {
-    local int TeamNum, ArmyIndex, ClassIndex, HonorLevel;
+    local int TeamNum, ArmyIndex, ClassIndex, HonorLevel, VoiceIndex;
     local DRMapInfo DRMI;
     local ROPlayerReplicationInfo ROPRI;
     local byte IsHelmet, TunicID, TunicMatID, ShirtID, HeadID, HairID, HeadgearID, HeadgearMatID, SkinID, FaceItemID, FacialHairID, TattooID, bPilot;
@@ -252,6 +252,15 @@ simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlay
         else
             ROPlayerController(Controller).SetSuitableVoicePack(TeamNum, ArmyIndex, SkinID);
     }
+    else // bot
+    {
+        if (ROPRI.bBot)
+        {
+            VoiceIndex = rand(3);
+        }
+
+        ROPRI.VoicePackIndex = VoiceIndex;
+    }
 }
 
 simulated function CreatePawnMesh()
@@ -345,6 +354,12 @@ simulated function CreatePawnMesh()
         GearMIC.SetParent(GearMat);
         mesh.SetMaterial(1, GearMIC);
     }
+
+
+    BodyMIC.SetScalarParameterValue('Grime_Scaler', 0.5);
+    GearMIC.SetScalarParameterValue('Grime_Scaler', 0.5);
+    HeadAndArmsMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadGrimeParam, 0.5);
+    HeadgearMIC.SetScalarParameterValue('Grime_Scaler', 0.5);
 
     // Generate list of bones which override the animation transforms (this is usually the face bones)
     ROSkeletalMeshComponent(mesh).GenerateAnimationOverrideBones(HeadAndArmsMesh);
@@ -715,6 +730,9 @@ simulated private function PlayQueuedSpeakLine()
     local bool bLocalPlayersTurretPawn;
     local bool bAllowSpatialization;
     local bool bCustomAudio;
+    local AudioDevice Audio;
+
+    Audio = class'Engine'.static.GetAudioDevice();
 
     if ( DialogAkComp == None || bPlayedDeath )
     {
@@ -723,7 +741,7 @@ simulated private function PlayQueuedSpeakLine()
 
     // Handle current speech, if any.
     DialogAkComp.StopEvents();
-    DialogAudioComp.FadeOut(0.2f, 0.f);
+    DialogAudioComp.Stop();
 
     bVersusMulti = true;
 
@@ -786,16 +804,16 @@ simulated private function PlayQueuedSpeakLine()
             `log("CustomAudio     =" $ DelayedSpeakLineParamsCustom.CustomAudio, `DEBUG_VOICECOMS, 'DRAudio');
 
             DialogAudioComp.SoundCue = DelayedSpeakLineParamsCustom.CustomAudio;
+            DialogAudioComp.bAlwaysPlay = DelayedSpeakLineParamsCustom.Priority >= Speech_Spawning;
             DialogAudioComp.bAllowSpatialization = bAllowSpatialization;
-            DialogAudioComp.VolumeMultiplier = 1.0; // TODO: volume control.
-            DialogAudioComp.OcclusionCheckInterval = (bAllowSpatialization ? 0.1 : 0.0);
-            DialogAudioComp.Location = Location;
-            DialogAudioComp.bAutoDestroy = True;
+            DialogAudioComp.VolumeMultiplier = 1.5 * (Audio.AKDialogVolume * Audio.AKMasterVolume);
             DialogAudioComp.FadeIn(0.05f, 1.f);
+            CurrentSpeechPriority = DelayedSpeakLineParamsCustom.Priority;
         }
         else
         {
             DialogAkComp.PlayEvent(DelayedSpeakLineParams.Audio, bAllowSpatialization);
+            CurrentSpeechPriority = DelayedSpeakLineParams.Priority;
         }
 
         //`log(GetFuncName()@"played line "$CurrentlySpeakingLine.SoundCue);

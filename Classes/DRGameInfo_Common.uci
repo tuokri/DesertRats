@@ -8,6 +8,7 @@ var private string CRLF;
 // Not the most elegant, but will do for now.
 // TODO: ADD WIN CONDITION! (From Super).
 `define ROUND_WON_FUNCTION \
+/*
 function RoundWon(int WinningTeam, byte WinCondition)\n\
 {\n\
     local int i;\n\
@@ -23,7 +24,7 @@ function RoundWon(int WinningTeam, byte WinCondition)\n\
     }\n\
     SetMorale(255, 255);\n\
     MapName = string(WorldInfo.GetPackageName());\n\
-    BStats.MapVersion = DRMapInfo(WorldInfo.GetMapInfo()).LevelVersion;\n\
+    //BStats.MapVersion = DRMapInfo(WorldInfo.GetMapInfo()).LevelVersion;\n\
     WinningTeamName = (WinningTeam == `AXIS_TEAM_INDEX ? "Axis" : "Allies");\n\
     NumOfPlayers = GetNumPlayers();\n\
     `log("BALANCE STATS:" @ MapName @ "|" @ MaxPlayers @ " max players |" @ NumOfPlayers\n\
@@ -66,7 +67,7 @@ function RoundWon(int WinningTeam, byte WinCondition)\n\
     BStats.WinCondition = WinCondition;\n\
     SendBalanceStatsPackage(BStats);\n\
 }\n\
-
+*/
 // TODO: Config.
 var /*config*/ bool bBalanceStatsAnalyticsEnabled;
 
@@ -336,6 +337,7 @@ function class<Pawn> GetPlayerClass(Controller C)
     return DefaultPawnClass;
 }
 
+/*
 // --- BEGIN SOUNDCUE BACKPORT ---
 function HandleBattleChatterEvent(Pawn VoicePawn, int BattleChatterEventIndex, optional PlayerReplicationInfo VoicePRI)
 {
@@ -705,7 +707,7 @@ function BroadcastDelayedBattleChatterEvent()
 // TODO: Or use something like this: (bad idea though? too many unreliable RPCs?)
 // TODO: --> BroadCastStuff() {ServerPlaySound(...)}
 // TODO: --> ServerPlaySound() {ClientHearSound(...)}
-
+*/
 // --- END SOUNDCUE BACKPORT ---
 
 simulated function SetMorale(byte AxisMorale, byte AlliesMorale)

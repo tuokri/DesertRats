@@ -961,7 +961,7 @@ DefaultProperties
 
     //Service dress
     UK_Tunics(7)={(
-        TunicMesh=SkeletalMesh'DR_CHR_UK.Mesh.UK_ServiceDress_Long',
+        TunicMesh=SkeletalMesh'DR_CHR_UK.Mesh.UK_ServiceDress',
         ArmsMeshFP=SkeletalMesh'DR_CHR.Mesh.UK_Hands_ServiceDress',
         BodyMICs=(
             (

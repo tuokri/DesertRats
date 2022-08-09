@@ -1,5 +1,35 @@
 class DRWeap_P14Scoped_Rifle_Content extends DRWeap_P14Scoped_Rifle;
 
+simulated function InitialiseScopeMaterial()
+{
+    local vector2D ViewportSize;
+
+    // Only want to spawn sniper lenses on human players, but when PostBeginPlay
+    // gets called Instigator isn't valid yet. So using NetMode == NM_Client,
+    // since weapons should only exist on owning human clients with that netmode
+    if( Instigator != none && Instigator.IsLocallyControlled() && ROPlayerController(Instigator.Controller) != none )
+    {
+        ViewportSize = ROPlayerController(Instigator.Controller).GetViewportSize();
+        UpdateScopeTextureTarget(ViewportSize.X);
+
+        // Now initialise the lense MIC
+        ScopeLenseMIC = new class'MaterialInstanceConstant';
+        ScopeLenseMIC.SetParent(ScopeLenseMICTemplate);
+        ScopeLenseMIC.SetTextureParameterValue('ScopeTextureTarget', SniperScopeTextureTarget);
+        // ScopeLenseMIC.SetTextureParameterValue('ReflectionTextureTarget', SniperScopeReflectionTextureTarget);
+        ScopeLenseMIC.SetScalarParameterValue(InterpParamName, 0.0);
+        mesh.SetMaterial(2, ScopeLenseMIC);
+
+        // ReflectionSceneCapture.bEnabled = true;
+
+        // Initialize the scope sight range setting
+        if( ScopeSightRanges.Length > 0 )
+        {
+            ScopeLenseMIC.SetScalarParameterValue('v_position', ScopeSightRanges[ScopeSightRangeIndex].SightPositionOffset);
+        }
+    }
+}
+
 DefaultProperties
 {
     // Arms
