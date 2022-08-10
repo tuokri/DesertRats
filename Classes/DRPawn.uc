@@ -16,6 +16,14 @@ var protected DelayedSpeakLineParamStructCustom DelayedSpeakLineParamsCustom;
 
 // --- END SOUNDCUE BACKPORT ---
 
+// cosmetics and other things ~ @adrian
+var SkeletalMesh FaceMasks;
+var ROSkeletalMeshComponent FaceMasksComponent;
+var MaterialInstanceConstant FaceMasksMIC;
+
+var ROSkeletalMeshComponent HideHeadComponent;
+
+
 simulated event PostBeginPlay()
 {
     super.PostBeginPlay();
@@ -176,6 +184,17 @@ simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlay
         TattooID = 0;
     }
 
+    if (ROPRI.bBot)
+    {
+        // Randomizes these for bots as well since vanilla bots dont seem to get any facial hair or tats...
+        // FaceItemID = rand(7);
+        // TattooID = rand(7);
+        if( fRand() < 0.35) // low chance for bots to equip face mask
+        {
+            FacialHairID = Rand(5);
+        }
+    }
+
     // Set Tunic Meshes and Materials
     TunicMesh = PawnHandlerClass.static.GetTunicMeshes(TeamNum, ArmyIndex, bPilot, TunicID, bNoHeadgear);
     BodyMICTemplate = PawnHandlerClass.static.GetBodyMIC(TeamNum, ArmyIndex, bPilot, TunicID, TunicMatID);
@@ -243,6 +262,7 @@ simulated function SetPawnElementsByConfig(bool bViaReplication, optional ROPlay
     // Set Face Items
     FaceItemMesh = PawnHandlerClass.static.GetFaceItemMesh(TeamNum, ArmyIndex, bPilot, HeadgearID, FaceItemID, FaceItemAttachSocket, bNoFacialHair);
     FacialHairMesh = bNoFacialHair == 1 ? none : PawnHandlerClass.static.GetFacialHairMesh(TeamNum, ArmyIndex, FacialHairID, FacialHairAttachSocket);
+    FaceMasks = class'DRPawnHandler'.static.GetCovidMasks(TeamNum, ArmyIndex, FacialHairID);
 
     // Set the voice locally if we're playing offline or as a listen server
     if( Role == ROLE_Authority && ROPlayerController(Controller) != none )
@@ -377,6 +397,12 @@ simulated function CreatePawnMesh()
     //  HeadAndArmsMIC.SetTextureParameterValue(HitMaskParamName, HitMaskRenderTargetHeadArms);
     // }
 
+    HideHeadComponent.SetSkeletalMesh(ArmsOnlyMesh);
+    HideHeadComponent.SetMaterial(0, HeadAndArmsMIC);
+    HideHeadComponent.SetLODParent(mesh);
+    HideHeadComponent.SetParentAnimComponent(mesh);
+    HideHeadComponent.SetShadowParent(mesh);
+
     // Attach headgear
     if( HeadgearMesh != none )
     {
@@ -422,6 +448,30 @@ simulated function CreatePawnMesh()
     {
         BandageMesh.SetSkeletalMesh(BandageMeshFP);
         BandageMesh.SetHidden(true);
+    }
+
+    if( FaceMasksComponent != none)
+    {
+        if( FaceMasksMIC != none)
+        {
+            FaceMasksMIC = new class'MaterialInstanceConstant';
+        }
+
+        FaceMasksMIC.SetParent(FaceMasks.Materials[0]);
+
+        FaceMasksComponent.SetMaterial(0, FaceMasksMIC);
+        FaceMasksComponent.SetSkeletalMesh(FaceMasks);
+        FaceMasksComponent.SetParentAnimComponent(mesh);
+        FaceMasksComponent.SetShadowParent(mesh);
+        FaceMasksComponent.SetActorCollision(false, false);
+        FaceMasksComponent.SetNotifyRigidBodyCollision(false);
+        FaceMasksComponent.SetTraceBlocking(false, false);
+
+        MeshMICs.AddItem(FaceMasksMIC);
+
+        AttachCovidMasks(FaceMasks);
+
+        //AttachComponent(FaceMasksComponent);
     }
 
     // Set first and third person trap disarm tool
@@ -508,6 +558,27 @@ simulated function CreatePawnMesh()
     }
 }
 
+simulated function AttachCovidMasks(SkeletalMesh NewHeadgearMesh)
+{
+    local SkeletalMeshSocket FacialHairSocket;
+
+    FacialHairSocket = ThirdPersonHeadAndArmsMeshComponent.GetSocketByName(FacialHairAttachSocket);
+
+    if( FacialHairSocket != none )
+    {
+       if( mesh.MatchRefBone(FacialHairSocket.BoneName) != INDEX_NONE )
+       {
+           FaceMasksComponent.SetShadowParent(mesh);
+           FaceMasksComponent.SetLODParent(mesh);
+           mesh.AttachComponent(FaceMasksComponent, FacialHairSocket.BoneName, FacialHairSocket.RelativeLocation, FacialHairSocket.RelativeRotation, FacialHairSocket.RelativeScale);
+       }
+       else
+       {
+            `warn("Bone name specified in socket not found in parent anim component. Facial Mask component will not be attached");
+       }
+    }
+}
+
 simulated function AttachNewHeadgear(SkeletalMesh NewHeadgearMesh)
 {
     local SkeletalMeshSocket HeadSocket;
@@ -526,6 +597,188 @@ simulated function AttachNewHeadgear(SkeletalMesh NewHeadgearMesh)
             mesh.AttachComponent( ThirdPersonHeadgearMeshComponent, HeadSocket.BoneName, HeadSocket.RelativeLocation, HeadSocket.RelativeRotation, HeadSocket.RelativeScale);
         }
     }
+}
+
+simulated function SetMeshVisibility(bool bVisible)
+{
+    super.SetMeshVisibility(bVisible);
+
+    if ( FaceMasksComponent != None )
+    {
+        FaceMasksComponent.SetOwnerNoSee(!bVisible);
+    }
+
+    // For local player and servers, update the mesh even if not rendered. For, all simulated pawns
+    // update it for a few seconds when they come into view, otherwise animations are not updated
+    if( !bVisible || WorldInfo.NetMode == NM_DedicatedServer || WorldInfo.NetMode == NM_ListenServer )
+    {
+        mesh.bUpdateSkelWhenNotRendered = true;
+        ThirdPersonHeadAndArmsMeshComponent.bUpdateSkelWhenNotRendered = true;
+        ThirdPersonHeadgearMeshComponent.bUpdateSkelWhenNotRendered = true;
+
+        if( FaceMasksComponent != None )
+        {
+            FaceMasksComponent.bUpdateSkelWhenNotRendered = true;
+        }
+    }
+    else
+    {
+        Mesh.AnimatingIntoView(2.f);
+        ThirdPersonHeadAndArmsMeshComponent.AnimatingIntoView(2.0);
+        ThirdPersonHeadgearMeshComponent.AnimatingIntoView(2.0);
+
+        if( FaceMasksComponent != none )
+        {
+            FaceMasksComponent.AnimatingIntoView(2.0);
+        }
+    }
+    // Handle third person weapon
+    SetWeaponAttachmentVisibility(bVisible);
+
+    SetWeaponVisibility(!bVisible);
+}
+
+simulated function SetLightingChannels(LightingChannelContainer InLightingChannels)
+{
+    super.SetLightingChannels(InLightingChannels);
+
+    if( FaceMasksComponent != none)
+    {
+        FaceMasksComponent.SetLightingChannels(InLightingChannels);
+    }
+}
+
+simulated function SetLightEnvironment(LightEnvironmentComponent InLightEnvironment)
+{
+    super.SetLightEnvironment(InLightEnvironment);
+
+    if( FaceMasksComponent != none)
+    {
+        FaceMasksComponent.SetLightEnvironment(InLightEnvironment);
+    }
+}
+
+
+simulated event StartDriving(Vehicle V)
+{
+    Super.StartDriving(V);
+
+    if ( ROVehicleBase(V) != none && V.Mesh.DepthPriorityGroup == SDPG_Foreground && Mesh.DepthPriorityGroup == SDPG_World )
+    {
+        if( FaceMasksComponent != none )
+        {
+            FaceMasksComponent.SetDepthPriorityGroup(SDPG_Foreground);
+        }
+    }
+}
+
+
+simulated event StopDriving(Vehicle V)
+{
+    Super.StopDriving(V);
+
+    if ( V != none && V.Mesh.DepthPriorityGroup == SDPG_World && Mesh.DepthPriorityGroup == SDPG_Foreground )
+    {
+        if( FaceMasksComponent != none )
+        {
+            FaceMasksComponent.SetDepthPriorityGroup(SDPG_World);
+        }
+    }
+}
+
+simulated function UpdateWetnessValue(float DeltaTime)
+{
+    local bool bWetnessChanged;
+
+    if( WetnessValue > TargetWetnessValue )
+    {
+        WetnessValue = FInterpConstantTo(WetnessValue, TargetWetnessValue, DeltaTime, 0.02);
+        bWetnessChanged = true;
+    }
+    else if( WetnessValue < TargetWetnessValue )
+    {
+        WetnessValue = FInterpConstantTo(WetnessValue, TargetWetnessValue, DeltaTime, WetnessSpeedModifier);
+        bWetnessChanged = true;
+    }
+
+    if( bWetnessChanged )
+    {
+        BodyMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicWetnessParam, WetnessValue);
+        HeadAndArmsMIC.SetScalarParameterValue(PawnHandlerClass.default.HeadWetnessParam, WetnessValue);
+        GearMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicWetnessParam, WetnessValue);
+
+        if( FaceMasksMIC != none )
+        {
+            FaceMasksMIC.SetScalarParameterValue(PawnHandlerClass.default.TunicWetnessParam, WetnessValue);
+        }
+    }
+}
+// HEY WE HAVE OUR FULL SHADOW NOW WHEN WE DIE YAYYYY
+simulated function HideHead(PlayerController LocalPC)
+{
+    super.HideHead(LocalPC);
+
+    AttachComponent(HideHeadComponent);
+
+    // Headgear
+    ThirdPersonHeadgearMeshComponent.bCastHiddenShadow=true;
+    ThirdPersonHeadgearMeshComponent.CastShadow=true;
+
+    // Head and Arms
+    ThirdPersonHeadAndArmsMeshComponent.SetSkeletalMesh(HeadAndArmsMesh);
+    ThirdPersonHeadAndArmsMeshComponent.SetHidden(true);
+    ThirdPersonHeadAndArmsMeshComponent.bCastHiddenShadow=true;
+    ThirdPersonHeadAndArmsMeshComponent.CastShadow=true;
+
+    // Face Items
+    FaceItemMeshComponent.bCastHiddenShadow=true;
+    FaceItemMeshComponent.CastShadow=true;
+
+    // Facial Hair
+    FacialHairMeshComponent.bCastHiddenShadow=true;
+    FacialHairMeshComponent.CastShadow=true;
+
+    FaceMasksComponent.bCastHiddenShadow=true;
+    FaceMasksComponent.CastShadow=true;
+}
+
+
+simulated function UnHideHead(PlayerController LocalPC)
+{
+    local ROPlayerController ROPC;
+
+    ROPC = ROPlayerController(LocalPC);
+    if ( ROPC != None )
+    {
+        ROPC.RestoreWorldNearClippingPlane();
+    }
+
+    DetachComponent(HideHeadComponent);
+
+    // Headgear
+    ThirdPersonHeadgearMeshComponent.SetHidden(false);
+    ThirdPersonHeadgearMeshComponent.bCastHiddenShadow=true;
+    ThirdPersonHeadgearMeshComponent.CastShadow=true;
+
+    // Head and Arms
+    ThirdPersonHeadAndArmsMeshComponent.SetSkeletalMesh(HeadAndArmsMesh);
+    ThirdPersonHeadAndArmsMeshComponent.SetHidden(false);
+    ThirdPersonHeadAndArmsMeshComponent.bCastHiddenShadow=true;
+    ThirdPersonHeadAndArmsMeshComponent.CastShadow=true;
+
+    // Face Items
+    FaceItemMeshComponent.SetHidden(false);
+    FaceItemMeshComponent.bCastHiddenShadow=true;
+    FaceItemMeshComponent.CastShadow=true;
+
+    // Facial Hair
+    FaceItemMeshComponent.SetHidden(false);
+    FacialHairMeshComponent.bCastHiddenShadow=true;
+    FacialHairMeshComponent.CastShadow=true;
+
+    FaceMasksComponent.SetHidden(false);
+    FaceMasksComponent.bCastHiddenShadow=true;
+    FaceMasksComponent.CastShadow=true;
 }
 
 function TakeFallingDamage()
@@ -866,6 +1119,32 @@ DefaultProperties
     DialogAudioComp=DialogAudioComp0
     Components.Add(DialogAudioComp0)
     // --- END SOUNDCUE BACKPORT ---
+
+    Begin Object class=ROSkeletalMeshComponent name=Covid
+        LightEnvironment = MyLightEnvironment
+        bUpdateSkelWhenNotRendered=false
+        bNoSkeletonUpdate=true
+        CastShadow=FALSE
+        MaxDrawDistance=2500    // 50m, beyond that they're barely visible so avoid the extra drawcall
+        CollideActors=false
+        BlockActors=false
+        BlockZeroExtent=false
+        BlockNonZeroExtent=false
+    End Object
+    FaceMasksComponent=Covid
+
+    Begin Object class=ROSkeletalMeshComponent name=DeadGuy0
+        LightEnvironment = MyLightEnvironment
+        bUpdateSkelWhenNotRendered=false
+        bNoSkeletonUpdate=true
+        CastShadow=FALSE
+        MaxDrawDistance=2500    // 50m, beyond that they're barely visible so avoid the extra drawcall
+        CollideActors=false
+        BlockActors=false
+        BlockZeroExtent=false
+        BlockNonZeroExtent=false
+    End Object
+    HideHeadComponent=DeadGuy0
 
     Begin Object Name=ROPawnSkeletalMeshComponent
         AnimSets(0)=AnimSet'CHR_Playeranim_Master.Anim.CHR_Stand_anim'

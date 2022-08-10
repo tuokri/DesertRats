@@ -1,6 +1,11 @@
 class DRCharCustMannequin extends ROCharCustMannequin
     notplaceable;
 
+// cosmetics and other things ~ @adrian
+var SkeletalMesh FaceMasks;
+var ROSkeletalMeshComponent FaceMasksComponent;
+var MaterialInstanceConstant FaceMasksMIC;
+
 function UpdateMannequin(byte TeamIndex, byte ArmyIndex, bool bPilot, int ClassIndex, byte HonorLevel, byte TunicID, byte TunicMaterialID, byte ShirtID, byte HeadID, byte HairID, byte HeadgearID, byte HeadgearMatID, byte FaceItemID, byte FacialHairID, byte TattooID, optional bool bMainMenu)
 {
     local Texture2D ShirtD, ShirtN, ShirtS, TattooTex;
@@ -49,6 +54,11 @@ function UpdateMannequin(byte TeamIndex, byte ArmyIndex, bool bPilot, int ClassI
         HairMIC = new class'MaterialInstanceConstant';
     }
 
+    if(FaceMasksMIC == none)
+    {
+        FaceMasksMIC = new class'MaterialInstanceConstant';
+    }
+
     if( ThirdPersonHeadgearMeshComponent.AttachedToSkelComponent != none )
         Mesh.DetachComponent(ThirdPersonHeadgearMeshComponent);
     if( FaceItemMeshComponent.AttachedToSkelComponent != none )
@@ -76,7 +86,7 @@ function UpdateMannequin(byte TeamIndex, byte ArmyIndex, bool bPilot, int ClassI
     HeadgearMesh = PawnHandlerClass.static.GetHeadgearMesh(TeamIndex, ArmyIndex, byte(bPilot), HeadID, HairID, HeadgearID, HeadgearMatID, HeadgearMICTemplate, HairMICTemplate, HeadgearAttachSocket, byteDisposal);
     FaceItemMesh = PawnHandlerClass.static.GetFaceItemMesh(TeamIndex, ArmyIndex, byte(bPilot), HeadgearID, FaceItemID, FaceItemAttachSocket, bNoFacialHair);
     FacialHairMesh = PawnHandlerClass.static.GetFacialHairMesh(TeamIndex, ArmyIndex, FacialHairID, FacialHairAttachSocket);
-
+    FaceMasks = class'DRPawnHandler'.static.GetCovidMasks(TeamIndex, ArmyIndex, FacialHairID);
     BodyMIC.SetParent(BodyMICTemplate);
     HeadAndArmsMIC.SetParent(HeadAndArmsMICTemplate);
     HeadgearMIC.SetParent(HeadgearMICTemplate);
@@ -163,6 +173,7 @@ function UpdateMannequin(byte TeamIndex, byte ArmyIndex, bool bPilot, int ClassI
     if( FaceItemID > 0 && FaceItemMesh != none )
     {
         AttachNewFaceItem(FaceItemMesh);
+        AttachCovidMasks(FaceMasks);
     }
 
     // Attach facial hair
@@ -174,6 +185,28 @@ function UpdateMannequin(byte TeamIndex, byte ArmyIndex, bool bPilot, int ClassI
     AttachPreviewWeapon(TeamIndex, ArmyIndex);
 
     mesh.SetRotation(InitialRot);
+}
+
+
+simulated function AttachCovidMasks(SkeletalMesh NewHeadgearMesh)
+{
+    local SkeletalMeshSocket FacialHairSocket;
+
+    FacialHairSocket = ThirdPersonHeadAndArmsMeshComponent.GetSocketByName(FacialHairAttachSocket);
+
+    if( FacialHairSocket != none )
+    {
+       if( mesh.MatchRefBone(FacialHairSocket.BoneName) != INDEX_NONE )
+       {
+           FaceMasksComponent.SetShadowParent(mesh);
+           FaceMasksComponent.SetLODParent(mesh);
+           mesh.AttachComponent(FaceMasksComponent, FacialHairSocket.BoneName, FacialHairSocket.RelativeLocation, FacialHairSocket.RelativeRotation, FacialHairSocket.RelativeScale);
+       }
+       else
+       {
+            `warn("Bone name specified in socket not found in parent anim component. Facial Mask component will not be attached");
+       }
+    }
 }
 
 function PlayIdleAnim()

@@ -4,20 +4,23 @@ class DRPawnHandler extends ROPawnHandler
 var config array<CharacterConfig> DAKConfig;
 var config array<CharacterConfig> UKConfig;
 
+// DAK
 var array<TunicInfo>        DAK_Tunics, DAK_TankCrew_Tunics, DAK_Commander_Tunics;
 var array<HeadgearInfo>     DAK_Headgear, DAK_TankCrew_Headgear, DAK_Commander_Headgear;
 var array<HeadgearMICInfo>  DAK_HeadgearMICs;
 var array<FieldgearMeshes>  DAK_FieldgearByRole;
-var TunicSVInfo         DAK_TunicSV, DAK_TankCrewSV;
+var TunicSVInfo             DAK_TunicSV, DAK_TankCrewSV;
 var array<PlayerHeadInfo>   DAK_Heads;
 var array<FaceItemInfo>     DAK_FaceItems;
 var array<FacialHairInfo>   DAK_FacialHair;
+var array<SkeletalMesh>     DAK_Facemasks;
 
+// UK
 var array<TunicInfo>        UK_Tunics, UK_TankCrew_Tunics, UK_Commander_Tunics;
 var array<HeadgearInfo>     UK_Headgear, UK_TankCrew_Headgear, UK_Commander_Headgear;
 var array<HeadgearMICInfo>  UK_HeadgearMICs;
 var array<FieldgearMeshes>  UK_FieldgearByRole;
-var TunicSVInfo         UK_TunicSV, UK_TankCrewSV;
+var TunicSVInfo             UK_TunicSV, UK_TankCrewSV;
 var array<PlayerHeadInfo>   UK_Heads;
 var array<FaceItemInfo>     UK_FaceItems;
 var array<FacialHairInfo>   UK_FacialHair;
@@ -228,6 +231,25 @@ static function SkeletalMesh GetGoreMeshes(int TeamNum, int ArmyIndex, byte Tuni
     return SkeletalMesh'CHR_VN_Gore.Mesh.Gore_Main_Mesh';
 }
 
+static function SkeletalMesh GetCovidMasks(int Team, int ArmyIndex, byte FacialHairID)
+{
+    local SkeletalMesh Extra;
+
+    if(Team == `AXIS_TEAM_INDEX)
+    {
+        switch (ArmyIndex)
+        {
+            default:
+                Extra = default.DAK_Facemasks[FacialHairID];
+        }
+    }
+    else
+    {
+        // nothing....
+    }
+
+    return Extra;
+}
 
 DefaultProperties
 {
@@ -801,12 +823,12 @@ DefaultProperties
     DAK_Headgear(5)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_G_Up'),HeadgearMICs=(0,1,2,3,4,5,6,7),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_G_Up',RequiredLevel=0)
     DAK_Headgear(6)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Paper_G_UP'),HeadgearMICs=(11),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Paper_G_UP',RequiredLevel=0)
     DAK_Headgear(7)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_2_G_UP'),HeadgearMICs=(12),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_2_G_UP',RequiredLevel=0)
-    DAK_Headgear(8)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1'),HeadgearMICs=(13,14),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1',RequiredLevel=0)
+    DAK_Headgear(8)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1'),HeadgearMICs=(13),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1',RequiredLevel=0)
     DAK_Headgear(9)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_G_Face'),HeadgearMICs=(0,1,2,3,4,5,6,7),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_G_Face',RequiredLevel=0)
     DAK_Headgear(10)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Paper_G_Face'),HeadgearMICs=(11),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Paper_G_Face',RequiredLevel=0)
     DAK_Headgear(11)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_2_G_Face'),HeadgearMICs=(12),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_2_G_Face',RequiredLevel=0)
-    DAK_Headgear(12)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_UP'),HeadgearMICs=(13,14),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
-    DAK_Headgear(13)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_face'),HeadgearMICs=(13,14),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
+    DAK_Headgear(12)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_UP'),HeadgearMICs=(13),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
+    DAK_Headgear(13)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_face'),HeadgearMICs=(13),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
 
     DAK_Commander_Headgear(0)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40'),HeadgearMICs=(0,1,2,3,4,5,6,7),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40')
     DAK_Commander_Headgear(1)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_Cap_Overseas'),HeadgearMICs=(8,9),HeadgearSocket=helmet,bIsHelmet=0,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_Cap_Overseas',RequiredLevel=0)
@@ -816,12 +838,12 @@ DefaultProperties
     DAK_Commander_Headgear(5)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_G_Up'),HeadgearMICs=(0,1,2,3,4,5,6,7),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_G_Up',RequiredLevel=0)
     DAK_Commander_Headgear(6)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Paper_G_UP'),HeadgearMICs=(11),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Paper_G_UP',RequiredLevel=0)
     DAK_Commander_Headgear(7)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_2_G_UP'),HeadgearMICs=(12),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_2_G_UP',RequiredLevel=0)
-    DAK_Commander_Headgear(8)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1'),HeadgearMICs=(13,14),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1',RequiredLevel=0)
+    DAK_Commander_Headgear(8)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1'),HeadgearMICs=(13),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1',RequiredLevel=0)
     DAK_Commander_Headgear(9)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_G_Face'),HeadgearMICs=(0,1,2,3,4,5,6,7),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_G_Face',RequiredLevel=0)
     DAK_Commander_Headgear(10)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Paper_G_Face'),HeadgearMICs=(11),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Paper_G_Face',RequiredLevel=0)
     DAK_Commander_Headgear(11)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_2_G_Face'),HeadgearMICs=(12),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_2_G_Face',RequiredLevel=0)
-    DAK_Commander_Headgear(12)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_UP'),HeadgearMICs=(13,14),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
-    DAK_Commander_Headgear(13)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_face'),HeadgearMICs=(13,14),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
+    DAK_Commander_Headgear(12)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_UP'),HeadgearMICs=(13),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
+    DAK_Commander_Headgear(13)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_M40_Camo_1_G_face'),HeadgearMICs=(13),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_M40_Camo_1_G_face',RequiredLevel=0)
     DAK_Commander_Headgear(14)=(HeadgearMeshes=(SkeletalMesh'DR_CHR_DAK.Mesh.DAK_Headgear_Officer'),HeadgearMICs=(10),HeadgearSocket=helmet,bIsHelmet=1,ThumbnailImage=Texture2D'DR_UI.Character_Two.DAK_Headgear_Officer',RequiredLevel=0)
 
 
@@ -850,7 +872,16 @@ DefaultProperties
     DAK_Heads(3)=(HeadMesh=SkeletalMesh'DR_CHR_Heads.Mesh.DAK_Head_02_Mesh',HeadMICTemplates=(MaterialInstanceConstant'CHR_VN_US_Heads.Materials.M_US_Head_05_Long_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.DAK.M_DAK_Head_02_Alt_01_Long_INST'),SkinToneID=0,HairColours=15,HeadgearSubIndex=1,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Heads.Head_US_04')
     DAK_Heads(4)=(HeadMesh=SkeletalMesh'DR_CHR_Heads.Mesh.DAK_Head_01_Mesh',HeadMICTemplates=(MaterialInstanceConstant'CHR_VN_AUS_Heads.Materials.M_AUS_Head_07_Long_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.DAK.M_DAK_Head_01_Alt_02_Long_INST'),SkinToneID=0,HairColours=15,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Heads.Head_US_05')
 
+    DAK_FacialHair(0)=(FacialHairMesh=none,FacialHairSocket=none,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Face.Face_None_US')
+    DAK_FacialHair(1)=(FacialHairMesh=none,FacialHairSocket=none,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Face.Face_None_US')
+    DAK_FacialHair(2)=(FacialHairMesh=none,FacialHairSocket=none,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Face.Face_None_US')
+    DAK_FacialHair(3)=(FacialHairMesh=none,FacialHairSocket=none,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Face.Face_None_US')
+    DAK_FacialHair(4)=(FacialHairMesh=none,FacialHairSocket=none,ThumbnailImage=Texture2D'VN_UI_Textures_Character.Face.Face_None_US')
 
+    DAK_Facemasks(1)=SkeletalMesh'DR_CHR.Mesh.DR_Facemask_Tan'
+    DAK_Facemasks(2)=SkeletalMesh'DR_CHR.Mesh.DR_Facemask_Green'
+    DAK_Facemasks(3)=SkeletalMesh'DR_CHR.Mesh.DR_Facemask_Brown'
+    DAK_Facemasks(4)=SkeletalMesh'DR_CHR.Mesh.DR_Facemask_Grey'
     //UK uniforms
     //Tunics
 
@@ -1012,4 +1043,9 @@ DefaultProperties
     UK_Heads(2)=(HeadMesh=SkeletalMesh'DR_CHR_Heads.Mesh.UK_Head_03_Mesh',HeadMICTemplates=(MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_03_Long_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_03_Rolled_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_03_ShortShoes_INST'),SkinToneID=0,HairColours=15,ThumbnailImage=Texture2D'VN_UI_Textures_Character_Two.Heads.Head_AUS_03')
     UK_Heads(3)=(HeadMesh=SkeletalMesh'DR_CHR_Heads.Mesh.UK_Head_04_Mesh',HeadMICTemplates=(MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_04_Long_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_04_Rolled_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_04_ShortShoes_INST'),SkinToneID=0,HairColours=15,ThumbnailImage=Texture2D'VN_UI_Textures_Character_Two.Heads.Head_US_11')
     UK_Heads(4)=(HeadMesh=SkeletalMesh'DR_CHR_Heads.Mesh.UK_Head_05_Mesh',HeadMICTemplates=(MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_05_Long_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_05_Rolled_INST',MaterialInstanceConstant'DR_CHR_Heads.MIC.UK.M_UK_Head_05_ShortShoes_INST'),SkinToneID=0,HairColours=15,ThumbnailImage=Texture2D'VN_UI_Textures_Character_Two.Heads.Head_AUS_04')
+
+    FPSkinToneMICs(0)=MaterialInstanceConstant'DR_CHR.MIC.M_DR_1stP_Bare_Tone1_INST'
+    FPSkinToneMICs(1)=MaterialInstanceConstant'DR_CHR.MIC.M_DR_1stP_Bare_Tone2_INST'
+    FPSkinToneMICs(2)=MaterialInstanceConstant'DR_CHR.MIC.M_DR_1stP_Bare_Tone3_INST'
+
 }
